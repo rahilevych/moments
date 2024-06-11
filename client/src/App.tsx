@@ -1,5 +1,6 @@
 import './App.css';
 import HistoryComponent from './components/HistoryComponent/HistoryComponent';
+import NavComponent from './components/NavComponent/NavComponent';
 import PostComponent from './components/PostComponent/PostComponent';
 import AutorizationPage from './pages/AutorizationPage/AutorizationPage';
 import Home from './pages/HomePage/Home';
@@ -11,6 +12,7 @@ function App() {
       {/* <Home /> */}
       {/* <HistoryComponent /> */}
       <PostComponent />
+      {/* <NavComponent /> */}
     </>
   );
 }
