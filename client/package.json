@@ -13,7 +13,10 @@
     "@phosphor-icons/react": "^2.1.5",
     "@tailwindcss/forms": "^0.5.7",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.1",
+    "react-router-dom": "^6.23.1",
+    "sass": "^1.77.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
