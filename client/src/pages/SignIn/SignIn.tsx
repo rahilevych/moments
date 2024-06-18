@@ -1,9 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-const AutorizationPage = () => {
+const SignIn = () => {
   return (
     <div className='wrapper min-h-screen'>
-      <div className='container mx-auto  h-full'>
+      <div className='container mx-auto h-full'>
         <div className='flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 '>
           <div className='sm:mx-auto sm:w-full sm:max-w-sm'>
             <h2 className='mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900'>
@@ -68,12 +69,12 @@ const AutorizationPage = () => {
             </form>
 
             <p className='mt-10 text-center text-sm text-gray-500'>
-              Don't have an account{' '}
-              <a
-                href='#'
+              Don't have an account?{' '}
+              <Link
+                to='/signup'
                 className='font-semibold leading-6 text-blue-600 hover:text-blue-500'>
                 Sign up
-              </a>
+              </Link>
             </p>
           </div>
         </div>
@@ -82,4 +83,4 @@ const AutorizationPage = () => {
   );
 };
 
-export default AutorizationPage;
+export default SignIn;
