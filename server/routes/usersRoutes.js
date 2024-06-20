@@ -13,7 +13,7 @@ usersRouter.post('/', async (request, response) => {
       following: request.body.following,
       followers: request.body.followers,
       posts: request.body.posts,
-      savedPosts: request.body.savedPosts,
+      savedPosts: request.body.saved_posts,
     };
     const user = await User.create(newUser);
     return response.status(201).send(user);
@@ -37,7 +37,11 @@ usersRouter.get('/:id', async (request, response) => {
   try {
     const { id } = request.params;
     console.log(`Fetching user with id: ${id}`);
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate([
+      'posts',
+      'following',
+      'followers',
+    ]);
     if (!user) {
       console.log(`User with id: ${id} not found`);
       return response.status(404).json({ message: 'User not found' });
