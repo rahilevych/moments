@@ -4,6 +4,7 @@ import {
   deleteUserById,
   getAllUsers,
   getUserById,
+  login,
   registration,
   updateUserById,
 } from '../controllers/userController.js';
@@ -20,6 +21,8 @@ usersRouter.post(
   ],
   registration
 );
+
+usersRouter.post('/login', login);
 
 usersRouter.get('/', getAllUsers);
 

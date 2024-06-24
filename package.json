@@ -1,6 +1,10 @@
 {
   "dependencies": {
+    "jsonwebtoken": "^9.0.2",
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.23.1"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.6"
   }
 }

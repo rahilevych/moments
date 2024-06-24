@@ -2,6 +2,8 @@ import { User } from '../models/userModel.js';
 import bcrypt from 'bcrypt';
 import { encryptPass } from '../utils/passServices.js';
 import { validationResult } from 'express-validator';
+import jwt from 'jsonwebtoken';
+import { secret } from '../config/token.js';
 // export const addUser = async (request, response) => {
 //   try {
 //     const newUser = {
@@ -56,6 +58,27 @@ export const registration = async (request, response) => {
     response.status(400).json;
   }
 };
+const generateAccessToken = (id) => {
+  const payload = {
+    id,
+  };
+  return jwt.sign(payload, secret, { expiresIn: '24h' });
+};
+
+export const login = async (request, response) => {
+  const { username, password } = request.body;
+  const user = await User.findOne({ username });
+  if (!user) {
+    return response.status(400).json({ massage: `user ${username} not found` });
+  }
+  const validPassword = bcrypt.compareSync(password, user.password);
+  if (!validPassword) {
+    return response.status(400).json({ massage: `Incorrect password` });
+  }
+  const token = generateAccessToken(user._id);
+  return response.json({ token });
+};
+
 export const getAllUsers = async (request, response) => {
   try {
     const users = await User.find({});
