@@ -1,23 +1,52 @@
 import { User } from '../models/userModel.js';
-
-export const addUser = async (request, response) => {
+import bcrypt from 'bcrypt';
+import { encryptPass } from '../utils/passServices.js';
+// export const addUser = async (request, response) => {
+//   try {
+//     const newUser = {
+//       username: request.body.username,
+//       email: request.body.email,
+//       password: request.body.password,
+//       userImg: request.body.user_img,
+//       bio: request.body.bio,
+//       following: request.body.following,
+//       followers: request.body.followers,
+//       posts: request.body.posts,
+//       savedPosts: request.body.saved_posts,
+//     };
+//     const user = await User.create(newUser);
+//     return response.status(201).send(user);
+//   } catch (error) {
+//     console.log(error.message);
+//     response.status(500).send({ message: error.message });
+//   }
+// };
+export const registration = async (request, response) => {
   try {
-    const newUser = {
+    const { username, password } = request.body;
+    const candidate = await User.findOne({ username });
+    if (candidate) {
+      return response.status(400).json({ message: 'User exist' });
+    }
+    const hashedPass = await encryptPass(password);
+    const newUser = new User({
       username: request.body.username,
-      email: request.body.email,
-      password: request.body.password,
-      userImg: request.body.user_img,
-      bio: request.body.bio,
-      following: request.body.following,
-      followers: request.body.followers,
-      posts: request.body.posts,
-      savedPosts: request.body.saved_posts,
-    };
-    const user = await User.create(newUser);
-    return response.status(201).send(user);
+      password: hashedPass,
+      // email: request.body.email,
+
+      // userImg: request.body.user_img,
+      // bio: request.body.bio,
+      // following: request.body.following,
+      // followers: request.body.followers,
+      // posts: request.body.posts,
+      // savedPosts: request.body.saved_posts,
+    });
+
+    await newUser.save();
+    return response.json({ message: 'user was signed up' });
   } catch (error) {
-    console.log(error.message);
-    response.status(500).send({ message: error.message });
+    console.log(error);
+    response.status(400).json;
   }
 };
 export const getAllUsers = async (request, response) => {

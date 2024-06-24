@@ -1,15 +1,15 @@
 import express, { request, response } from 'express';
 
 import {
-  addUser,
   deleteUserById,
   getAllUsers,
   getUserById,
+  registration,
   updateUserById,
 } from '../controllers/userController.js';
 const usersRouter = express.Router();
 
-usersRouter.post('/', addUser);
+usersRouter.post('/', registration);
 
 usersRouter.get('/', getAllUsers);
 
