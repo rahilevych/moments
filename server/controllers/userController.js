@@ -1,6 +1,7 @@
 import { User } from '../models/userModel.js';
 import bcrypt from 'bcrypt';
 import { encryptPass } from '../utils/passServices.js';
+import { validationResult } from 'express-validator';
 // export const addUser = async (request, response) => {
 //   try {
 //     const newUser = {
@@ -23,6 +24,12 @@ import { encryptPass } from '../utils/passServices.js';
 // };
 export const registration = async (request, response) => {
   try {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+      return response
+        .status(400)
+        .json({ message: 'Error during registration', errors });
+    }
     const { username, password } = request.body;
     const candidate = await User.findOne({ username });
     if (candidate) {
