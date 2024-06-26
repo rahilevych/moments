@@ -6,12 +6,15 @@ import mongoose from 'mongoose';
 import mongoDBURL from './config/dbConfig.js';
 import postsRouter from './routes/postsRoutes.js';
 import commentsRouter from './routes/commentsRoutes.js';
-import passport from '../server/utils/passportConfig.js';
+import passport from 'passport';
+import passportStrategy from '../server/utils/passportConfig.js';
 
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.use(passport);
+
+app.use(passport.initialize());
+passport.use(passportStrategy);
 
 app.use('/users', usersRouter);
 app.use('/posts', postsRouter);

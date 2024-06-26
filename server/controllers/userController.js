@@ -79,6 +79,20 @@ export const login = async (request, response) => {
   return response.json({ token });
 };
 
+export const getUserProfile = async (request, response) => {
+  console.log('userprofile');
+  console.log(request.user);
+  if (request.user) {
+    response.status(200).json({
+      message: 'user profile information',
+      user: {
+        email: request.user.email,
+        username: request.user.username,
+      },
+    });
+  }
+};
+
 export const getAllUsers = async (request, response) => {
   try {
     const users = await User.find({});
@@ -89,48 +103,48 @@ export const getAllUsers = async (request, response) => {
   }
 };
 
-export const getUserById = async (request, response) => {
-  try {
-    const { id } = request.params;
-    console.log(`Fetching user with id: ${id}`);
-    const user = await User.findById(id).populate([
-      'posts',
-      'following',
-      'followers',
-    ]);
-    if (!user) {
-      console.log(`User with id: ${id} not found`);
-      return response.status(404).json({ message: 'User not found' });
-    }
-    console.log(`User with id: ${id} found`);
-    return response.status(200).json(user);
-  } catch (error) {
-    console.log(`Error fetching user with id: ${id} - ${error.message}`);
-    response.status(500).send({ message: error.message });
-  }
-};
-export const updateUserById = async (request, response) => {
-  try {
-    const { id } = request.params;
-    const result = await User.findByIdAndUpdate(id, request.body);
-    if (!result) {
-      response.status(404).json({ message: 'Book not find' });
-    }
-    return response.status(200).send({ message: 'Book updeteed successfully' });
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-export const deleteUserById = async (request, response) => {
-  try {
-    const { id } = request.params;
-    const result = await User.findByIdAndDelete(id);
-    if (!result) {
-      response.status(404).json({ message: 'User not find' });
-    }
-    return response.status(200).send({ message: 'User deleted successfully' });
-  } catch (error) {
-    console.log(error.massege);
-    response.status(500).send({ message: error.message });
-  }
-};
+// export const getUserById = async (request, response) => {
+//   try {
+//     const { id } = request.params;
+//     console.log(`Fetching user with id: ${id}`);
+//     const user = await User.findById(id).populate([
+//       'posts',
+//       'following',
+//       'followers',
+//     ]);
+//     if (!user) {
+//       console.log(`User with id: ${id} not found`);
+//       return response.status(404).json({ message: 'User not found' });
+//     }
+//     console.log(`User with id: ${id} found`);
+//     return response.status(200).json(user);
+//   } catch (error) {
+//     console.log(`Error fetching user with id: ${id} - ${error.message}`);
+//     response.status(500).send({ message: error.message });
+//   }
+// };
+// export const updateUserById = async (request, response) => {
+//   try {
+//     const { id } = request.params;
+//     const result = await User.findByIdAndUpdate(id, request.body);
+//     if (!result) {
+//       response.status(404).json({ message: 'Book not find' });
+//     }
+//     return response.status(200).send({ message: 'Book updeteed successfully' });
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// };
+// export const deleteUserById = async (request, response) => {
+//   try {
+//     const { id } = request.params;
+//     const result = await User.findByIdAndDelete(id);
+//     if (!result) {
+//       response.status(404).json({ message: 'User not find' });
+//     }
+//     return response.status(200).send({ message: 'User deleted successfully' });
+//   } catch (error) {
+//     console.log(error.massege);
+//     response.status(500).send({ message: error.message });
+//   }
+// };
