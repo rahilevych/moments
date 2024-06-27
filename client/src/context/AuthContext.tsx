@@ -1,36 +1,123 @@
 import { ReactNode, createContext, useState } from 'react';
 import { UserType } from '../types/UserType';
 
-// define the type of my context
 type AuthContextType = {
   user: UserType | null;
+  username: string;
+  password: string;
   setUser: (user: UserType) => void;
+  setUsername: (password: string) => void;
+  setPassword: (password: string) => void;
+  signUp: () => Promise<void>;
+  signIn: () => Promise<void>;
+  //email: string;
+  //setEmail: (email: string) => void;
+  // setSignUpPressed: (isPressed: boolean) => void;
+  // setLoginPressed: (isPressed: boolean) => void;
+  // loginPressed: boolean;
+  // signUpPressed: boolean;
+
+  // logOut: () => Promise<void>;
+  // isLoggedIn: boolean;
 };
 
-//define the initial value of the context
-const initContextValue = {
+//define the initial value of context
+const initAuthContextValue = {
   user: {} as UserType,
+  username: '',
+  password: '',
   setUser: () => {
     throw new Error('context not initialised');
   },
+  setPassword: () => {
+    throw new Error('context not initialised');
+  },
+
+  setUsername: () => {
+    throw new Error('context not initialised');
+  },
+  signUp: () => Promise.resolve(),
+  signIn: () => Promise.resolve(),
+
+  //   setEmail: () => {
+  //     throw new Error('context not initialised');
+  //   },
+
+  //   logOut: () => Promise.resolve(),
+  //   email: '',
+  //   password: '',
+  //   loggedIn: false,
+  //   isLoggedIn: false,
+  //   setSignUpPressed: () => {
+  //     throw new Error('context not initialised');
+  //   },
+  //   setLoginPressed: () => {
+  //     throw new Error('context not initialised');
+  //   },
+  //   loginPressed: false,
+  //   signUpPressed: false,
 };
 
-//define type of the props the AuthContextProvider receives
+//define type of props the AuthContextProvider recived
+
 type AuthContextProviderProps = {
   children: ReactNode;
 };
+export const AuthContext = createContext<AuthContextType>(initAuthContextValue);
 
-//1. create context
-export const AuthContext = createContext<AuthContextType>(initContextValue);
-
-//2. create provider
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
-  // move inside states and functions
-  const [user, setUser] = useState<UserType | null>(null);
+  let [user, setUser] = useState<UserType | null>(null);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  //2. return the provider fo the context and the values to share
+  //   const [email, setEmail] = useState('');
+  //   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  //   const [loggedOut, setLoggedOut] = useState(false);
+  //   const [signUpPressed, setSignUpPressed] = useState(true);
+  //   const [loginPressed, setLoginPressed] = useState(false);
+
+  const signUp = async () => {};
+
+  const signIn = async () => {};
+
+  //   const stayLoggedIn = () => {
+  //     onAuthStateChanged(auth, (user) => {
+  //       if (user) {
+  //         setIsLoggedIn(true);
+  //       } else {
+  //         setIsLoggedIn(false);
+  //       }
+  //     });
+  //   };
+
+  //   const logOut = async () => {
+  //     try {
+  //       await signOut(auth);
+  //       setLoggedOut(true);
+  //       setIsLoggedIn(false);
+  //       setUser(null);
+  //       console.log(auth.currentUser?.email);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+
+  //   useEffect(() => {
+  //     stayLoggedIn();
+  //   }, []);
+
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        username,
+        password,
+        setUser,
+        signUp,
+        signIn,
+        setPassword,
+        setUsername,
+      }}>
       {children}
     </AuthContext.Provider>
   );
