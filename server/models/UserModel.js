@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
 const userSchema = mongoose.Schema({
-  username: String,
+  username: { type: String, required: true },
   email: String,
-  password: String,
+  password: { type: String, required: true },
   user_img: String,
   bio: String,
   following: [{ type: Schema.Types.ObjectId, ref: 'user' }],
@@ -12,3 +12,4 @@ const userSchema = mongoose.Schema({
   posts: [{ type: Schema.Types.ObjectId, ref: 'post' }],
 });
 export const User = mongoose.model('user', userSchema);
+``;
