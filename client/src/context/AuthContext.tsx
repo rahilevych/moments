@@ -1,12 +1,13 @@
 import { ReactNode, createContext, useState } from 'react';
 import { UserType } from '../types/UserType';
+import axios from 'axios';
 
 type AuthContextType = {
   user: UserType | null;
   username: string;
   password: string;
   setUser: (user: UserType) => void;
-  setUsername: (password: string) => void;
+  setUsername: (username: string) => void;
   setPassword: (password: string) => void;
   signUp: () => Promise<void>;
   signIn: () => Promise<void>;
@@ -69,6 +70,8 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   let [user, setUser] = useState<UserType | null>(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  console.log(password);
+  console.log(username);
 
   //   const [email, setEmail] = useState('');
   //   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -76,7 +79,24 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   //   const [signUpPressed, setSignUpPressed] = useState(true);
   //   const [loginPressed, setLoginPressed] = useState(false);
 
-  const signUp = async () => {};
+  const signUp = async () => {
+    try {
+      const response = await axios.post(
+        'http://localhost:4003/users/registration',
+        {
+          username,
+          password,
+        }
+      );
+      if (response.status === 200) {
+        const result = response.data;
+        console.log('Новый пользователь', result);
+        setUser(result);
+      }
+    } catch (error) {
+      console.error('Ошибка при регистрации:', error);
+    }
+  };
 
   const signIn = async () => {};
 
