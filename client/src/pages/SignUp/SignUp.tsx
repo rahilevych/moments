@@ -1,8 +1,38 @@
 // RegistrationPage.jsx
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
 
 const SignUp = () => {
+  const { signUp, setUsername, setPassword, username, password, user } =
+    useContext(AuthContext);
+
+  const handleInputChangeUsername = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = e.target.value;
+    setUsername(value);
+    // setErrors((prevErrors) => ({
+    //   ...prevErrors,
+    //   email: validateEmail(value),
+    // }));
+  };
+
+  const handleInputChangePass = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value) {
+      setPassword(e.target.value);
+      // setErrors((prevErrors) => ({
+      //   ...prevErrors,
+      //   password: validatePassword(e.target.value),
+      // }));
+    }
+  };
+
+  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    signUp();
+  };
+
   return (
     <div className='wrapper min-h-screen'>
       <div className='container mx-auto h-full'>
@@ -14,19 +44,20 @@ const SignUp = () => {
           </div>
 
           <div className='mt-10 sm:mx-auto sm:w-full sm:max-w-sm'>
-            <form className='space-y-6' action='#' method='POST'>
+            <form className='space-y-6' onSubmit={submitForm} method='post'>
               <div>
                 <label
-                  htmlFor='email'
+                  htmlFor='username'
                   className='block text-sm font-medium leading-6 text-gray-900'>
-                  Email address
+                  Username
                 </label>
                 <div className='mt-2'>
                   <input
-                    id='email'
-                    name='email'
-                    type='email'
-                    autoComplete='email'
+                    onChange={handleInputChangeUsername}
+                    id='username'
+                    name='username'
+                    type='username'
+                    autoComplete='username'
                     required
                     className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6'
                   />
@@ -41,6 +72,7 @@ const SignUp = () => {
                 </label>
                 <div className='mt-2'>
                   <input
+                    onChange={handleInputChangePass}
                     id='password'
                     name='password'
                     type='password'
