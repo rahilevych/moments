@@ -98,7 +98,23 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     }
   };
 
-  const signIn = async () => {};
+  const signIn = async () => {
+    try {
+      const response = await axios.post('http://localhost:4003/users/login', {
+        username,
+        password,
+      });
+      if (response.status === 200) {
+        const result = response.data;
+        console.log('Signed in user', result);
+        if (result.token) {
+          localStorage.setItem('token', result.token);
+        }
+      }
+    } catch (error) {
+      console.error('Error during signing in', error);
+    }
+  };
 
   //   const stayLoggedIn = () => {
   //     onAuthStateChanged(auth, (user) => {
