@@ -4,10 +4,15 @@ export const multerUpload = multer({
   storage: multer.diskStorage({}),
   fileFilter: (req, file, cb) => {
     let extension = path.extname(file.originalname);
-    if (extension !== '.jpg' && extension !== '.jpeg' && extension !== '.png') {
+    if (
+      extension !== '.jpg' &&
+      extension !== '.jpeg' &&
+      extension !== '.png' &&
+      extension !== '.JPG'
+    ) {
       cb(new Error('File extension not supported'), false);
       return;
     }
-    cn(null, true);
+    cb(null, true);
   },
 });
