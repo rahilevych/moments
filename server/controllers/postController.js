@@ -1,6 +1,7 @@
 import { Post } from '../models/postModel.js';
 
 export const addPost = async (request, response) => {
+  console.log(request.file);
   try {
     const newPost = {
       user_id: request.body.user_id,
