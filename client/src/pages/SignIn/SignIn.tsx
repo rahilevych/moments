@@ -1,7 +1,35 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
 
 const SignIn = () => {
+  const { signIn, setUsername, setPassword } = useContext(AuthContext);
+
+  const handleInputChangeUsername = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = e.target.value;
+    setUsername(value);
+    // setErrors((prevErrors) => ({
+    //   ...prevErrors,
+    //   email: validateEmail(value),
+    // }));
+  };
+
+  const handleInputChangePass = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value) {
+      setPassword(e.target.value);
+      // setErrors((prevErrors) => ({
+      //   ...prevErrors,
+      //   password: validatePassword(e.target.value),
+      // }));
+    }
+  };
+
+  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    signIn();
+  };
   return (
     <div className='wrapper min-h-screen'>
       <div className='container mx-auto h-full'>
@@ -13,7 +41,11 @@ const SignIn = () => {
           </div>
 
           <div className='mt-10 sm:mx-auto sm:w-full sm:max-w-sm'>
-            <form className='space-y-6' action='#' method='POST'>
+            <form
+              className='space-y-6'
+              action='#'
+              method='POST'
+              onSubmit={submitForm}>
               <div>
                 <label
                   htmlFor='email'
@@ -22,6 +54,7 @@ const SignIn = () => {
                 </label>
                 <div className='mt-2'>
                   <input
+                    onChange={handleInputChangeUsername}
                     id='email'
                     name='email'
                     type='email'
@@ -49,6 +82,7 @@ const SignIn = () => {
                 </div>
                 <div className='mt-2'>
                   <input
+                    onChange={handleInputChangePass}
                     id='password'
                     name='password'
                     type='password'
