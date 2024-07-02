@@ -1,19 +1,26 @@
 import { Post } from '../models/postModel.js';
+import { imageUpload } from '../utils/imageManagement.js';
+import { removeTempFile } from '../utils/tempFileManagment.js';
 
 export const addPost = async (request, response) => {
   console.log(request.file);
   try {
     const newPost = {
       user_id: request.body.user_id,
-      image_url: request.body.image_url,
       caption: request.body.caption,
       likes: request.body.likes,
     };
+    if (request.file) {
+      const postURL = await imageUpload(request.file, 'post_images');
+      newPost.image_url = postURL;
+    }
     const post = await Post.create(newPost);
     return response.status(201).send(post);
   } catch (error) {
     console.log(error.message);
     response.status(500).send({ message: error.message });
+  } finally {
+    removeTempFile(request.file);
   }
 };
 
