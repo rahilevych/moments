@@ -8,19 +8,10 @@ import {
   registration,
 } from '../controllers/userController.js';
 import JWTAuth from '../middleware/JWTAuth.js';
+import { userValidation } from '../validation/userValidation.js';
 const usersRouter = express.Router();
 
-usersRouter.post(
-  '/registration',
-  [
-    check('username', 'Username is empty').notEmpty(),
-    check('password', 'Password have to be longer than 6 symbols').isLength({
-      min: 6,
-      max: 10,
-    }),
-  ],
-  registration
-);
+usersRouter.post('/registration', userValidation, registration);
 
 usersRouter.post('/login', login);
 
