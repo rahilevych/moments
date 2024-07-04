@@ -4,26 +4,7 @@ import { encryptPass } from '../utils/passServices.js';
 import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import { secret } from '../config/token.js';
-// export const addUser = async (request, response) => {
-//   try {
-//     const newUser = {
-//       username: request.body.username,
-//       email: request.body.email,
-//       password: request.body.password,
-//       userImg: request.body.user_img,
-//       bio: request.body.bio,
-//       following: request.body.following,
-//       followers: request.body.followers,
-//       posts: request.body.posts,
-//       savedPosts: request.body.saved_posts,
-//     };
-//     const user = await User.create(newUser);
-//     return response.status(201).send(user);
-//   } catch (error) {
-//     console.log(error.message);
-//     response.status(500).send({ message: error.message });
-//   }
-// };
+
 export const registration = async (request, response) => {
   try {
     const errors = validationResult(request);
@@ -32,32 +13,35 @@ export const registration = async (request, response) => {
         .status(400)
         .json({ message: 'Error during registration', errors });
     }
-    const { username, password } = request.body;
-    const candidate = await User.findOne({ username });
-    if (candidate) {
-      return response.status(400).json({ message: 'User exist' });
-    }
-    const hashedPass = await encryptPass(password);
-    const newUser = new User({
-      username: request.body.username,
-      password: hashedPass,
-      // email: request.body.email,
 
-      // userImg: request.body.user_img,
-      // bio: request.body.bio,
-      // following: request.body.following,
-      // followers: request.body.followers,
-      // posts: request.body.posts,
-      // savedPosts: request.body.saved_posts,
+    const { email, username, fullname, password } = request.body;
+    console.log('Request Body:', request.body);
+
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    if (existingUser) {
+      return response
+        .status(400)
+        .json({ message: 'User with this email or username already exists' });
+    }
+
+    const hashedPass = await encryptPass(password);
+
+    const newUser = new User({
+      email,
+      username,
+      fullname,
+      password: hashedPass,
+      createdAt: new Date(),
     });
 
     await newUser.save();
-    return response.json({ message: 'user was signed up' });
+    return response.status(201).json({ message: 'User was signed up' });
   } catch (error) {
     console.log(error);
-    response.status(400).json;
+    return response.status(500).json({ message: 'Server error' });
   }
 };
+
 const generateAccessToken = (id) => {
   const payload = {
     id,
@@ -86,6 +70,7 @@ export const getUserProfile = async (request, response) => {
     response.status(200).json({
       message: 'user profile information',
       user: {
+        id: request.user._id,
         email: request.user.email,
         username: request.user.username,
       },
