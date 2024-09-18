@@ -25,7 +25,6 @@ export const registration = async (request, response) => {
     }
 
     const hashedPass = await encryptPass(password);
-
     const newUser = new User({
       email,
       username,
@@ -37,7 +36,6 @@ export const registration = async (request, response) => {
     await newUser.save();
     return response.status(201).json({ message: 'User was signed up' });
   } catch (error) {
-    console.log(error);
     return response.status(500).json({ message: 'Server error' });
   }
 };
@@ -64,15 +62,22 @@ export const login = async (request, response) => {
 };
 
 export const getUserProfile = async (request, response) => {
-  console.log('userprofile');
-  console.log(request.user);
   if (request.user) {
     response.status(200).json({
       message: 'user profile information',
       user: {
-        id: request.user._id,
+        _id: request.user._id,
         email: request.user.email,
         username: request.user.username,
+        likes: request.user.likes,
+        saved_posts: request.user.saved_posts,
+        fullname: request.user.fullname,
+        user_img: request.user.user_img,
+        bio: request.user.bio,
+        following: request.user.following,
+        followers: request.user.followers,
+        posts: request.user.posts,
+        createdAt: request.user.createdAt,
       },
     });
   }
@@ -81,33 +86,118 @@ export const getUserProfile = async (request, response) => {
 export const getAllUsers = async (request, response) => {
   try {
     const users = await User.find({});
-
     return response.status(200).json({ data: users });
   } catch (error) {
-    console.log(error.message);
+    return response.status(500).json({ error: 'Server error' });
+  }
+};
+export const toggleSubscribeBtn = async (request, response) => {
+  try {
+    const { otherUserId } = request.params;
+    const userId = request.user._id;
+
+    const user = await User.findById(userId);
+    const otherUser = await User.findById(otherUserId);
+
+    console.log('user from  back', user);
+    console.log('user2 from  back', otherUser);
+
+    if (!user || !otherUser) {
+      return response.status(404).json({ message: 'User not found' });
+    }
+
+    const isFollowing = user.following.includes(otherUserId);
+    const isFollower = otherUser.followers.includes(userId);
+
+    if (isFollowing && isFollower) {
+      user.following = user.following.filter(
+        (id) => id.toString() !== otherUserId
+      );
+      otherUser.followers = otherUser.followers.filter(
+        (id) => id.toString() !== userId
+      );
+    } else if (!isFollowing && !isFollower) {
+      user.following.push(otherUserId);
+      otherUser.followers.push(userId);
+    } else {
+      if (isFollowing) {
+        user.following = user.following.filter(
+          (id) => id.toString() !== otherUserId
+        );
+      } else {
+        user.following.push(otherUserId);
+      }
+      if (isFollower) {
+        otherUser.followers = otherUser.followers.filter(
+          (id) => id.toString() !== userId
+        );
+      } else {
+        otherUser.followers.push(userId);
+      }
+    }
+
+    await user.save();
+    await otherUser.save();
+
+    const users = await User.find({});
+    return response.status(200).json({ data: users });
+  } catch (error) {
+    console.error('Error by subscribing:', error.message);
+    return response.status(500).json({ message: 'Server error' });
   }
 };
 
-// export const getUserById = async (request, response) => {
+// export const toggleSubscribeBtn = async (request, response) => {
 //   try {
-//     const { id } = request.params;
-//     console.log(`Fetching user with id: ${id}`);
-//     const user = await User.findById(id).populate([
-//       'posts',
-//       'following',
-//       'followers',
-//     ]);
-//     if (!user) {
-//       console.log(`User with id: ${id} not found`);
+//     const { otherUserId } = request.params;
+//     const userId = request.user._id;
+//     const user = await User.findById(userId);
+//     const otherUser = await User.findById(otherUserId);
+//     console.log('user from  back', user);
+//     console.log('user2 from  back', otherUser);
+//     if (!user || !otherUser) {
 //       return response.status(404).json({ message: 'User not found' });
 //     }
-//     console.log(`User with id: ${id} found`);
-//     return response.status(200).json(user);
+//     const isFollowing = user.following.includes(otherUserId);
+//     const isFollower = otherUser.followers.includes(userId);
+
+//     if (!isFollowing && !isFollower) {
+//       user.following.push(otherUserId);
+//       otherUser.followers.push(userId);
+//     } else if (isFollowing && isFollower) {
+//       user.following = user.following.filter(
+//         (id) => id.toString() !== otherUserId
+//       );
+//       otherUser.followers = otherUser.followers.filter(
+//         (id) => id.toString() !== userId
+//       );
+//     } else {
+//       return response
+//         .status(400)
+//         .json({ message: 'Invalid follow/unfollow state' });
+//     }
+//     await user.save();
+//     await otherUser.save();
+//     const users = await User.find({});
+//     return response.status(200).json({ data: users });
 //   } catch (error) {
-//     console.log(`Error fetching user with id: ${id} - ${error.message}`);
-//     response.status(500).send({ message: error.message });
+//     console.error('Error by subscribing:', error.message);
+//     return response.status(500).json({ message: 'Server error' });
 //   }
 // };
+export const getUserById = async (request, response) => {
+  try {
+    const { id } = request.params;
+    const user = await User.findById(id).populate('posts');
+    if (!user) {
+      return response.status(404).json({ message: 'User not found ' });
+    }
+    response.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    response.status(500).json({ message: 'Server error' });
+  }
+};
 // export const updateUserById = async (request, response) => {
 //   try {
 //     const { id } = request.params;
