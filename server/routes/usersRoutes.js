@@ -2,10 +2,11 @@ import express, { request, response } from 'express';
 import { check } from 'express-validator';
 import {
   getAllUsers,
-  // getAllUsers,
+  getUserById,
   getUserProfile,
   login,
   registration,
+  toggleSubscribeBtn,
 } from '../controllers/userController.js';
 import JWTAuth from '../middleware/JWTAuth.js';
 import { userValidation } from '../validation/userValidation.js';
@@ -17,10 +18,10 @@ usersRouter.post('/login', login);
 
 usersRouter.get('/profile', JWTAuth, getUserProfile);
 
-usersRouter.get('/', getAllUsers);
+usersRouter.get('/', JWTAuth, getAllUsers);
+usersRouter.post('/:otherUserId/subscribe', JWTAuth, toggleSubscribeBtn);
 
-// usersRouter.get('/:id', getUserById);
-
+usersRouter.get('/:id', getUserById);
 // usersRouter.put('/:id', updateUserById);
 // usersRouter.delete('/:id', deleteUserById);
 
