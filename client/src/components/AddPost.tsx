@@ -1,66 +1,72 @@
-import React, { useState } from 'react';
+import React, { useContext, useRef } from 'react';
+import { PostContext } from '../context/PostContext';
+import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const AddPost = () => {
-  const [image, setImage] = useState(null);
-  const [caption, setCaption] = useState('');
+  const { addPost, setCaption, caption } = useContext(PostContext);
+  const { user } = useContext(AuthContext);
+  const selectedFile = useRef<File | null>(null);
 
-  //   const handleImageChange = (e) => {
-  //     setImage(URL.createObjectURL(e.target.files[0]));
-  //   };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.files);
+    if (e.target.files && e.target.files.length > 0) {
+      selectedFile.current = e.target.files[0];
+    }
+  };
 
-  //   const handleCaptionChange = (e) => {
-  //     setCaption(e.target.value);
-  //   };
+  const handleInputChangeCaption = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCaption(e.target.value);
+  };
 
-  //   const handleSubmit = (e) => {
-  //     e.preventDefault();
-  //     // Логика отправки поста на сервер
-  //     console.log({ image, caption });
-  //   };
+  const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (selectedFile.current && user) {
+      const formData = new FormData();
+      formData.append('image_url', selectedFile.current);
+      formData.append('caption', caption);
+      formData.append('user_id', user?._id);
+      await addPost(formData);
+      // return <Navigate to={`/user/${user._id}`} replace={true}></Navigate>;
+    }
+  };
 
   return (
-    <div className='min-h-screen flex items-center justify-center '>
-      <div className='bg-white p-8 rounded-lg shadow-lg w-full max-w-md'>
-        <h2 className='text-2xl font-bold mb-4'>Add a New Post</h2>
-        <form>
-          <div className='mb-4'>
+    <div className='min-h-screen flex items-center justify-center bg-white'>
+      <div className='bg-white p-8 rounded-lg shadow-lg w-full max-w-lg'>
+        <h2 className='text-3xl font-bold text-center mb-6 text-gray-800'>
+          Add a New Post
+        </h2>
+        <form onSubmit={submitForm} method='post'>
+          <div className='mb-6'>
             <label
               className='block text-sm font-medium text-gray-700 mb-2'
               htmlFor='image'>
               Upload Image
             </label>
             <input
+              onChange={handleFileChange}
               type='file'
               id='image'
               accept='image/*'
-              //   onChange={handleImageChange}
-              className='block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100'
+              className='block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100'
             />
-            {image && (
-              <img
-                src={image}
-                alt='Selected'
-                className='mt-4 w-full h-64 object-cover rounded'
-              />
-            )}
           </div>
-          <div className='mb-4'>
+          <div className='mb-6'>
             <label
               className='block text-sm font-medium text-gray-700 mb-2'
               htmlFor='caption'>
               Caption
             </label>
-            <textarea
+            <input
+              onChange={handleInputChangeCaption}
               id='caption'
-              value={caption}
-              //   onChange={handleCaptionChange}
-              //   rows="3"
-              className='block w-full p-2 border border-gray-300 rounded'
-              placeholder='Write a caption...'></textarea>
+              className='block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+              placeholder='Write a caption...'></input>
           </div>
           <button
             type='submit'
-            className='w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75'>
+            className='w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-300'>
             Post
           </button>
         </form>
