@@ -1,4 +1,3 @@
-import React from 'react';
 import profile from '../assets/images/profile.png';
 const HistoryComponent = () => {
   return (

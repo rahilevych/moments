@@ -1,11 +1,10 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import profile from '../assets/images/profile.png';
 import { AuthContext } from '../context/AuthContext';
 import { UserContext } from '../context/UserContext';
 
 const ProfileHeader = () => {
-  const { user, logout} =
-    useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
 
   const { profileUser } = useContext(UserContext);
 

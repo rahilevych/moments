@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import ProfileHeader from '../components/ProfileHeader';
 import UserPosts from '../components/UserPosts';
 import { PostContext } from '../context/PostContext';
@@ -10,8 +10,8 @@ const UserPage = () => {
   //const { posts, getPosts } = useContext(PostContext);
   const { id } = useParams<{ id: string }>();
   const { getUserById, setProfileUser } = useContext(UserContext);
-  const { getUserProfile, user } = useContext(AuthContext);
-  const { getUserPostsByUserId, getPosts } = useContext(PostContext);
+  const { user } = useContext(AuthContext);
+  const { getUserPostsByUserId } = useContext(PostContext);
 
   const fetchUser = async () => {
     if (id) {

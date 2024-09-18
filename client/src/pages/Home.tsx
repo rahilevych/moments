@@ -1,8 +1,5 @@
-import React, { useContext, useEffect } from 'react';
 import HistoryComponent from '../components/HistoryComponent';
 import PostComponent from '../components/PostComponent';
-
-import { AuthContext } from '../context/AuthContext';
 
 const Home = () => {
   return (

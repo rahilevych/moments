@@ -1,4 +1,3 @@
-import React from 'react';
 import postimg from '../assets/images/postimg.png';
 import profile from '../assets/images/profile.png';
 import {

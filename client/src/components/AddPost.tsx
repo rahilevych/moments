@@ -1,7 +1,6 @@
 import React, { useContext, useRef } from 'react';
 import { PostContext } from '../context/PostContext';
 import { AuthContext } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 const AddPost = () => {
   const { addPost, setCaption, caption } = useContext(PostContext);

@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext, useRef, useState } from 'react';
+import { ReactNode, createContext, useContext, useState } from 'react';
 
 import axios from 'axios';
 import { CommentType } from '../types/CommentType';
@@ -54,8 +54,8 @@ export const CommentContextProvider = ({
   const [comment, setComment] = useState<CommentType | null>(null);
   const [comments, setComments] = useState<CommentType[]>([]);
   const [text, setText] = useState('');
-  const [currentPost, setCurrentPost] = useState<PostType>();
-  const { post, getPostById, setPost } = useContext(PostContext);
+  const [_, setCurrentPost] = useState<PostType>();
+  const { post, getPostById } = useContext(PostContext);
 
   const addComment = async (formData: FormData, id: string) => {
     await getPostById(id);

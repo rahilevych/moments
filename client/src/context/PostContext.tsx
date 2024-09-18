@@ -3,7 +3,6 @@ import axios from 'axios';
 import { PostType } from '../types/PostType';
 import { AuthContext } from './AuthContext';
 import { CommentContext } from './CommentContext';
-import { useNavigate } from 'react-router-dom';
 
 type PostContextType = {
   toggleLikePost: (postId: string) => Promise<void>;
@@ -71,11 +70,11 @@ export const PostContext = createContext<PostContextType>(initPostContextValue);
 export const PostContextProvider = ({ children }: PostContextProviderProps) => {
   const [post, setPost] = useState<PostType | null>(null);
   const [posts, setPosts] = useState<PostType[] | null>(null);
-  const [file, setFile] = useState<React.MutableRefObject<File | null>>();
+  const [_, setFile] = useState<React.MutableRefObject<File | null>>();
   const [caption, setCaption] = useState<string>('');
   const [postsAmount, setPostsAmount] = useState(0);
   const { getCommentsByIds } = useContext(CommentContext);
-  const { getUserProfile, user, setUser } = useContext(AuthContext);
+  const { getUserProfile, user } = useContext(AuthContext);
 
   const addPost = async (formData: FormData) => {
     try {

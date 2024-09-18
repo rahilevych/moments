@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Heart,
@@ -15,29 +15,14 @@ import profile from '../assets/images/profile.png';
 
 const DetailedPost = () => {
   const { id } = useParams();
-  const {
-    posts,
-    toggleLikePost,
-    toggleSavePost,
-    setPost,
-    post,
-    getPostById,
-    getPosts,
-  } = useContext(PostContext);
+  const { posts, toggleLikePost, toggleSavePost, setPost, post, getPostById } =
+    useContext(PostContext);
   const { user, getUserProfile } = useContext(AuthContext);
   const { users } = useContext(UserContext);
   const { getUserPostsByUserId } = useContext(PostContext);
 
-  const {
-    setText,
-    addComment,
-    text,
-    getCommentsByIds,
-    comments,
-    setComment,
-
-    setCurrentPost,
-  } = useContext(CommentContext);
+  const { setText, addComment, text, getCommentsByIds, comments } =
+    useContext(CommentContext);
 
   const findUsername = (userId: string) => {
     const foundUser = users?.find((user) => user._id === userId);

@@ -1,7 +1,7 @@
 import { ReactNode, createContext, useState } from 'react';
 import { UserType } from '../types/UserType';
 import axios from 'axios';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { getToken } from '../utils/tokenServices';
 
 type AuthContextType = {
@@ -97,8 +97,8 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       );
 
       if (response.status === 201) {
-        const result = response.data;
-        //setUser(result);
+        // const result = response.data;
+        // //setUser(result);
         navigate('/login');
       } else {
         console.error('Unexpected response status:', response.status);

@@ -5,11 +5,11 @@ import {
   PaperPlaneTilt,
   PlusSquare,
 } from '@phosphor-icons/react';
-import React, { useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import img from '../assets/images/profile.png';
-import PostComponent from './PostComponent';
+
 import { PostContext } from '../context/PostContext';
 import { UserContext } from '../context/UserContext';
 
