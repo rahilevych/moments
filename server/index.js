@@ -22,6 +22,7 @@ app.use(
   })
 );
 cloudinaryConfig();
+app.options('*', cors());
 
 app.use(passport.initialize());
 
