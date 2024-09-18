@@ -1,5 +1,4 @@
 import express from 'express';
-import cors from 'cors';
 import { PORT } from './config/serverConfig.js';
 import usersRouter from '../server/routes/usersRoutes.js';
 import mongoose from 'mongoose';
@@ -14,18 +13,23 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: 'https://instclone-six.vercel.app',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-  })
-);
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://instclone-six.vercel.app');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  if (req.method === 'OPTIONS') {
+    return res.status(200).json({});
+  }
+  next();
+});
+
 cloudinaryConfig();
-app.options('*', cors());
 
 app.use(passport.initialize());
-
 passport.use(passportStrategy);
 
 app.use('/users', usersRouter);
@@ -35,9 +39,9 @@ app.use('/comments', commentsRouter);
 mongoose
   .connect(mongoDBURL)
   .then(() => {
-    console.log(`App is listerning to port:${PORT}`);
+    console.log(`App is listening to port:${PORT}`);
     app.listen(PORT, () => {
-      console.log(`App is listerning to port: ${PORT}`);
+      console.log(`App is listening to port: ${PORT}`);
     });
   })
   .catch((error) => {
