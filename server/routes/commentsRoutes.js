@@ -1,7 +1,5 @@
 import express, { request, response } from 'express';
-import { User } from '../models/userModel.js';
-import { Post } from '../models/postModel.js';
-import { Comment } from '../models/commentModel.js';
+
 import {
   addComment,
   deleteCommentById,
@@ -9,15 +7,14 @@ import {
   getCommentById,
   updateCommentById,
 } from '../controllers/commentController.js';
+import JWTAuth from '../middleware/JWTAuth.js';
 
 const commentsRouter = express.Router();
 
-commentsRouter.post('/', addComment);
-
-commentsRouter.get('/', getAllComments);
-
+commentsRouter.post('/', JWTAuth, addComment);
 commentsRouter.get('/:id', getCommentById);
 
+commentsRouter.get('/', getAllComments);
 commentsRouter.put('/:id', updateCommentById);
 commentsRouter.delete('/:id', deleteCommentById);
 
