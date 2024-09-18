@@ -3,6 +3,7 @@ import axios from 'axios';
 import { PostType } from '../types/PostType';
 import { AuthContext } from './AuthContext';
 import { CommentContext } from './CommentContext';
+import { baseUrl } from '../utils/baseUrl';
 
 type PostContextType = {
   toggleLikePost: (postId: string) => Promise<void>;
@@ -79,17 +80,13 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
   const addPost = async (formData: FormData) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(
-        'http://localhost:4003/posts',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
+      const response = await axios.post(`${baseUrl}/posts`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
 
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (response.status === 200) {
         const result = response.data;
         console.log('New post', result);
@@ -107,7 +104,7 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
   const getPosts = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:4003/posts', {
+      const response = await axios.get(`${baseUrl}/posts`, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
@@ -126,14 +123,11 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
   const getPostById = async (postId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(
-        `http://localhost:4003/posts/${postId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`${baseUrl}/posts/${postId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (response.status === 200) {
         const result = response.data;
         setPost(result);
@@ -148,15 +142,12 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
   const getUserPostsByUserId = async (userId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(
-        `http://localhost:4003/posts/user/${userId}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`${baseUrl}/posts/user/${userId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (response.status === 200) {
         const result = response.data;
         post && (await getPostById(post?._id));
@@ -174,7 +165,7 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        `http://localhost:4003/posts/${postId}/like`,
+        `${baseUrl}/posts/${postId}/like`,
         {},
         {
           headers: {
@@ -207,7 +198,7 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
         return;
       }
       const response = await axios.post(
-        `http://localhost:4003/posts/${postId}/save`,
+        `${baseUrl}/posts/${postId}/save`,
         {},
         {
           headers: {

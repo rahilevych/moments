@@ -4,6 +4,7 @@ import axios from 'axios';
 import { CommentType } from '../types/CommentType';
 import { PostType } from '../types/PostType';
 import { PostContext } from './PostContext';
+import { baseUrl } from '../utils/baseUrl';
 
 type CommentContextType = {
   comment: CommentType | null;
@@ -61,16 +62,12 @@ export const CommentContextProvider = ({
     await getPostById(id);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(
-        'http://localhost:4003/comments',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.post(`${baseUrl}/comments`, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (response.status === 200) {
         const result = response.data;
         setComment(result);
@@ -89,7 +86,7 @@ export const CommentContextProvider = ({
     post && getPostById(post?._id);
     try {
       const commentRequests = commentIds.map((id) =>
-        axios.get(`http://localhost:4003/comments/${id}`)
+        axios.get(`${baseUrl}/comments/${id}`)
       );
       const commentResponses = await Promise.all(commentRequests);
       const fetchedComments = commentResponses.map((response) => response.data);

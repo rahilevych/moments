@@ -3,6 +3,7 @@ import { UserType } from '../types/UserType';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { getToken } from '../utils/tokenServices';
+import { baseUrl } from '../utils/baseUrl';
 
 type AuthContextType = {
   user: UserType | null;
@@ -86,15 +87,12 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
   const signUp = async () => {
     try {
-      const response = await axios.post(
-        'http://localhost:4003/users/registration',
-        {
-          email,
-          username,
-          password,
-          fullname,
-        }
-      );
+      const response = await axios.post(`${baseUrl}/users/registration`, {
+        email,
+        username,
+        password,
+        fullname,
+      });
 
       if (response.status === 201) {
         // const result = response.data;
@@ -115,7 +113,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
   const signIn = async () => {
     try {
-      const response = await axios.post('http://localhost:4003/users/login', {
+      const response = await axios.post(`${baseUrl}/users/login`, {
         username,
         password,
       });
@@ -147,7 +145,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       return;
     }
     try {
-      const response = await axios.get('http://localhost:4003/users/profile', {
+      const response = await axios.get(`${baseUrl}/users/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

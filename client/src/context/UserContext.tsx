@@ -2,6 +2,7 @@ import { ReactNode, createContext, useContext, useState } from 'react';
 import { UserType } from '../types/UserType';
 import axios from 'axios';
 import { AuthContext } from './AuthContext';
+import { baseUrl } from '../utils/baseUrl';
 
 type UserContextType = {
   users: UserType[] | null;
@@ -54,7 +55,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
   const getAllUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:4003/users', {
+      const response = await axios.get(`${baseUrl}/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -80,7 +81,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
         return;
       }
       const response = await axios.post(
-        `http://localhost:4003/users/${otherUserId}/subscribe`,
+        `${baseUrl}/users/${otherUserId}/subscribe`,
         {},
         {
           headers: {
@@ -107,7 +108,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
   const getUserById = async (id: string): Promise<UserType> => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:4003/users/${id}`, {
+      const response = await axios.get(`${baseUrl}/users/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
