@@ -1,1 +1,1 @@
-export const PORT = import.meta.env.VITE_PORT;
+export const PORT = process.env.PORT;

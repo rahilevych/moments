@@ -1,1 +1,1 @@
-export const secret = import.meta.env.VITE_TOKEN_SECRET;
+export const secret = process.env.TOKEN_SECRET;
