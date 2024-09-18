@@ -1,11 +1,15 @@
 export interface UserType {
-  id: string;
+  _id: string;
   email: string;
   username: string;
   fullname: string;
   password: string;
-  following: [string];
+  user_img: string;
+  bio: string;
+
+  following: string[];
   followers: [string];
-  savedPosts: [string];
+  saved_posts: [string];
   posts: [string];
+  createdAt: Date;
 }
