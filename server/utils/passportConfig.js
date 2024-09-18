@@ -1,14 +1,19 @@
-import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
-import { User } from '../models/userModel';
+import passport from 'passport';
+import passportJwt from 'passport-jwt';
+import { User } from '../models/userModel.js';
+import { secret } from '../config/token.js';
+
+const JwtStrategy = passportJwt.Strategy;
+const ExtractJwt = passportJwt.ExtractJwt;
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: 'SECRET_KEY_RANDOM',
+  secretOrKey: secret,
 };
 
-const JWTAuth = new JwtStrategy(jwtOptions, async function (jwt_payload, done) {
+const strategy = new JwtStrategy(jwtOptions, async (jwt_payload, done) => {
   try {
-    const user = await User.findOne({ id: jwt_payload.sub });
+    const user = await User.findById(jwt_payload.id);
     if (user) {
       return done(null, user);
     } else {
@@ -18,4 +23,8 @@ const JWTAuth = new JwtStrategy(jwtOptions, async function (jwt_payload, done) {
     return done(error, false);
   }
 });
+
+passport.use(strategy);
+
+const JWTAuth = passport.authenticate('jwt', { session: false });
 export default JWTAuth;
