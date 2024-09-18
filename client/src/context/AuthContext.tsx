@@ -87,12 +87,20 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
   const signUp = async () => {
     try {
-      const response = await axios.post(`${baseUrl}/users/registration`, {
-        email,
-        username,
-        password,
-        fullname,
-      });
+      const response = await axios.post(
+        `${baseUrl}/users/registration`,
+        {
+          email,
+          username,
+          password,
+          fullname,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       if (response.status === 201) {
         // const result = response.data;
