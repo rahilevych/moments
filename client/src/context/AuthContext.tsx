@@ -1,38 +1,30 @@
 import { ReactNode, createContext, useState } from 'react';
 import { UserType } from '../types/UserType';
 import axios from 'axios';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { getToken } from '../utils/tokenServices';
 
 type AuthContextType = {
   user: UserType | null;
-  token: string;
+
   email: string;
   username: string;
   password: string;
   fullname: string;
 
-  setUser: (user: UserType) => void;
+  setUser: (user: UserType | null) => void;
   setUsername: (username: string) => void;
   setPassword: (password: string) => void;
+
   setEmail: (username: string) => void;
   setFullname: (password: string) => void;
-  setToken: (token: string) => void;
 
   signUp: () => Promise<void>;
   signIn: () => Promise<void>;
   getUserProfile: () => Promise<void>;
-
-  //email: string;
-  //setEmail: (email: string) => void;
-  // setSignUpPressed: (isPressed: boolean) => void;
-  // setLoginPressed: (isPressed: boolean) => void;
-  // loginPressed: boolean;
-  // signUpPressed: boolean;
-
-  // logOut: () => Promise<void>;
-  // isLoggedIn: boolean;
+  logout: () => void;
 };
 
-//define the initial value of context
 const initAuthContextValue = {
   user: {} as UserType,
   token: '',
@@ -41,6 +33,8 @@ const initAuthContextValue = {
   password: '',
   email: '',
   fullname: '',
+  followersAmount: 0,
+  followingAmount: 0,
 
   setUser: () => {
     throw new Error('context not initialised');
@@ -62,31 +56,19 @@ const initAuthContextValue = {
   setFullname: () => {
     throw new Error('context not initialised');
   },
+  setFollowersAmount: () => {
+    throw new Error('context not initialised');
+  },
+
+  setFollowingAmount: () => {
+    throw new Error('context not initialised');
+  },
 
   signUp: () => Promise.resolve(),
   signIn: () => Promise.resolve(),
   getUserProfile: () => Promise.resolve(),
-
-  //   setEmail: () => {
-  //     throw new Error('context not initialised');
-  //   },
-
-  //   logOut: () => Promise.resolve(),
-  //   email: '',
-  //   password: '',
-  //   loggedIn: false,
-  //   isLoggedIn: false,
-  //   setSignUpPressed: () => {
-  //     throw new Error('context not initialised');
-  //   },
-  //   setLoginPressed: () => {
-  //     throw new Error('context not initialised');
-  //   },
-  //   loginPressed: false,
-  //   signUpPressed: false,
+  logout: () => Promise.resolve(),
 };
-
-//define type of props the AuthContextProvider recived
 
 type AuthContextProviderProps = {
   children: ReactNode;
@@ -99,12 +81,8 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState<UserType | null>(null);
-  const [token, setToken] = useState<string>('');
 
-  console.log(password);
-  console.log(username);
-  console.log(email);
-  console.log(fullname);
+  const navigate = useNavigate();
 
   const signUp = async () => {
     try {
@@ -120,15 +98,15 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
       if (response.status === 201) {
         const result = response.data;
-        console.log('New user', result);
-        setUser(result);
+        //setUser(result);
+        navigate('/login');
       } else {
         console.error('Unexpected response status:', response.status);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error('Axios error response data:', error.response?.data);
-        console.error('Axios error message:', error.message);
+        console.error('Axios error with data:', error.response?.data);
+        console.error('Axios error :', error.message);
       } else {
         console.error('Error by signing up:', error);
       }
@@ -143,10 +121,18 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       });
       if (response.status === 200) {
         const result = response.data;
-        console.log('Signed in user', result);
-        setToken(result);
+
+        const isUserLogged = getToken();
+        if (isUserLogged) {
+          getUserProfile();
+          console.log('user is logged in');
+        } else {
+          console.log('user is logged out');
+        }
         if (result.token) {
           localStorage.setItem('token', result.token);
+
+          navigate('user/home');
         }
       }
     } catch (error) {
@@ -169,45 +155,23 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       if (response.status === 200) {
         const user = response.data.user;
         setUser(user);
-        console.log('User profile:', user);
-        const userId = user.id;
-        console.log('User id:', userId);
       }
     } catch (error) {
       console.error('Error fetching user profile', error);
     }
   };
 
-  //   const stayLoggedIn = () => {
-  //     onAuthStateChanged(auth, (user) => {
-  //       if (user) {
-  //         setIsLoggedIn(true);
-  //       } else {
-  //         setIsLoggedIn(false);
-  //       }
-  //     });
-  //   };
-
-  //   const logOut = async () => {
-  //     try {
-  //       await signOut(auth);
-  //       setLoggedOut(true);
-  //       setIsLoggedIn(false);
-  //       setUser(null);
-  //       console.log(auth.currentUser?.email);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   useEffect(() => {
-  //     stayLoggedIn();
-  //   }, []);
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('token');
+    navigate('/');
+  };
 
   return (
     <AuthContext.Provider
       value={{
-        token,
+        logout,
+
         user,
         email,
         username,
@@ -218,7 +182,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         signUp,
         signIn,
 
-        setToken,
         setPassword,
         setUsername,
         setFullname,

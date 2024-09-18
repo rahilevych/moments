@@ -1,30 +1,47 @@
 import { Toaster } from 'react-hot-toast';
 import './App.css';
-import HistoryComponent from './components/HistoryComponent/HistoryComponent';
-import NavComponent from './components/NavComponent/NavComponent';
-import PostComponent from './components/PostComponent/PostComponent';
-import AutorizationPage from './pages/SignIn/SignIn';
-import Home from './pages/HomePage/Home';
-import Layout from './components/Layout/Layout';
-import { Route, Routes } from 'react-router-dom';
+import HistoryComponent from './components/HistoryComponent';
+import NavComponent from './components/NavComponent';
+import PostComponent from './components/PostComponent';
+import AutorizationPage from './pages/SignIn';
+import Home from './pages/Home';
+
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { User } from '@phosphor-icons/react';
-import SignUp from './pages/SignUp/SignUp';
-import SignIn from './pages/SignIn/SignIn';
-import UserPage from './pages/UserPage/UserPage';
+import SignUp from './pages/SignUp';
+import SignIn from './pages/SignIn';
+import UserPage from './pages/UserPage';
 import AddPost from './components/AddPost';
+import { useContext, useEffect } from 'react';
+
+import { AuthContext } from './context/AuthContext';
+import DetailedPost from './pages/DetailedPost';
+
+import Layout from './components/Layout';
+import SearchPage from './pages/SearchPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
+  useEffect(() => {}, []);
   return (
     <>
       <Toaster />
       <Routes>
-        <Route path='/' element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path='user' element={<UserPage />} />
-          <Route path='add-post' element={<AddPost />} />
-        </Route>
+        <Route path='/' element={<SignUp />} />
         <Route path='login' element={<SignIn />} />
-        <Route path='signup' element={<SignUp />} />
+        <Route
+          path='/user/*'
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }>
+          <Route path='home' element={<Home />} />
+          <Route path=':id' element={<UserPage />} />
+          <Route path='add-post' element={<AddPost />} />
+          <Route path=':id/post/:id' element={<DetailedPost />} />
+          <Route path='search' element={<SearchPage />} />
+        </Route>
       </Routes>
     </>
   );
