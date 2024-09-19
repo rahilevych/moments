@@ -1,5 +1,5 @@
 import express, { request, response } from 'express';
-import { check } from 'express-validator';
+
 import {
   getAllUsers,
   getUserById,
