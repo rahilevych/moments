@@ -1,5 +1,5 @@
-import { Comment } from '../models/commentModel.js';
-import { Post } from '../models/postModel.js';
+import { Comment } from '../models/CommentModel.js';
+import { Post } from '../models/PostModel.js';
 
 export const addComment = async (request, response) => {
   try {
@@ -8,6 +8,7 @@ export const addComment = async (request, response) => {
       post_id: request.body.post_id,
       text: request.body.text,
       likes: request.body.likes,
+      createdAt: new Date(),
     };
 
     const comment = await Comment.create(newComment);

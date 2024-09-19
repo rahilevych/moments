@@ -14,4 +14,3 @@ const userSchema = mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 export const User = mongoose.model('user', userSchema);
-``;

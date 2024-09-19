@@ -1,7 +1,7 @@
 import passport from 'passport';
 import passportJwt from 'passport-jwt';
-import { User } from '../models/userModel';
-import { secret } from '../config/token';
+import { User } from '../models/UserModel.js';
+import { secret } from '../config/token.js';
 
 const JwtStrategy = passportJwt.Strategy;
 const ExtractJwt = passportJwt.ExtractJwt;

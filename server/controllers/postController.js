@@ -1,5 +1,5 @@
-import { Post } from '../models/postModel.js';
-import { User } from '../models/userModel.js';
+import { Post } from '../models/PostModel.js';
+import { User } from '../models/UserModel.js';
 import { imageUpload } from '../utils/imageManagement.js';
 import { removeTempFile } from '../utils/tempFileManagment.js';
 
