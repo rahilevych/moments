@@ -11,29 +11,41 @@ import passportStrategy from '../server/utils/passportConfig.js';
 import { cloudinaryConfig } from './config/cloudinary.js';
 
 const app = express();
-app.use(cors());
+const addMiddlewares = () => {
+  app.use(cors());
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
-cloudinaryConfig();
+  cloudinaryConfig();
 
-app.use(passport.initialize());
+  app.use(passport.initialize());
 
-passport.use(passportStrategy);
+  passport.use(passportStrategy);
+};
 
-app.use('/users', usersRouter);
-app.use('/posts', postsRouter);
-app.use('/comments', commentsRouter);
+const addRoutes = () => {
+  app.use('/users', usersRouter);
+  app.use('/posts', postsRouter);
+  app.use('/comments', commentsRouter);
+};
 
-mongoose
-  .connect(mongoDBURL)
-  .then(() => {
-    console.log(`App is listerning to port:${PORT}`);
-    app.listen(PORT, () => {
-      console.log(`App is listerning to port: ${PORT}`);
+const connectMongoDb = () => {
+  mongoose
+    .connect(mongoDBURL)
+    .then(() => {
+      console.log(`App is listerning to port:${PORT}`);
+      app.listen(PORT, () => {
+        console.log(`App is listerning to port: ${PORT}`);
+      });
+    })
+    .catch((error) => {
+      console.log(error);
     });
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+};
+
+(async function () {
+  addMiddlewares();
+  addRoutes();
+  connectMongoDb();
+})();
