@@ -30,22 +30,35 @@ const addRoutes = () => {
   app.use('/comments', commentsRouter);
 };
 
-const connectMongoDb = () => {
-  mongoose
-    .connect(mongoDBURL)
-    .then(() => {
-      console.log(`App is listerning to port:${PORT}`);
-      app.listen(PORT, () => {
-        console.log(`App is listerning to port: ${PORT}`);
-      });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+const startServer = () => {
+  const port = process.env.PORT || 5001;
+
+  app.listen(port, () => {
+    console.log('Server is running in port ', port);
+  });
 };
+
+const connectMongoDB = async () => {
+  await mongoose.connect(mongoDBURL);
+  console.log('Mongo DB is running');
+};
+// const connectMongoDb = () => {
+//   mongoose
+//     .connect(mongoDBURL)
+//     .then(() => {
+//       console.log(`App is listerning to port:${PORT}`);
+//       app.listen(PORT, () => {
+//         console.log(`App is listerning to port: ${PORT}`);
+//       });
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//     });
+// };
 
 (async function () {
   addMiddlewares();
+  await connectMongoDB();
   addRoutes();
-  connectMongoDb();
+  startServer();
 })();
