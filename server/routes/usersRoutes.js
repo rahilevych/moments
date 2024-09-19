@@ -18,7 +18,7 @@ usersRouter.post('/login', login);
 
 usersRouter.get('/profile', JWTAuth, getUserProfile);
 
-usersRouter.get('/', JWTAuth, getAllUsers);
+usersRouter.get('/', getAllUsers);
 usersRouter.post('/:otherUserId/subscribe', JWTAuth, toggleSubscribeBtn);
 
 usersRouter.get('/:id', getUserById);
