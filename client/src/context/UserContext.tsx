@@ -11,6 +11,7 @@ type UserContextType = {
   setFollowingUser: (followingUser: UserType) => void;
   getAllUsers: () => Promise<void>;
   getUserById: (id: string) => Promise<UserType>;
+  fetchUser: (id: string) => void;
   setProfileUser: (user: UserType | null) => void;
   profileUser: UserType | null;
   toggleSubscribe: (otherUserId: string, userId: string) => Promise<void>;
@@ -31,6 +32,11 @@ const initUserContextValue: UserContextType = {
   getUserById: async () => {
     throw new Error('context not initialised');
   },
+
+  fetchUser: async (id) => {
+    throw new Error('context not initialised');
+  },
+
   setProfileUser: () => {
     throw new Error('context not initialised');
   },
@@ -105,7 +111,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
     }
   };
 
-  const getUserById = async (id: string): Promise<UserType> => {
+  const getUserById = async (id: string) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(`${baseUrl}/users/${id}`, {
@@ -113,10 +119,18 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log('data user getUser by id', response.data);
       return response.data;
     } catch (error) {
       console.error('Error', error);
       throw error;
+    }
+  };
+
+  const fetchUser = async (id: string) => {
+    if (id) {
+      const user = await getUserById(id);
+      setProfileUser(user);
     }
   };
 
@@ -132,6 +146,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
         getUserById,
         profileUser,
         setProfileUser,
+        fetchUser,
       }}>
       {children}
     </UserContext.Provider>
