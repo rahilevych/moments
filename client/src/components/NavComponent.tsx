@@ -26,18 +26,26 @@ const NavComponent = () => {
       navigate(`/user/${user._id}`);
     }
   };
+  const handleNavigateToHome = () => {
+    if (user && user._id) {
+      setProfileUser(user);
+      getUserPostsByUserId(user._id);
+      navigate(`/user/${user._id}/home`);
+    }
+  };
   useEffect(() => {
     getUserProfile();
     // getUserPostsByUserId(user?._id)
   }, []);
   return (
     <nav className='flex flex-col items-start p-4 space-y-6'>
-      <NavLink to={'home'}>
-        <div className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'>
-          <House size={32} />
-          <p>Home</p>
-        </div>
-      </NavLink>
+      <div
+        onClick={handleNavigateToHome}
+        className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'>
+        <House size={32} />
+        <p>Home</p>
+      </div>
+
       <NavLink to={'search'}>
         <div className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'>
           <MagnifyingGlass size={32} />
