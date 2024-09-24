@@ -4,6 +4,8 @@ import { encryptPass } from '../utils/passServices.js';
 import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import { secret } from '../config/token.js';
+import { Post } from '../models/PostModel.js';
+import { populate } from 'dotenv';
 
 export const registration = async (request, response) => {
   try {
@@ -147,48 +149,21 @@ export const toggleSubscribeBtn = async (request, response) => {
   }
 };
 
-// export const toggleSubscribeBtn = async (request, response) => {
-//   try {
-//     const { otherUserId } = request.params;
-//     const userId = request.user._id;
-//     const user = await User.findById(userId);
-//     const otherUser = await User.findById(otherUserId);
-//     console.log('user from  back', user);
-//     console.log('user2 from  back', otherUser);
-//     if (!user || !otherUser) {
-//       return response.status(404).json({ message: 'User not found' });
-//     }
-//     const isFollowing = user.following.includes(otherUserId);
-//     const isFollower = otherUser.followers.includes(userId);
-
-//     if (!isFollowing && !isFollower) {
-//       user.following.push(otherUserId);
-//       otherUser.followers.push(userId);
-//     } else if (isFollowing && isFollower) {
-//       user.following = user.following.filter(
-//         (id) => id.toString() !== otherUserId
-//       );
-//       otherUser.followers = otherUser.followers.filter(
-//         (id) => id.toString() !== userId
-//       );
-//     } else {
-//       return response
-//         .status(400)
-//         .json({ message: 'Invalid follow/unfollow state' });
-//     }
-//     await user.save();
-//     await otherUser.save();
-//     const users = await User.find({});
-//     return response.status(200).json({ data: users });
-//   } catch (error) {
-//     console.error('Error by subscribing:', error.message);
-//     return response.status(500).json({ message: 'Server error' });
-//   }
-// };
 export const getUserById = async (request, response) => {
   try {
     const { id } = request.params;
-    const user = await User.findById(id).populate('posts');
+    const user = await User.findById(id).populate({
+      path: 'following',
+      populate: {
+        path: 'posts',
+        model: 'Post',
+        populate: {
+          path: 'user_id',
+          model: 'User',
+        },
+      },
+    });
+
     if (!user) {
       return response.status(404).json({ message: 'User not found ' });
     }
@@ -198,28 +173,3 @@ export const getUserById = async (request, response) => {
     response.status(500).json({ message: 'Server error' });
   }
 };
-// export const updateUserById = async (request, response) => {
-//   try {
-//     const { id } = request.params;
-//     const result = await User.findByIdAndUpdate(id, request.body);
-//     if (!result) {
-//       response.status(404).json({ message: 'Book not find' });
-//     }
-//     return response.status(200).send({ message: 'Book updeteed successfully' });
-//   } catch (error) {
-//     console.log(error.message);
-//   }
-// };
-// export const deleteUserById = async (request, response) => {
-//   try {
-//     const { id } = request.params;
-//     const result = await User.findByIdAndDelete(id);
-//     if (!result) {
-//       response.status(404).json({ message: 'User not find' });
-//     }
-//     return response.status(200).send({ message: 'User deleted successfully' });
-//   } catch (error) {
-//     console.log(error.massege);
-//     response.status(500).send({ message: error.message });
-//   }
-// };
