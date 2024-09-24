@@ -9,17 +9,21 @@ import {
 } from '@phosphor-icons/react';
 import { PostContext } from '../context/PostContext';
 import { CommentContext } from '../context/CommentContext';
-import { AuthContext } from '../context/AuthContext';
-import { UserContext } from '../context/UserContext';
+
 import profile from '../assets/images/profile.png';
+import { UserContext } from '../context/UserContext';
+import {
+  getPostById,
+  getUserPostsByUserId,
+  toggleLikePost,
+  toggleSavePost,
+} from '../services/postServices';
+import { getUserProfile } from '../services/authService';
 
 const DetailedPost = () => {
   const { id } = useParams();
-  const { posts, toggleLikePost, toggleSavePost, setPost, post, getPostById } =
-    useContext(PostContext);
-  const { user, getUserProfile } = useContext(AuthContext);
-  const { users } = useContext(UserContext);
-  const { getUserPostsByUserId } = useContext(PostContext);
+  const { posts, post, setPosts, setPost } = useContext(PostContext);
+  const { user, users, setUser } = useContext(UserContext);
 
   const { setText, addComment, text, getCommentsByIds, comments } =
     useContext(CommentContext);
@@ -35,14 +39,14 @@ const DetailedPost = () => {
 
   const handleLikeClick = async () => {
     if (user && user._id && post) {
-      await toggleLikePost(post._id);
+      posts && (await toggleLikePost(post._id, setPost, posts, setPosts));
     }
   };
 
   const handleSaveClick = async () => {
     if (user && post && post._id) {
       console.log('save button was clicked');
-      await toggleSavePost(post._id, user._id);
+      await toggleSavePost(post._id, user._id, user, setUser);
     }
   };
 
@@ -61,7 +65,7 @@ const DetailedPost = () => {
 
       await addComment(formData, id);
       await getCommentsByIds(post.comments);
-      await getPostById(id);
+      await getPostById(id, setPost);
       setText('');
     } else {
       console.error('User, post or text is missing');
@@ -69,19 +73,19 @@ const DetailedPost = () => {
   };
 
   useEffect(() => {
-    getUserProfile();
+    getUserProfile(setUser);
     console.log('user from det', user);
-    user && getUserPostsByUserId(user?._id);
+    user && post && getUserPostsByUserId(user?._id, setPosts);
     console.log(id);
     console.log(posts);
     if (id && posts) {
-      getPostById(id);
+      getPostById(id, setPost);
       const currentPost = posts.find((post) => post._id === String(id));
       if (currentPost) {
         setPost(currentPost);
         if (currentPost.comments && currentPost.comments.length > 0) {
-          findAvatar(currentPost.user_id);
-          findUsername(currentPost.user_id);
+          findAvatar(currentPost.user_id.user_img);
+          findUsername(currentPost.user_id._id);
           getCommentsByIds(currentPost.comments);
         }
       } else {
@@ -101,10 +105,12 @@ const DetailedPost = () => {
                 <img
                   alt='User'
                   className='w-10 h-10 rounded-full'
-                  src={findAvatar(post?.user_id || profile)}
+                  src={findAvatar(post?.user_id.user_img || profile)}
                 />
               </div>
-              <p className='pl-4'>{findUsername(post?.user_id || '')}</p>
+              <p className='pl-4'>
+                {findUsername(post?.user_id.username || '')}
+              </p>
             </div>
             <div className='post__menu ml-auto'></div>
           </div>

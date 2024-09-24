@@ -1,9 +1,14 @@
-import React, { useContext, useEffect } from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import React, { useContext, useEffect, useState } from 'react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { UserContext } from '../context/UserContext';
+import { signIn } from '../services/authService';
 
 const SignIn = () => {
-  const { signIn, setUsername, setPassword, user } = useContext(AuthContext);
+  const { user, setUser } = useContext(UserContext);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
   useEffect(() => {}, [user]);
   const handleInputChangeUsername = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -20,7 +25,8 @@ const SignIn = () => {
 
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    signIn();
+
+    user && signIn(username, password, user, setUser, navigate);
   };
   if (user) {
     return <Navigate to={`/user/${user._id}/home`} replace={true} />;

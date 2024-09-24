@@ -1,13 +1,14 @@
 import React, { useContext, useEffect } from 'react';
-import { UserContext } from '../context/UserContext';
+
 import userAvatar from '../assets/images/profile.png';
-import { AuthContext } from '../context/AuthContext';
+
 import { UserType } from '../types/UserType';
 import { Link } from 'react-router-dom'; // Импортируем Link из react-router-dom
+import { UserContext } from '../context/UserContext';
+import { getAllUsers, toggleSubscribe } from '../services/userService';
 
 const SearchPage = () => {
-  const { getAllUsers, users, toggleSubscribe } = useContext(UserContext);
-  const { user } = useContext(AuthContext);
+  const { users, user, setUsers } = useContext(UserContext);
 
   const handleSearch = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -15,16 +16,19 @@ const SearchPage = () => {
 
   const handleSubscribe = async (otherUserId: string) => {
     if (user) {
-      await toggleSubscribe(otherUserId, user._id);
+      await toggleSubscribe(otherUserId, user._id, setUsers);
     }
   };
 
   const isSubscribed = (otherUser: UserType) => {
-    return user && user.following.includes(otherUser?._id);
+    return (
+      user &&
+      user.following.some((followedUser) => followedUser._id === otherUser?._id)
+    );
   };
 
   useEffect(() => {
-    getAllUsers();
+    getAllUsers(setUsers);
   }, []);
 
   return (

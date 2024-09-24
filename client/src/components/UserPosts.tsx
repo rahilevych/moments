@@ -1,21 +1,23 @@
 import { useContext, useEffect } from 'react';
 import { PostContext } from '../context/PostContext';
-import { UserContext } from '../context/UserContext';
+
 import { NavLink } from 'react-router-dom';
+import { getUserPostsByUserId } from '../services/postServices';
+import { UserContext } from '../context/UserContext';
 
 const UserPosts = () => {
-  const { getUserPostsByUserId, posts } = useContext(PostContext);
-  const { profileUser } = useContext(UserContext);
-  console.log('profile user from userposts', profileUser);
-
+  const { posts, post, setPosts } = useContext(PostContext);
+  const { user } = useContext(UserContext);
+  console.log('profile user from userposts', user);
+  console.log(post);
   useEffect(() => {
-    if (profileUser) {
-      getUserPostsByUserId(profileUser._id);
+    if (user) {
+      post && getUserPostsByUserId(user._id, setPosts);
     }
     // }, [profileUser, getUserPostsByUserId]);
   }, []);
 
-  if (!profileUser) {
+  if (!user) {
     return null;
   }
 

@@ -1,10 +1,11 @@
 import React, { useContext, useRef } from 'react';
 import { PostContext } from '../context/PostContext';
-import { AuthContext } from '../context/AuthContext';
+import { UserContext } from '../context/UserContext';
+import { addPost } from '../services/postServices';
 
 const AddPost = () => {
-  const { addPost, setCaption, caption } = useContext(PostContext);
-  const { user } = useContext(AuthContext);
+  const { setCaption, caption, setPost, setPosts } = useContext(PostContext);
+  const { user } = useContext(UserContext);
   const selectedFile = useRef<File | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,7 +26,7 @@ const AddPost = () => {
       formData.append('image_url', selectedFile.current);
       formData.append('caption', caption);
       formData.append('user_id', user?._id);
-      await addPost(formData);
+      await addPost(formData, setPost, setPosts);
       // return <Navigate to={`/user/${user._id}`} replace={true}></Navigate>;
     }
   };

@@ -1,46 +1,61 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import HistoryComponent from '../components/HistoryComponent';
 import PostComponent from '../components/PostComponent';
-import { useParams } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
-import { AuthContext } from '../context/AuthContext';
+import { getUserProfile } from '../services/authService';
+import { getUserById } from '../services/userService';
 
 const Home = () => {
-  const { profileUser, fetchUser } = useContext(UserContext);
-  const { user } = useContext(AuthContext);
-  const { id } = useParams<{ id: string }>();
-  console.log(id);
+  const { user, setUser } = useContext(UserContext);
+
+  console.log('user>>.', user);
 
   useEffect(() => {
-    id && fetchUser(id);
-    console.log('user', user);
-  }, [id]);
+    getUserProfile(setUser);
+
+    if (user) {
+      getUserById(user._id, setUser);
+      setUser(user);
+    } else {
+      console.log('Loading user...');
+    }
+  }, []);
 
   return (
-    <div className='home flex flex-col items-center'>
-      <div className='flex flex-col items-start w-full p-4'>
-        <div className='text-lg font-medium mb-2'>Recommendations for you</div>
-        <hr className='border-t border-gray-300 w-full mb-4' />
+    user && (
+      <div className=' flex flex-col items-center w-full'>
+        <div className='flex flex-col items-start w-full p-4'>
+          <div className='text-lg font-medium mb-2'>
+            Recommendations for you
+          </div>
+          <hr className='border-t border-gray-300 w-full mb-4' />
+        </div>
+        <div className=' flex overflow-x-auto w-full bg-white p-4 border-b border-gray-200'>
+          <HistoryComponent />
+          <HistoryComponent />
+          <HistoryComponent />
+          <HistoryComponent />
+          <HistoryComponent />
+        </div>
+        <div className=' flex flex-col items-center w-full bg-white justify-center'>
+          {user?.following?.length ? (
+            user.following
+              .flatMap((followedUser) => followedUser.posts || [])
+              .map((post) => (
+                <NavLink
+                  key={post._id}
+                  to={`../${user._id}/post/${post._id}`}
+                  className='w-full flex items-start justify-center'>
+                  <PostComponent post={post} />
+                </NavLink>
+              ))
+          ) : (
+            <p>No following users or posts found.</p>
+          )}
+        </div>
       </div>
-      <div className='histories flex overflow-x-auto w-full bg-white p-4 border-b border-gray-200'>
-        <HistoryComponent />
-        <HistoryComponent />
-        <HistoryComponent />
-        <HistoryComponent />
-        <HistoryComponent />
-      </div>
-
-      <div className='posts flex flex-col items-center w-full bg-white'>
-        {profileUser &&
-          profileUser.following
-            .flatMap((followedUser) =>
-              followedUser.posts.map((post) => ({
-                ...post,
-              }))
-            )
-            .map((post) => <PostComponent key={post._id} post={post} />)}
-      </div>
-    </div>
+    )
   );
 };
 

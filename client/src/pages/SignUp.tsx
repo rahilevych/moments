@@ -1,11 +1,15 @@
 // RegistrationPage.jsx
-import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { signUp } from '../services/authService';
 
 const SignUp = () => {
-  const { signUp, setUsername, setPassword, setFullname, setEmail } =
-    useContext(AuthContext);
+  const [email, setEmail] = useState('');
+  const [fullname, setFullname] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const navigate = useNavigate();
 
   const handleInputChangeUsername = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -49,7 +53,7 @@ const SignUp = () => {
 
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    signUp();
+    signUp(email, username, password, fullname, navigate);
   };
   // if (user) {
   //   return <Navigate to={'/login'} replace={true} />;

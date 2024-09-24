@@ -1,5 +1,3 @@
-import { useContext } from 'react';
-import postimg from '../assets/images/postimg.png';
 import profile from '../assets/images/profile.png';
 import {
   BookmarkSimple,
@@ -8,7 +6,7 @@ import {
   ShareFat,
   Smiley,
 } from '@phosphor-icons/react';
-import { UserContext } from '../context/UserContext';
+
 import { PostType } from '../types/PostType';
 
 interface Props {
@@ -73,7 +71,7 @@ const PostComponent = (props: Props) => {
       <div className='post__likes px-4'>
         {props.post.comments.length > 0
           ? ` ${props.post.likes.length} likes`
-          : '12  likes'}
+          : '12 likes'}
       </div>
       <div className='post__description px-4 py-2'>{props.post.caption}</div>
       <div className='post__comments px-4 py-2 text-sm text-gray-400'>

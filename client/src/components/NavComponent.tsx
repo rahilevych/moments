@@ -7,44 +7,38 @@ import {
 } from '@phosphor-icons/react';
 import { useContext, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
 import img from '../assets/images/profile.png';
-
+import { getUserProfile } from '../services/authService';
 import { PostContext } from '../context/PostContext';
 import { UserContext } from '../context/UserContext';
+import { getUserPostsByUserId } from '../services/postServices';
 
 const NavComponent = () => {
-  const { user, getUserProfile } = useContext(AuthContext);
-  const { getUserPostsByUserId } = useContext(PostContext);
-  const { setProfileUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+  const { post, setPost, setPosts } = useContext(PostContext);
+
   const navigate = useNavigate();
 
   const handleNavigateToProfile = () => {
     if (user && user._id) {
-      setProfileUser(user);
-      getUserPostsByUserId(user._id);
+      setUser(user);
+      post && getUserPostsByUserId(user._id, setPosts);
       navigate(`/user/${user._id}`);
     }
   };
-  const handleNavigateToHome = () => {
-    if (user && user._id) {
-      setProfileUser(user);
-      getUserPostsByUserId(user._id);
-      navigate(`/user/${user._id}/home`);
-    }
-  };
+
   useEffect(() => {
-    getUserProfile();
-    // getUserPostsByUserId(user?._id)
+    getUserProfile(setUser);
   }, []);
   return (
     <nav className='flex flex-col items-start p-4 space-y-6'>
-      <div
-        onClick={handleNavigateToHome}
-        className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'>
-        <House size={32} />
-        <p>Home</p>
-      </div>
+      <NavLink to={'home'}>
+        {' '}
+        <div className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'>
+          <House size={32} />
+          <p>Home</p>
+        </div>
+      </NavLink>
 
       <NavLink to={'search'}>
         <div className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'>
