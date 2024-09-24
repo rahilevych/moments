@@ -1,8 +1,7 @@
-import { ReactNode, createContext, useState } from 'react';
+import { ReactNode, createContext, useEffect, useState } from 'react';
 import { UserType } from '../types/UserType';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { getToken } from '../utils/tokenServices';
 import { baseUrl } from '../utils/baseUrl';
 
 type AuthContextType = {
@@ -84,6 +83,11 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const [user, setUser] = useState<UserType | null>(null);
 
   const navigate = useNavigate();
+  useEffect(() => {
+    if (user) {
+      navigate(`/user/${user._id}/home`);
+    }
+  }, [user]);
 
   const signUp = async () => {
     try {
@@ -103,8 +107,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       );
 
       if (response.status === 201) {
-        // const result = response.data;
-        // //setUser(result);
         navigate('/login');
       } else {
         console.error('Unexpected response status:', response.status);
@@ -125,21 +127,11 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         username,
         password,
       });
+
       if (response.status === 200) {
-        const result = response.data;
-
-        const isUserLogged = getToken();
-        if (isUserLogged) {
-          getUserProfile();
-          console.log('user is logged in');
-        } else {
-          console.log('user is logged out');
-        }
-        if (result.token) {
-          localStorage.setItem('token', result.token);
-
-          navigate('user/home');
-        }
+        const { token } = response.data;
+        localStorage.setItem('token', token);
+        await getUserProfile();
       }
     } catch (error) {
       console.error('Error during signing in', error);
@@ -159,8 +151,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         },
       });
       if (response.status === 200) {
-        const user = response.data.user;
-        setUser(user);
+        setUser(response.data.user);
       }
     } catch (error) {
       console.error('Error fetching user profile', error);
