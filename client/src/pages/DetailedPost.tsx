@@ -19,14 +19,15 @@ import {
   toggleSavePost,
 } from '../services/postServices';
 import { getUserProfile } from '../services/authService';
+import { addComment, getCommentsByIds } from '../services/commentService';
 
 const DetailedPost = () => {
   const { id } = useParams();
   const { posts, post, setPosts, setPost } = useContext(PostContext);
   const { user, users, setUser } = useContext(UserContext);
+  const { setComment, setComments } = useContext(CommentContext);
 
-  const { setText, addComment, text, getCommentsByIds, comments } =
-    useContext(CommentContext);
+  const { setText, text, comments } = useContext(CommentContext);
 
   const findUsername = (userId: string) => {
     const foundUser = users?.find((user) => user._id === userId);
@@ -63,8 +64,8 @@ const DetailedPost = () => {
       formData.append('user_id', user._id);
       formData.append('post_id', post._id);
 
-      await addComment(formData, id);
-      await getCommentsByIds(post.comments);
+      await addComment(formData, id, post, setPost, setComments, setComment);
+      await getCommentsByIds(post.comments, post, setPost, setComments);
       await getPostById(id, setPost);
       setText('');
     } else {
@@ -86,7 +87,12 @@ const DetailedPost = () => {
         if (currentPost.comments && currentPost.comments.length > 0) {
           findAvatar(currentPost.user_id.user_img);
           findUsername(currentPost.user_id._id);
-          getCommentsByIds(currentPost.comments);
+          getCommentsByIds(
+            currentPost.comments,
+            currentPost,
+            setPost,
+            setComments
+          );
         }
       } else {
         console.error('Post not found');

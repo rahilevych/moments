@@ -2,9 +2,11 @@ import React, { useContext, useRef } from 'react';
 import { PostContext } from '../context/PostContext';
 import { UserContext } from '../context/UserContext';
 import { addPost } from '../services/postServices';
+import { CommentContext } from '../context/CommentContext';
 
 const AddPost = () => {
   const { setCaption, caption, setPost, setPosts } = useContext(PostContext);
+  const { setComments } = useContext(CommentContext);
   const { user } = useContext(UserContext);
   const selectedFile = useRef<File | null>(null);
 
@@ -26,7 +28,7 @@ const AddPost = () => {
       formData.append('image_url', selectedFile.current);
       formData.append('caption', caption);
       formData.append('user_id', user?._id);
-      await addPost(formData, setPost, setPosts);
+      await addPost(formData, setPost, setPosts, setComments);
       // return <Navigate to={`/user/${user._id}`} replace={true}></Navigate>;
     }
   };

@@ -44,7 +44,7 @@ export const PostContext = createContext<PostContextType>(initPostContextValue);
 export const PostContextProvider = ({ children }: PostContextProviderProps) => {
   const [post, setPost] = useState<PostType | null>(null);
   const [posts, setPosts] = useState<PostType[] | null>(null);
-  const [file, setFile] = useState<React.MutableRefObject<File | null>>({
+  const [_, setFile] = useState<React.MutableRefObject<File | null>>({
     current: null,
   });
   const [caption, setCaption] = useState<string>('');

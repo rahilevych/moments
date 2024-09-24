@@ -4,11 +4,14 @@ import { getUserProfile } from './authService';
 import { Dispatch, SetStateAction } from 'react';
 import { PostType } from '../types/PostType';
 import { UserType } from '../types/UserType';
+import { getCommentsByIds } from './commentService';
+import { CommentType } from '../types/CommentType';
 
 export const addPost = async (
   formData: FormData,
   setPost: Dispatch<SetStateAction<PostType | null>>,
-  setPosts: Dispatch<SetStateAction<PostType[] | null>>
+  setPosts: Dispatch<SetStateAction<PostType[] | null>>,
+  setComments: Dispatch<SetStateAction<CommentType[]>>
 ) => {
   try {
     const token = localStorage.getItem('token');
@@ -24,9 +27,8 @@ export const addPost = async (
       console.log('New post', result);
       setPost(result);
       getPosts(setPosts);
-      // if (post) {
-      //   getCommentsByIds(post?.comments);
-      // }
+
+      getCommentsByIds(result.comments, result, setPost, setComments);
     }
   } catch (error) {
     console.error('Error by adding post', error);

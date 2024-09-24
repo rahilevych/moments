@@ -1,43 +1,41 @@
-import { ReactNode, createContext, useContext, useState } from 'react';
-
-import axios from 'axios';
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useState,
+} from 'react';
 import { CommentType } from '../types/CommentType';
 import { PostType } from '../types/PostType';
-import { PostContext } from './PostContext';
-import { baseUrl } from '../utils/baseUrl';
 
 type CommentContextType = {
   comment: CommentType | null;
-  setComment: (comment: CommentType) => void;
-  setCurrentPost: (post: PostType) => void;
-  comments: CommentType[] | null;
-  setComments: (comments: CommentType[]) => void;
-  addComment: (formData: FormData, id: string) => Promise<void>;
-  setText: (text: string) => void;
+  setComment: Dispatch<SetStateAction<CommentType | null>>;
+  setCurrentPost: Dispatch<SetStateAction<PostType | null>>;
+  comments: CommentType[];
+  setComments: Dispatch<SetStateAction<CommentType[]>>;
+  setText: Dispatch<SetStateAction<string>>;
   text: string;
-  getCommentsByIds: (commentIds: string[]) => Promise<void>; // Новый
+  setCaption: Dispatch<SetStateAction<string>>;
 };
 
-const initCommentContextValue = {
-  comment: {} as CommentType,
+const initCommentContextValue: CommentContextType = {
+  comment: null,
   setComment: () => {
     throw new Error('context not initialised');
   },
   setCurrentPost: () => {
     throw new Error('context not initialised');
   },
-  comments: {} as CommentType[],
+  comments: [],
   setComments: () => {
-    throw new Error('context not initialised');
-  },
-  addComment: async () => {
     throw new Error('context not initialised');
   },
   text: '',
   setText: () => {
     throw new Error('context not initialised');
   },
-  getCommentsByIds: async () => {
+  setCaption: () => {
     throw new Error('context not initialised');
   },
 };
@@ -45,6 +43,7 @@ const initCommentContextValue = {
 type CommentContextProviderProps = {
   children: ReactNode;
 };
+
 export const CommentContext = createContext<CommentContextType>(
   initCommentContextValue
 );
@@ -54,61 +53,22 @@ export const CommentContextProvider = ({
 }: CommentContextProviderProps) => {
   const [comment, setComment] = useState<CommentType | null>(null);
   const [comments, setComments] = useState<CommentType[]>([]);
-  const [text, setText] = useState('');
-  const [_, setCurrentPost] = useState<PostType>();
-  const { post, getPostById } = useContext(PostContext);
+  const [text, setText] = useState<string>('');
+  const [, setCurrentPost] = useState<PostType | null>(null);
 
-  const addComment = async (formData: FormData, id: string) => {
-    await getPostById(id);
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(`${baseUrl}/comments`, formData, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status === 200) {
-        const result = response.data;
-        setComment(result);
-        console.log('comment that was added', result);
-        await getPostById(id);
-
-        post && (await getCommentsByIds(post?.comments));
-        console.log('comments for post', post && post.comments);
-      }
-    } catch (error) {
-      console.error('Error by adding comment', error);
-    }
-  };
-
-  const getCommentsByIds = async (commentIds: string[]) => {
-    post && getPostById(post?._id);
-    try {
-      const commentRequests = commentIds.map((id) =>
-        axios.get(`${baseUrl}/comments/${id}`)
-      );
-      const commentResponses = await Promise.all(commentRequests);
-      const fetchedComments = commentResponses.map((response) => response.data);
-      console.log('get comments by ids fetched comments', fetchedComments);
-      setComments(fetchedComments);
-    } catch (error) {
-      console.error('Error fetching comments:', error);
-    }
-  };
+  const [, setCaption] = useState<string>('');
 
   return (
     <CommentContext.Provider
       value={{
-        setCurrentPost,
         comment,
         setComment,
         comments,
         setComments,
-        addComment,
         text,
         setText,
-        getCommentsByIds,
+        setCurrentPost,
+        setCaption,
       }}>
       {children}
     </CommentContext.Provider>
