@@ -1,3 +1,5 @@
+import { PostType } from './PostType';
+
 export interface UserType {
   _id: string;
   email: string;
@@ -7,9 +9,9 @@ export interface UserType {
   user_img: string;
   bio: string;
 
-  following: string[];
-  followers: [string];
+  following: UserType[];
+  followers: UserType[];
   saved_posts: [string];
-  posts: [string];
+  posts: PostType[];
   createdAt: Date;
 }
