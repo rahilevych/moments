@@ -12,10 +12,10 @@ import JWTAuth from '../middleware/JWTAuth.js';
 const commentsRouter = express.Router();
 
 commentsRouter.post('/', JWTAuth, addComment);
-commentsRouter.get('/:id', getCommentById);
+commentsRouter.get('/:id', JWTAuth, getCommentById);
 
-commentsRouter.get('/', getAllComments);
-commentsRouter.put('/:id', updateCommentById);
-commentsRouter.delete('/:id', deleteCommentById);
+commentsRouter.get('/', JWTAuth, getAllComments);
+commentsRouter.put('/:id', JWTAuth, updateCommentById);
+commentsRouter.delete('/:id', JWTAuth, deleteCommentById);
 
 export default commentsRouter;
