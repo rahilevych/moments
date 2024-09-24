@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const SignIn = () => {
   const { signIn, setUsername, setPassword, user } = useContext(AuthContext);
-
+  useEffect(() => {}, [user]);
   const handleInputChangeUsername = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -23,7 +23,7 @@ const SignIn = () => {
     signIn();
   };
   if (user) {
-    return <Navigate to={'/user/home'} replace={true} />;
+    return <Navigate to={`/user/${user._id}/home`} replace={true} />;
   }
   return (
     <div className='min-h-screen flex items-center justify-center bg-gray-100'>

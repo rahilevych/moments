@@ -32,7 +32,7 @@ function App() {
               <Layout />
             </ProtectedRoute>
           }>
-          <Route path='home' element={<Home />} />
+          <Route path=':id/home' element={<Home />} />
           <Route path=':id' element={<UserPage />} />
           <Route path='add-post' element={<AddPost />} />
           <Route path=':id/post/:id' element={<DetailedPost />} />
