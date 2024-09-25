@@ -1,3 +1,4 @@
+import { CommentType } from './CommentType';
 import { UserType } from './UserType';
 
 export interface PostType {
@@ -5,7 +6,7 @@ export interface PostType {
   user_id: UserType;
   image_url: string;
   caption: string;
-  likes: [string];
-  comments: [string];
+  likes: UserType[];
+  comments: CommentType[];
   createdAt: Date;
 }
