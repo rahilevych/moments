@@ -13,7 +13,13 @@ import usersRouter from './routes/usersRoutes.js';
 
 const app = express();
 const addMiddlewares = () => {
-  app.use(cors());
+  app.use(
+    cors({
+      origin: 'https://instclone-client.vercel.app',
+      credentials: true,
+    })
+  );
+
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   cloudinaryConfig();
