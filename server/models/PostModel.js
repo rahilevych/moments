@@ -4,7 +4,7 @@ const postSchema = mongoose.Schema({
   image_url: { type: String, required: true },
   caption: { type: String },
   likes: { type: [Schema.Types.ObjectId], ref: 'User' },
-  comments: { type: [Schema.Types.ObjectId], ref: 'User' },
+  comments: { type: [Schema.Types.ObjectId], ref: 'Comment' },
   createdAt: { type: Date, default: Date.now },
 });
 export const Post = mongoose.model('Post', postSchema);
