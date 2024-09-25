@@ -10,6 +10,8 @@ import { UserType } from '../types/UserType';
 type UserContextType = {
   user: UserType | null;
   setUser: Dispatch<SetStateAction<UserType | null>>;
+  profileUser: UserType | null;
+  setProfileUser: Dispatch<SetStateAction<UserType | null>>;
   users: UserType[] | null;
   setUsers: Dispatch<SetStateAction<UserType[] | null>>;
   followingUser: UserType | null;
@@ -19,6 +21,10 @@ type UserContextType = {
 const initUserContextValue: UserContextType = {
   user: null,
   setUser: () => {
+    throw new Error('context not initialised');
+  },
+  profileUser: null,
+  setProfileUser: () => {
     throw new Error('context not initialised');
   },
   users: null,
@@ -41,12 +47,15 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
   const [user, setUser] = useState<UserType | null>(null);
   const [users, setUsers] = useState<UserType[] | null>(null);
   const [followingUser, setFollowingUser] = useState<UserType | null>(null);
+  const [profileUser, setProfileUser] = useState<UserType | null>(null);
 
   return (
     <UserContext.Provider
       value={{
         user,
         setUser,
+        profileUser,
+        setProfileUser,
         users,
         setUsers,
         followingUser,
