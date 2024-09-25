@@ -31,7 +31,13 @@ export const addPost = async (request, response) => {
 export const getUserPostsByUserId = async (request, response) => {
   try {
     const userId = request.params.userId;
-    const posts = await Post.find({ user_id: userId });
+    const posts = await Post.find({ user_id: userId }).populate({
+      path: 'comments',
+      populate: {
+        path: 'user_id',
+        model: 'User',
+      },
+    });
     response.status(200).json(posts);
   } catch (error) {
     response.status(500).send({ message: error.message });
@@ -68,6 +74,8 @@ export const toggleLikePostById = async (request, response) => {
   try {
     const { id } = request.params;
     const userId = request.user._id;
+    console.log('id>>>', id);
+    console.log('userId>>>', userId);
     const post = await Post.findById(id);
     if (!post) {
       return response.status(404).json({ message: 'Post not found' });
@@ -87,7 +95,18 @@ export const toggleLikePostById = async (request, response) => {
 
 export const getAllPosts = async (request, response) => {
   try {
-    const posts = await Post.find({});
+    const posts = await Post.find({})
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'user_id',
+          model: 'User',
+        },
+      })
+      .populate({
+        path: 'user_id',
+        model: 'User',
+      });
 
     return response.status(200).json({ data: posts });
   } catch (error) {
@@ -100,7 +119,18 @@ export const getPostById = async (request, response) => {
     const { id } = request.params;
     console.log('postId', id);
     console.log(`Fetching post with id: ${id}`);
-    const post = await Post.findById(id);
+    const post = await Post.findById(id)
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'user_id',
+          model: 'User',
+        },
+      })
+      .populate({
+        path: 'user_id',
+        model: 'User',
+      });
     if (!post) {
       console.log(`Post with id: ${id} not found`);
       return response.status(404).json({ message: 'Post not found' });
