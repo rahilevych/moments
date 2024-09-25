@@ -8,9 +8,7 @@ import { CommentType } from '../types/CommentType';
 export const addComment = async (
   formData: FormData,
   id: string,
-  post: PostType,
   setPost: Dispatch<SetStateAction<PostType | null>>,
-  setComments: Dispatch<SetStateAction<CommentType[]>>,
   setComment: Dispatch<SetStateAction<CommentType | null>>
 ) => {
   await getPostById(id, setPost);
@@ -27,10 +25,6 @@ export const addComment = async (
       setComment(result);
       console.log('comment that was added', result);
       await getPostById(id, setPost);
-
-      post &&
-        (await getCommentsByIds(post?.comments, post, setPost, setComments));
-      console.log('comments for post', post && post.comments);
     }
   } catch (error) {
     console.error('Error by adding comment', error);

@@ -2,6 +2,9 @@ import axios from 'axios';
 import { baseUrl } from '../utils/baseUrl';
 import { Dispatch, SetStateAction } from 'react';
 import { UserType } from '../types/UserType';
+import { getUserProfile } from './authService';
+import { getPosts } from './postServices';
+import { PostType } from '../types/PostType';
 
 export const getAllUsers = async (
   setUsers: Dispatch<SetStateAction<UserType[] | null>>
@@ -45,12 +48,6 @@ export const toggleSubscribe = async (
       }
     );
     if (response.status === 200) {
-      const updatedUser = response.data;
-      console.log(
-        'updated user from user context after subscribing',
-        updatedUser
-      );
-
       await getAllUsers(setUsers);
     }
   } catch (error) {
@@ -60,7 +57,7 @@ export const toggleSubscribe = async (
 
 export const getUserById = async (
   id: string,
-  setUser: Dispatch<SetStateAction<UserType | null>>
+  setProfileUser: Dispatch<SetStateAction<UserType | null>>
 ) => {
   try {
     const token = localStorage.getItem('token');
@@ -70,7 +67,7 @@ export const getUserById = async (
       },
     });
     console.log('data user getUser by id', response.data);
-    setUser(response.data);
+    setProfileUser(response.data);
     return response.data;
   } catch (error) {
     console.error('Error', error);
@@ -90,20 +87,13 @@ export const fetchUser = async (
 
 export const fetchData = async (
   setUser: Dispatch<SetStateAction<UserType | null>>,
-  setProfileUser: Dispatch<SetStateAction<UserType | null>>,
-  getUserProfile: (
-    setUser: Dispatch<SetStateAction<UserType | null>>
-  ) => Promise<void>,
-  profileData: UserType
+  setPosts: Dispatch<SetStateAction<PostType[] | null>>
 ) => {
   try {
-    await getUserProfile(setUser);
-    setUser(profileData);
-
-    if (profileData) {
-      const userData = await getUserById(profileData._id, setProfileUser);
-      console.log(userData);
-    }
+    const user = await getUserProfile(setUser);
+    const userCurrent = await getUserById(user._id, setUser);
+    setUser(userCurrent);
+    getPosts(setPosts);
   } catch (error) {
     console.error('Error loading user data:', error);
   }

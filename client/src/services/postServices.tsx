@@ -48,7 +48,7 @@ export const getPosts = async (
     });
     if (response.status === 200) {
       const result = response.data;
-      setPosts(result);
+      setPosts(result.data);
       console.log('result posts', result);
       // setPostsAmount(result.length);
     }
@@ -105,9 +105,7 @@ export const getUserPostsByUserId = async (
 
 export const toggleLikePost = async (
   postId: string,
-  setPost: Dispatch<SetStateAction<PostType | null>>,
-  posts: PostType[],
-  setPosts: Dispatch<SetStateAction<PostType[] | null>>
+  setPost: Dispatch<SetStateAction<PostType | null>>
 ) => {
   try {
     const token = localStorage.getItem('token');
@@ -124,12 +122,6 @@ export const toggleLikePost = async (
     if (response.status === 200) {
       const updatedPost = response.data;
       setPost(updatedPost);
-      if (posts) {
-        const updatedPosts = posts.map((p) =>
-          p._id === updatedPost._id ? updatedPost : p
-        );
-        setPosts(updatedPosts);
-      }
     }
   } catch (error) {
     console.error('Error toggling like on post:', error);

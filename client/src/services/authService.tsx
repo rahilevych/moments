@@ -45,7 +45,7 @@ export const signUp = async (
 export const signIn = async (
   username: string,
   password: string,
-  user: UserType,
+  user: UserType | null,
   setUser: Dispatch<SetStateAction<UserType | null>>,
   navigate: NavigateFunction
 ) => {
@@ -84,9 +84,11 @@ export const getUserProfile = async (
     });
     if (response.status === 200) {
       setUser(response.data.user);
+      return response.data.user;
     }
   } catch (error) {
     console.error('Error fetching user profile', error);
+    return error;
   }
 };
 export const logout = (
