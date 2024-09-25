@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Heart,
@@ -14,34 +14,28 @@ import profile from '../assets/images/profile.png';
 import { UserContext } from '../context/UserContext';
 import {
   getPostById,
-  getUserPostsByUserId,
   toggleLikePost,
   toggleSavePost,
 } from '../services/postServices';
-import { getUserProfile } from '../services/authService';
-import { addComment, getCommentsByIds } from '../services/commentService';
+
+import { addComment } from '../services/commentService';
+import { getUserById } from '../services/userService';
+import { timeAgo } from '../utils/timeAgo';
 
 const DetailedPost = () => {
-  const { id } = useParams();
-  const { posts, post, setPosts, setPost } = useContext(PostContext);
-  const { user, users, setUser } = useContext(UserContext);
+  const { id, postId } = useParams();
+  const { post, setPost } = useContext(PostContext);
+  const { user, setUser, profileUser } = useContext(UserContext);
   const { setComment, setComments } = useContext(CommentContext);
 
-  const { setText, text, comments } = useContext(CommentContext);
-
-  const findUsername = (userId: string) => {
-    const foundUser = users?.find((user) => user._id === userId);
-    return foundUser?.username;
-  };
-  const findAvatar = (userId: string) => {
-    const foundUser = users?.find((user) => user._id === userId);
-    return foundUser?.user_img || profile;
-  };
+  const { setText, text } = useContext(CommentContext);
 
   const handleLikeClick = async () => {
-    if (user && user._id && post) {
-      posts && (await toggleLikePost(post._id, setPost, posts, setPosts));
-    }
+    try {
+      console.log('profile user>>>>>>', profileUser);
+      post && (await toggleLikePost(post._id, setPost));
+      await fetchPost();
+    } catch (error) {}
   };
 
   const handleSaveClick = async () => {
@@ -57,49 +51,34 @@ const DetailedPost = () => {
 
   const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    try {
+      if (user && post && text.trim() !== '' && postId) {
+        const formData = new FormData();
+        formData.append('text', text);
+        formData.append('user_id', user._id);
+        formData.append('post_id', post._id);
+        await addComment(formData, postId, setPost, setComment);
+        await getPostById(postId, setPost);
+        setText('');
+      } else {
+        console.error('User, post or text is missing');
+      }
+    } catch (error) {}
+  };
 
-    if (user && post && text.trim() !== '' && id) {
-      const formData = new FormData();
-      formData.append('text', text);
-      formData.append('user_id', user._id);
-      formData.append('post_id', post._id);
-
-      await addComment(formData, id, post, setPost, setComments, setComment);
-      await getCommentsByIds(post.comments, post, setPost, setComments);
-      await getPostById(id, setPost);
-      setText('');
-    } else {
-      console.error('User, post or text is missing');
+  const fetchPost = async () => {
+    try {
+      if (id) await getUserById(id, setUser);
+      if (postId) await getPostById(postId, setPost);
+    } catch (error) {
+      console.error('Error by getting user', error);
     }
   };
 
   useEffect(() => {
-    getUserProfile(setUser);
-    console.log('user from det', user);
-    user && post && getUserPostsByUserId(user?._id, setPosts);
-    console.log(id);
-    console.log(posts);
-    if (id && posts) {
-      getPostById(id, setPost);
-      const currentPost = posts.find((post) => post._id === String(id));
-      if (currentPost) {
-        setPost(currentPost);
-        if (currentPost.comments && currentPost.comments.length > 0) {
-          findAvatar(currentPost.user_id.user_img);
-          findUsername(currentPost.user_id._id);
-          getCommentsByIds(
-            currentPost.comments,
-            currentPost,
-            setPost,
-            setComments
-          );
-        }
-      } else {
-        console.error('Post not found');
-      }
-    }
+    fetchPost();
+    console.log('post>>>>>>>>>>>>>>', post);
   }, []);
-  //}, [comments, addComment, getCommentsByIds]);
 
   return (
     <div className='min-h-screen flex items-center justify-center bg-white'>
@@ -111,12 +90,10 @@ const DetailedPost = () => {
                 <img
                   alt='User'
                   className='w-10 h-10 rounded-full'
-                  src={findAvatar(post?.user_id.user_img || profile)}
+                  src={post?.user_id.user_img || profile}
                 />
               </div>
-              <p className='pl-4'>
-                {findUsername(post?.user_id.username || '')}
-              </p>
+              <p className='pl-4'>{post?.user_id.username || ''}</p>
             </div>
             <div className='post__menu ml-auto'></div>
           </div>
@@ -132,10 +109,16 @@ const DetailedPost = () => {
               <Heart
                 size={24}
                 onClick={handleLikeClick}
-                style={{
-                  color:
-                    user && post?.likes.includes(user?._id) ? 'red' : 'gray',
-                }}
+                weight={
+                  user && post?.likes.map((user) => user._id).includes(user._id)
+                    ? 'fill'
+                    : 'regular'
+                }
+                className={`transition-transform transform hover:scale-110 fill-current ${
+                  user && post?.likes.map((user) => user._id).includes(user._id)
+                    ? 'text-red-500'
+                    : 'text-gray-500'
+                }`}
               />
               <ChatCircle size={24} />
               <ShareFat size={24} />
@@ -145,7 +128,8 @@ const DetailedPost = () => {
               onClick={handleSaveClick}
               style={{
                 color:
-                  post && user?.saved_posts?.includes(post?._id)
+                  post &&
+                  user?.saved_posts?.map((post) => post._id).includes(post?._id)
                     ? 'red'
                     : 'gray',
               }}
@@ -154,7 +138,9 @@ const DetailedPost = () => {
           <div className='post__description px-4 py-2'>
             {post?.caption || 'No description available'}
           </div>
-          <div className='px-4 text-xs text-gray-400'>1 HOUR AGO</div>
+          <div className='px-4 text-xs text-gray-400'>
+            {timeAgo(post?.createdAt)}
+          </div>
           <div className='flex flex-row w-full relative mt-4'>
             <form onSubmit={submitForm} className='flex w-full'>
               <Smiley size={24} className='absolute left-3 top-2' />
@@ -176,17 +162,17 @@ const DetailedPost = () => {
           className='w-1/3 p-4 border-l overflow-y-auto'
           style={{ maxHeight: '80vh' }}>
           <h3 className='text-lg font-semibold mb-4'>Comments</h3>
-          {comments && comments.length > 0 ? (
-            comments.map((comment) => (
+          {post?.comments && post.comments.length > 0 ? (
+            post.comments.map((comment) => (
               <div key={comment._id} className='mb-4'>
                 <div className='flex items-center mb-2'>
                   <img
                     alt='Avatar'
                     className='w-8 h-8 rounded-full'
-                    src={findAvatar(comment.user_id || profile)}
+                    src={comment.user_id?.user_img || profile}
                   />
                   <p className='ml-2 font-semibold'>
-                    {findUsername(comment.user_id || '')}
+                    {comment.user_id?.username || ''}
                   </p>
                 </div>
                 <p>{comment.text}</p>
