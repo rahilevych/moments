@@ -14,14 +14,15 @@ import { UserContext } from '../context/UserContext';
 import { getUserPostsByUserId } from '../services/postServices';
 
 const NavComponent = () => {
-  const { user, setUser } = useContext(UserContext);
-  const { post, setPosts } = useContext(PostContext);
+  const { user, setUser, setProfileUser, profileUser } =
+    useContext(UserContext);
+  const { post, setPost, setPosts } = useContext(PostContext);
 
   const navigate = useNavigate();
 
   const handleNavigateToProfile = () => {
     if (user && user._id) {
-      setUser(user);
+      setProfileUser(profileUser);
       post && getUserPostsByUserId(user._id, setPosts);
       navigate(`/user/${user._id}`);
     }

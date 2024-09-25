@@ -5,15 +5,16 @@ import { logout } from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 
 const ProfileHeader = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser, profileUser, setProfileUser } =
+    useContext(UserContext);
   const navigate = useNavigate();
 
-  if (!user) {
+  if (!profileUser) {
     return null;
   }
 
-  const isCurrentUser = user?._id === user._id;
-  console.log('profile user from heaedr', user);
+  const isCurrentUser = user?._id === profileUser._id;
+  console.log('profile user from heaedr', profileUser);
   return (
     <div className='profile-header flex flex-col items-center md:flex-row md:justify-between p-4 border-b border-gray-200'>
       <div className='profile-avatar w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden'>
@@ -24,16 +25,18 @@ const ProfileHeader = () => {
         />
       </div>
       <div className='profile-info flex flex-col md:ml-6 mt-4 md:mt-0'>
-        <h2 className='text-2xl font-bold'>{user.username}</h2>
+        <h2 className='text-2xl font-bold'>{profileUser.username}</h2>
         <div className='stats flex mt-2'>
           <div className='mr-4'>
-            <span className='font-bold'>{user.posts.length}</span> posts
+            <span className='font-bold'>{profileUser.posts.length}</span> posts
           </div>
           <div className='mr-4'>
-            <span className='font-bold'>{user.followers.length}</span> followers
+            <span className='font-bold'>{profileUser.followers.length}</span>{' '}
+            followers
           </div>
           <div className='mr-4'>
-            <span className='font-bold'>{user.following.length}</span> following
+            <span className='font-bold'>{profileUser.following.length}</span>{' '}
+            following
           </div>
         </div>
         <div className='flex space-x-2 mt-4'>

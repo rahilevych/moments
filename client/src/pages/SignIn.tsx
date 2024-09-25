@@ -26,7 +26,7 @@ const SignIn = () => {
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    user && signIn(username, password, user, setUser, navigate);
+    signIn(username, password, user, setUser, navigate);
   };
   if (user) {
     return <Navigate to={`/user/${user._id}/home`} replace={true} />;

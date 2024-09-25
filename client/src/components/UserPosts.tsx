@@ -9,12 +9,12 @@ const UserPosts = () => {
   const { posts, post, setPosts } = useContext(PostContext);
   const { user } = useContext(UserContext);
   console.log('profile user from userposts', user);
-  console.log(post);
+  console.log('post', post);
   useEffect(() => {
     if (user) {
-      post && getUserPostsByUserId(user._id, setPosts);
+      getUserPostsByUserId(user._id, setPosts);
+      console.log('posts>>>.', posts);
     }
-    // }, [profileUser, getUserPostsByUserId]);
   }, []);
 
   if (!user) {

@@ -4,22 +4,26 @@ import PostComponent from '../components/PostComponent';
 import { NavLink } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import { getUserProfile } from '../services/authService';
-import { getUserById } from '../services/userService';
+import { fetchData, getUserById } from '../services/userService';
+import { PostContext } from '../context/PostContext';
+import { getPosts } from '../services/postServices';
 
 const Home = () => {
-  const { user, setUser } = useContext(UserContext);
-
-  console.log('user>>.', user);
+  const { user, profileUser, setProfileUser, setUser } =
+    useContext(UserContext);
+  const { posts, setPosts } = useContext(PostContext);
 
   useEffect(() => {
-    getUserProfile(setUser);
+    fetchData(setUser, setPosts);
 
-    if (user) {
-      getUserById(user._id, setUser);
-      setUser(user);
-    } else {
-      console.log('Loading user...');
-    }
+    console.log('user>>.', user);
+    console.log('userprofile', profileUser);
+    console.log('posts', posts);
+    // if (user) {
+    //   getUserById(user._id, setUser);
+    // } else {
+    //   console.log('Loading user...');
+    // }
   }, []);
 
   return (
@@ -39,20 +43,28 @@ const Home = () => {
           <HistoryComponent />
         </div>
         <div className=' flex flex-col items-center w-full bg-white justify-center'>
-          {user?.following?.length ? (
-            user.following
-              .flatMap((followedUser) => followedUser.posts || [])
-              .map((post) => (
+          {user?.following?.length
+            ? user.following
+                .flatMap((followedUser) => followedUser.posts || [])
+                .map((post) => (
+                  <NavLink
+                    key={post._id}
+                    to={`../${user._id}/post/${post._id}`}
+                    className='w-full flex items-start justify-center'>
+                    <PostComponent post={post} />
+                  </NavLink>
+                ))
+            : posts &&
+              // [...posts]
+              // .sort(() => Math.random() - 0.5)
+              posts.map((post) => (
                 <NavLink
                   key={post._id}
                   to={`../${user._id}/post/${post._id}`}
                   className='w-full flex items-start justify-center'>
                   <PostComponent post={post} />
                 </NavLink>
-              ))
-          ) : (
-            <p>No following users or posts found.</p>
-          )}
+              ))}
         </div>
       </div>
     )
