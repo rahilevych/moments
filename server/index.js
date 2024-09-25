@@ -4,7 +4,7 @@ import { PORT } from './config/serverConfig.js';
 
 import mongoose from 'mongoose';
 import mongoDBURL from './config/dbConfig.js';
-import postsRouter from './routes/PostsRoutes.js';
+import postsRouter from './routes/postsRoutes.js';
 import commentsRouter from './routes/commentsRoutes.js';
 import passport from 'passport';
 import passportStrategy from '../server/utils/passportConfig.js';
