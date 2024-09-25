@@ -5,8 +5,7 @@ import { logout } from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 
 const ProfileHeader = () => {
-  const { user, setUser, profileUser, setProfileUser } =
-    useContext(UserContext);
+  const { user, setUser, profileUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   if (!profileUser) {

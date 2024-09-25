@@ -16,7 +16,7 @@ import { getUserPostsByUserId } from '../services/postServices';
 const NavComponent = () => {
   const { user, setUser, setProfileUser, profileUser } =
     useContext(UserContext);
-  const { post, setPost, setPosts } = useContext(PostContext);
+  const { post, setPosts } = useContext(PostContext);
 
   const navigate = useNavigate();
 

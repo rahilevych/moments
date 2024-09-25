@@ -9,7 +9,7 @@ import { getUserPostsByUserId } from '../services/postServices';
 
 const UserPage = () => {
   const { id } = useParams<{ id: string }>();
-  const { setUser, setProfileUser } = useContext(UserContext);
+  const { setProfileUser } = useContext(UserContext);
   const { setPosts } = useContext(PostContext);
 
   useEffect(() => {

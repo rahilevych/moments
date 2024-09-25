@@ -3,14 +3,11 @@ import HistoryComponent from '../components/HistoryComponent';
 import PostComponent from '../components/PostComponent';
 import { NavLink } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
-import { getUserProfile } from '../services/authService';
-import { fetchData, getUserById } from '../services/userService';
+import { fetchData } from '../services/userService';
 import { PostContext } from '../context/PostContext';
-import { getPosts } from '../services/postServices';
 
 const Home = () => {
-  const { user, profileUser, setProfileUser, setUser } =
-    useContext(UserContext);
+  const { user, profileUser, setUser } = useContext(UserContext);
   const { posts, setPosts } = useContext(PostContext);
 
   useEffect(() => {

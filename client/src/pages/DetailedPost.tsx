@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Heart,
@@ -26,7 +26,7 @@ const DetailedPost = () => {
   const { id, postId } = useParams();
   const { post, setPost } = useContext(PostContext);
   const { user, setUser, profileUser } = useContext(UserContext);
-  const { setComment, setComments } = useContext(CommentContext);
+  const { setComment } = useContext(CommentContext);
 
   const { setText, text } = useContext(CommentContext);
 
@@ -139,7 +139,7 @@ const DetailedPost = () => {
             {post?.caption || 'No description available'}
           </div>
           <div className='px-4 text-xs text-gray-400'>
-            {timeAgo(post?.createdAt)}
+            {timeAgo(post?.createdAt || new Date())}
           </div>
           <div className='flex flex-row w-full relative mt-4'>
             <form onSubmit={submitForm} className='flex w-full'>
