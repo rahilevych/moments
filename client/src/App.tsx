@@ -16,6 +16,8 @@ import DetailedPost from './pages/DetailedPost';
 import Layout from './components/Layout';
 import SearchPage from './pages/SearchPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import Profile from './pages/Profile';
+import Subscriptions from './pages/Subscriptions';
 
 function App() {
   useEffect(() => {}, []);
@@ -37,6 +39,8 @@ function App() {
           <Route path='add-post' element={<AddPost />} />
           <Route path=':id/post/:postId' element={<DetailedPost />} />
           <Route path='search' element={<SearchPage />} />
+          <Route path=':id/subscriptions' element={<Subscriptions />} />
+          <Route path='profile/:id' element={<Profile />} />
         </Route>
       </Routes>
     </>

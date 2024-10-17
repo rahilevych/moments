@@ -84,6 +84,41 @@ export const getUserProfile = async (request, response) => {
     });
   }
 };
+export const updateUser = async (request, response) => {
+  try {
+    const { id } = request.params;
+
+    const updateData = {
+      username: request.body.username,
+      fullname: request.body.fullname,
+      email: request.body.email,
+      bio: request.body.bio,
+      user_img: request.body.user_img,
+    };
+
+    Object.keys(updateData).forEach(
+      (key) => updateData[key] === undefined && delete updateData[key]
+    );
+
+    console.log('Data to update:', updateData);
+
+    const updatedUser = await User.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
+    console.log('updated user: ' + updatedUser);
+
+    return response
+      .status(200)
+      .json({ message: 'Profile was updated', user: updatedUser });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    return response.status(500).json({ message: error.message });
+  } finally {
+    if (request.file) {
+      removeTempFile(request.file);
+    }
+  }
+};
 
 export const getAllUsers = async (request, response) => {
   try {

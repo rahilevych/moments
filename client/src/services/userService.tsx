@@ -98,3 +98,21 @@ export const fetchData = async (
     console.error('Error loading user data:', error);
   }
 };
+export const updateUser = async (user: UserType, formData: FormData) => {
+  try {
+    const response = await axios.put(
+      `${baseUrl}/users/edit/${user._id}`,
+      formData,
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    console.error('Error loading user data:', error);
+    throw error;
+  }
+};
