@@ -68,7 +68,11 @@ const NavComponent = () => {
       <div
         className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'
         onClick={handleNavigateToProfile}>
-        <img src={img} alt='User Avatar' className='w-10 h-10 rounded-full' />
+        <img
+          src={user?.user_img}
+          alt='User Avatar'
+          className='w-10 h-10 rounded-full'
+        />
         <p>{user?.username}</p>
       </div>
     </nav>

@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import profile from '../assets/images/profile.png';
 import { UserContext } from '../context/UserContext';
 import { logout } from '../services/authService';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const ProfileHeader = () => {
   const { user, setUser, profileUser } = useContext(UserContext);
@@ -18,7 +18,7 @@ const ProfileHeader = () => {
     <div className='profile-header flex flex-col items-center md:flex-row md:justify-between p-4 border-b border-gray-200'>
       <div className='profile-avatar w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden'>
         <img
-          src={profile}
+          src={profileUser.user_img}
           alt='Profile'
           className='w-full h-full object-cover'
         />
@@ -29,21 +29,30 @@ const ProfileHeader = () => {
           <div className='mr-4'>
             <span className='font-bold'>{profileUser.posts.length}</span> posts
           </div>
-          <div className='mr-4'>
-            <span className='font-bold'>{profileUser.followers.length}</span>{' '}
-            followers
-          </div>
-          <div className='mr-4'>
-            <span className='font-bold'>{profileUser.following.length}</span>{' '}
-            following
-          </div>
+          <NavLink to={`/user/${profileUser._id}/subscriptions`}>
+            <div className='mr-4 cursor-pointer'>
+              <span className='font-bold'>{profileUser.followers.length}</span>{' '}
+              followers
+            </div>
+          </NavLink>
+
+          <NavLink to={`/user/${profileUser._id}/subscriptions`}>
+            {' '}
+            <div className='mr-4'>
+              <span className='font-bold'>{profileUser.following.length}</span>{' '}
+              following
+            </div>
+          </NavLink>
         </div>
         <div className='flex space-x-2 mt-4'>
           {isCurrentUser ? (
             <>
-              <button className='px-4 py-2 border border-gray-300 rounded-md text-sm font-semibold text-gray-700'>
-                Edit profile
-              </button>
+              <NavLink to={`/user/profile/${user._id}`}>
+                <button className='px-4 py-2 border border-gray-300 rounded-md text-sm font-semibold text-gray-700'>
+                  Edit profile
+                </button>
+              </NavLink>
+
               <button
                 onClick={() => logout(setUser, navigate)}
                 className='px-4 py-2 border border-gray-300 rounded-md text-sm font-semibold text-gray-700'>
