@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { PostContext } from '../context/PostContext';
 import { UserContext } from '../context/UserContext';
 import { addPost } from '../services/postServices';
@@ -10,8 +10,10 @@ const AddPost = () => {
   const { user } = useContext(UserContext);
   const selectedFile = useRef<File | null>(null);
 
+  // Состояние для отслеживания успешного добавления поста
+  const [isPostAdded, setIsPostAdded] = useState(false);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.files);
     if (e.target.files && e.target.files.length > 0) {
       selectedFile.current = e.target.files[0];
     }
@@ -28,17 +30,32 @@ const AddPost = () => {
       formData.append('image_url', selectedFile.current);
       formData.append('caption', caption);
       formData.append('user_id', user?._id);
+
       await addPost(formData, setPost, setPosts, setComments);
-      // return <Navigate to={`/user/${user._id}`} replace={true}></Navigate>;
+
+      // Устанавливаем состояние после успешного добавления
+      setIsPostAdded(true);
+
+      // Сброс формы после добавления поста
+      selectedFile.current = null;
+      setCaption('');
     }
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-white'>
+    <div className='h-auto flex items-center justify-center bg-white'>
       <div className='bg-white p-8 rounded-lg shadow-lg w-full max-w-lg'>
         <h2 className='text-3xl font-bold text-center mb-6 text-gray-800'>
           Add a New Post
         </h2>
+
+        {/* Оповещение об успешном добавлении поста */}
+        {isPostAdded && (
+          <div className='mb-6 text-green-600 font-semibold text-center'>
+            Post added successfully!
+          </div>
+        )}
+
         <form onSubmit={submitForm} method='post'>
           <div className='mb-6'>
             <label
@@ -62,6 +79,7 @@ const AddPost = () => {
             </label>
             <input
               onChange={handleInputChangeCaption}
+              value={caption}
               id='caption'
               className='block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
               placeholder='Write a caption...'></input>
