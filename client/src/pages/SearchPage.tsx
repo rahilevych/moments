@@ -31,6 +31,7 @@ const SearchPage = () => {
       <Search
         setFilteredUsers={setFilteredUsers}
         setSearchQuery={setSearchQuery}
+        title={'Search Users'}
       />
       <UsersList filteredUsers={filteredUsers} />
     </div>

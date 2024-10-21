@@ -4,6 +4,7 @@ import { UserType } from '../types/UserType';
 type Props = {
   setFilteredUsers: (users: UserType[]) => void;
   setSearchQuery: (query: string) => void;
+  title: string;
 };
 export const Search = (props: Props) => {
   const { users } = useContext(UserContext);
@@ -23,7 +24,7 @@ export const Search = (props: Props) => {
   return (
     <div>
       {' '}
-      <h1 className='text-2xl font-bold mb-4'>Search Users</h1>
+      <h1 className='text-2xl font-bold mb-4'>{props.title}</h1>
       <form className='mb-4 flex space-x-2'>
         <input
           type='text'
