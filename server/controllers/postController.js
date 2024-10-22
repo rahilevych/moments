@@ -31,13 +31,18 @@ export const addPost = async (request, response) => {
 export const getUserPostsByUserId = async (request, response) => {
   try {
     const userId = request.params.userId;
-    const posts = await Post.find({ user_id: userId }).populate({
-      path: 'comments',
-      populate: {
+    const posts = await Post.find({ user_id: userId })
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'user_id',
+          model: 'User',
+        },
+      })
+      .populate({
         path: 'user_id',
         model: 'User',
-      },
-    });
+      });
     response.status(200).json(posts);
   } catch (error) {
     response.status(500).send({ message: error.message });

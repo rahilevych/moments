@@ -128,6 +128,7 @@ export const getAllUsers = async (request, response) => {
     return response.status(500).json({ error: 'Server error' });
   }
 };
+
 export const toggleSubscribeBtn = async (request, response) => {
   try {
     const { otherUserId } = request.params;
@@ -187,21 +188,34 @@ export const toggleSubscribeBtn = async (request, response) => {
 export const getUserById = async (request, response) => {
   try {
     const { id } = request.params;
-    const user = await User.findById(id).populate({
-      path: 'following',
-      populate: {
-        path: 'posts',
-        model: 'Post',
+    const user = await User.findById(id)
+      .populate({
+        path: 'following',
         populate: {
-          path: 'user_id',
-          model: 'User',
+          path: 'posts',
+          model: 'Post',
+          populate: {
+            path: 'user_id',
+            model: 'User',
+          },
         },
-      },
-    });
+      })
+      .populate({
+        path: 'followers',
+        populate: {
+          path: 'posts',
+          model: 'Post',
+          populate: {
+            path: 'user_id',
+            model: 'User',
+          },
+        },
+      });
 
     if (!user) {
-      return response.status(404).json({ message: 'User not found ' });
+      return response.status(404).json({ message: 'User not found' });
     }
+
     response.status(200).json(user);
   } catch (error) {
     console.error(error);
