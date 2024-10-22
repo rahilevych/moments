@@ -21,11 +21,16 @@ import {
 import { addComment } from '../services/commentService';
 import { getUserById } from '../services/userService';
 import { timeAgo } from '../utils/timeAgo';
+import { PostType } from '../types/PostType';
+interface Props {
+  post: PostType;
+}
 
-const DetailedPost = () => {
-  const { id, postId } = useParams();
+const DetailedPost = (props: Props) => {
+  const { id } = useParams();
   const { post, setPost } = useContext(PostContext);
-  const { user, setUser, profileUser } = useContext(UserContext);
+  const { user, setUser, profileUser, setProfileUser } =
+    useContext(UserContext);
   const { setComment } = useContext(CommentContext);
 
   const { setText, text } = useContext(CommentContext);
@@ -33,15 +38,15 @@ const DetailedPost = () => {
   const handleLikeClick = async () => {
     try {
       console.log('profile user>>>>>>', profileUser);
-      post && (await toggleLikePost(post._id, setPost));
+      props.post && (await toggleLikePost(props.post._id, setPost));
       await fetchPost();
     } catch (error) {}
   };
 
   const handleSaveClick = async () => {
-    if (user && post && post._id) {
+    if (user && props.post && props.post._id) {
       console.log('save button was clicked');
-      await toggleSavePost(post._id, user._id, user, setUser);
+      await toggleSavePost(props.post._id, user._id, user, setUser);
     }
   };
 
@@ -52,13 +57,13 @@ const DetailedPost = () => {
   const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      if (user && post && text.trim() !== '' && postId) {
+      if (user && post && text.trim() !== '') {
         const formData = new FormData();
         formData.append('text', text);
         formData.append('user_id', user._id);
         formData.append('post_id', post._id);
-        await addComment(formData, postId, setPost, setComment);
-        await getPostById(postId, setPost);
+        await addComment(formData, post._id, setPost, setComment);
+        await getPostById(post._id, setPost);
         setText('');
       } else {
         console.error('User, post or text is missing');
@@ -68,8 +73,8 @@ const DetailedPost = () => {
 
   const fetchPost = async () => {
     try {
-      if (id) await getUserById(id, setUser);
-      if (postId) await getPostById(postId, setPost);
+      if (id) await getUserById(id, setProfileUser);
+      if (props.post) await getPostById(props.post._id, setPost);
     } catch (error) {
       console.error('Error by getting user', error);
     }
@@ -78,12 +83,13 @@ const DetailedPost = () => {
   useEffect(() => {
     fetchPost();
     console.log('post>>>>>>>>>>>>>>', post);
+    console.log('id>>>>>>>>>>>>>>', id);
   }, []);
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-white'>
-      <div className='bg-white rounded-lg shadow-lg w-full max-w-5xl flex'>
-        <div className='w-2/3 p-4'>
+    <div className='p-5 flex items-center justify-center bg-white w-full'>
+      <div className=' flex gap-7'>
+        <div className='w-auto '>
           <div className='post__navigation flex flex-row px-4 py-2'>
             <div className='post__user flex flex-row items-center'>
               <div className='rounded-full '>
@@ -97,7 +103,7 @@ const DetailedPost = () => {
             </div>
             <div className='post__menu ml-auto'></div>
           </div>
-          <div className='post__img w-full h-96'>
+          <div className='post__img w-auto h-80'>
             <img
               alt='Post'
               src={post?.image_url}
@@ -158,9 +164,7 @@ const DetailedPost = () => {
           </div>
         </div>
 
-        <div
-          className='w-1/3 p-4 border-l overflow-y-auto'
-          style={{ maxHeight: '80vh' }}>
+        <div className='w-auto min-w-60 p-4 border-l overflow-y-auto'>
           <h3 className='text-lg font-semibold mb-4'>Comments</h3>
           {post?.comments && post.comments.length > 0 ? (
             post.comments.map((comment) => (

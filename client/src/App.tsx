@@ -11,13 +11,15 @@ import UserPage from './pages/UserPage';
 import AddPost from './components/AddPost';
 import { useEffect } from 'react';
 
-import DetailedPost from './pages/DetailedPost';
+import DetailedPost from './components/DetailedPost';
 
 import Layout from './components/Layout';
 import SearchPage from './pages/SearchPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import Profile from './pages/Profile';
-import Subscriptions from './pages/Subscriptions';
+
+import Following from './pages/Following';
+import Followers from './pages/Followers';
 
 function App() {
   useEffect(() => {}, []);
@@ -37,9 +39,10 @@ function App() {
           <Route path='home' element={<Home />} />
           <Route path=':id' element={<UserPage />} />
           <Route path='add-post' element={<AddPost />} />
-          <Route path=':id/post/:postId' element={<DetailedPost />} />
+
           <Route path='search' element={<SearchPage />} />
-          <Route path=':id/subscriptions' element={<Subscriptions />} />
+          <Route path=':id/followers' element={<Followers />} />
+          <Route path=':id/following' element={<Following />} />
           <Route path='profile/:id' element={<Profile />} />
         </Route>
       </Routes>
