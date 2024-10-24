@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
-import { signIn } from '../services/authService';
+import { getUserProfile, signIn } from '../services/authService';
+import { getUserById } from '../services/userService';
 
 const SignIn = () => {
   const { user, setUser } = useContext(UserContext);
@@ -22,14 +23,18 @@ const SignIn = () => {
       setPassword(e.target.value);
     }
   };
+  const login = async () => {
+    setUser(await getUserProfile());
+    setUser(user && (await getUserById(user?._id)));
 
+    await signIn(username, password, user, navigate);
+  };
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    signIn(username, password, user, setUser, navigate);
+    login();
   };
   if (user) {
-    return <Navigate to={`/user/${user._id}/home`} replace={true} />;
+    return <Navigate to={`/user/home`} replace={true} />;
   }
   return (
     <div className='min-h-screen flex items-center justify-center bg-gray-100'>
