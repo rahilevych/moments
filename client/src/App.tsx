@@ -1,28 +1,31 @@
 import { Toaster } from 'react-hot-toast';
 import './App.css';
-
 import Home from './pages/Home';
-
 import { Route, Routes } from 'react-router-dom';
-
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import UserPage from './pages/UserPage';
-import AddPost from './components/AddPost';
-import { useEffect } from 'react';
-
-import DetailedPost from './components/DetailedPost';
-
+import { useContext, useEffect } from 'react';
 import Layout from './components/Layout';
-import SearchPage from './pages/SearchPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import Profile from './pages/Profile';
-
-import Following from './pages/Following';
-import Followers from './pages/Followers';
+import { UserContext } from './context/UserContext';
+import { getUserProfile } from './services/authService';
+import { getUserById } from './services/userService';
 
 function App() {
-  useEffect(() => {}, []);
+  const { setUser } = useContext(UserContext);
+
+  const setUserProfile = async () => {
+    const user = await getUserProfile();
+    setUser(await getUserById(user._id));
+  };
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setUserProfile();
+    }
+  }, []);
   return (
     <>
       <Toaster />
@@ -38,11 +41,6 @@ function App() {
           }>
           <Route path='home' element={<Home />} />
           <Route path=':id' element={<UserPage />} />
-          <Route path='add-post' element={<AddPost />} />
-
-          <Route path='search' element={<SearchPage />} />
-          <Route path=':id/followers' element={<Followers />} />
-          <Route path=':id/following' element={<Following />} />
           <Route path='profile/:id' element={<Profile />} />
         </Route>
       </Routes>
