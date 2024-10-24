@@ -1,21 +1,14 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { UserType } from '../types/UserType';
 import { UserContext } from '../context/UserContext';
-import { PostContext } from '../context/PostContext';
 import userAvatar from '../assets/images/profile.png';
-import {
-  fetchData,
-  getAllUsers,
-  toggleSubscribe,
-} from '../services/userService';
+import { getUserById, toggleSubscribe } from '../services/userService';
 import { NavLink } from 'react-router-dom';
 type Props = {
   filteredUsers: UserType[] | null;
 };
 const UsersList = (props: Props) => {
-  const { user, setUsers, setUser } = useContext(UserContext);
-  const { setPosts } = useContext(PostContext);
-
+  const { user, setUser } = useContext(UserContext);
   const isSubscribed = (otherUser: UserType) => {
     return (
       user &&
@@ -24,9 +17,8 @@ const UsersList = (props: Props) => {
   };
   const handleSubscribe = async (otherUserId: string) => {
     if (user) {
-      await toggleSubscribe(otherUserId, user._id, setUsers);
-      await fetchData(setUser, setPosts);
-      await getAllUsers(setUsers);
+      await toggleSubscribe(otherUserId, user._id);
+      setUser(await getUserById(user._id));
     }
   };
   return (

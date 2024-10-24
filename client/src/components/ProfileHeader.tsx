@@ -1,19 +1,51 @@
-import { useContext } from 'react';
-import profile from '../assets/images/profile.png';
+import { useContext, useState } from 'react';
 import { UserContext } from '../context/UserContext';
 import { logout } from '../services/authService';
 import { NavLink, useNavigate } from 'react-router-dom';
+import {
+  getAllUsers,
+  getUserById,
+  toggleSubscribe,
+} from '../services/userService';
+import { UserType } from '../types/UserType';
+import Modal from './Modal';
+import Following from './Following';
+import Followers from './Followers';
 
 const ProfileHeader = () => {
-  const { user, setUser, profileUser } = useContext(UserContext);
+  const { user, setUser, profileUser, setProfileUser } =
+    useContext(UserContext);
   const navigate = useNavigate();
+  const [isFollowingOpen, setIsFollowingOpen] = useState(false);
+  const [isFollowerOpen, setIsFollowerOpen] = useState(false);
+  const toggleFollowingModal = () => {
+    setIsFollowingOpen(!isFollowingOpen);
+  };
+  const toggleFollowerModal = () => {
+    setIsFollowerOpen(!isFollowerOpen);
+  };
 
   if (!profileUser) {
     return null;
   }
 
+  const isSubscribed = (otherUser: UserType) => {
+    return (
+      user &&
+      user.following.some((followedUser) => followedUser._id === otherUser?._id)
+    );
+  };
+  const handleSubscribe = async (otherUserId: string) => {
+    if (user) {
+      await toggleSubscribe(otherUserId, user._id);
+      await getAllUsers();
+      setProfileUser(await getUserById(profileUser._id));
+    }
+  };
+
   const isCurrentUser = user?._id === profileUser._id;
   console.log('profile user from heaedr', profileUser);
+
   return (
     <div className='profile-header flex flex-col items-center md:flex-row md:justify-between p-4 border-b border-gray-200'>
       <div className='profile-avatar w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden'>
@@ -29,20 +61,22 @@ const ProfileHeader = () => {
           <div className='mr-4'>
             <span className='font-bold'>{profileUser.posts.length}</span> posts
           </div>
-          <NavLink to={`/user/${profileUser._id}/subscriptions`}>
-            <div className='mr-4 cursor-pointer'>
-              <span className='font-bold'>{profileUser.followers.length}</span>{' '}
-              followers
-            </div>
-          </NavLink>
 
-          <NavLink to={`/user/${profileUser._id}/subscriptions`}>
-            {' '}
-            <div className='mr-4'>
-              <span className='font-bold'>{profileUser.following.length}</span>{' '}
-              following
-            </div>
-          </NavLink>
+          <div className='mr-4 cursor-pointer' onClick={toggleFollowerModal}>
+            <span className='font-bold'>{profileUser.followers.length}</span>{' '}
+            followers
+          </div>
+
+          <div className='mr-4' onClick={toggleFollowingModal}>
+            <span className='font-bold'>{profileUser.following.length}</span>{' '}
+            following
+          </div>
+          <Modal isOpen={isFollowingOpen} onClose={toggleFollowingModal}>
+            <Following />
+          </Modal>
+          <Modal isOpen={isFollowerOpen} onClose={toggleFollowerModal}>
+            <Followers />
+          </Modal>
         </div>
         <div className='flex space-x-2 mt-4'>
           {isCurrentUser ? (
@@ -60,14 +94,15 @@ const ProfileHeader = () => {
               </button>
             </>
           ) : (
-            <>
-              <button className='px-4 py-2 border border-gray-300 rounded-md text-sm font-semibold text-gray-700'>
-                Subscribe
-              </button>
-              <button className='px-4 py-2 border border-gray-300 rounded-md text-sm font-semibold text-gray-700'>
-                Unsubscribe
-              </button>
-            </>
+            <button
+              onClick={() => handleSubscribe(profileUser._id)}
+              className={`px-4 py-2 rounded-md ${
+                isSubscribed(profileUser)
+                  ? 'bg-gray-500 text-white'
+                  : 'bg-blue-500 text-white'
+              }`}>
+              {isSubscribed(profileUser) ? 'Unsubscribe' : 'Subscribe'}
+            </button>
           )}
         </div>
       </div>
