@@ -1,43 +1,27 @@
 import axios from 'axios';
 import { baseUrl } from '../utils/baseUrl';
-import { getUserProfile } from './authService';
 import { Dispatch, SetStateAction } from 'react';
-import { PostType } from '../types/PostType';
 import { UserType } from '../types/UserType';
-import { getCommentsByIds } from './commentService';
-import { CommentType } from '../types/CommentType';
 
-export const addPost = async (
-  formData: FormData,
-  setPost: Dispatch<SetStateAction<PostType | null>>,
-  setPosts: Dispatch<SetStateAction<PostType[] | null>>,
-  setComments: Dispatch<SetStateAction<CommentType[]>>
-) => {
+export const addPost = async (formData: FormData) => {
   try {
     const token = localStorage.getItem('token');
     const response = await axios.post(`${baseUrl}/posts`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-
         Authorization: `Bearer ${token}`,
       },
     });
     if (response.status === 200) {
       const result = response.data;
-      console.log('New post', result);
-      setPost(result);
-      getPosts(setPosts);
-
-      getCommentsByIds(result.comments, result, setPost, setComments);
+      return result;
     }
   } catch (error) {
     console.error('Error by adding post', error);
   }
 };
 
-export const getPosts = async (
-  setPosts: Dispatch<SetStateAction<PostType[] | null>>
-) => {
+export const getPosts = async () => {
   try {
     const token = localStorage.getItem('token');
     const response = await axios.get(`${baseUrl}/posts`, {
@@ -47,19 +31,16 @@ export const getPosts = async (
       },
     });
     if (response.status === 200) {
-      const result = response.data;
-      setPosts(result.data);
-      console.log('result posts', result);
-      // setPostsAmount(result.length);
+      const result = response.data.data;
+      console.log('>>>>>>>>>>>>posts', response.data.data);
+      return result;
     }
   } catch (error) {
     console.error('Error fetching posts', error);
+    return error;
   }
 };
-export const getPostById = async (
-  postId: string,
-  setPost: Dispatch<SetStateAction<PostType | null>>
-) => {
+export const getPostById = async (postId: string) => {
   try {
     const token = localStorage.getItem('token');
     const response = await axios.get(`${baseUrl}/posts/${postId}`, {
@@ -69,19 +50,14 @@ export const getPostById = async (
     });
     if (response.status === 200) {
       const result = response.data;
-      setPost(result);
-      console.log('new pos from fost id ', result);
-      // setPostsAmount(result.length);
+      return result;
     }
   } catch (error) {
     console.error('Error fetching posts', error);
   }
 };
 
-export const getUserPostsByUserId = async (
-  userId: string,
-  setPosts: Dispatch<SetStateAction<PostType[] | null>>
-) => {
+export const getUserPostsByUserId = async (userId: string) => {
   try {
     const token = localStorage.getItem('token');
     const response = await axios.get(`${baseUrl}/posts/user/${userId}`, {
@@ -92,21 +68,14 @@ export const getUserPostsByUserId = async (
     });
     if (response.status === 200) {
       const result = response.data;
-      //   post && (await getPostById(post?._id, setPost));
-      setPosts(result);
-      console.log('resul users posts', result);
-
-      //setPostsAmount(result.length);
+      return result;
     }
   } catch (error) {
     console.error('Error fetching user posts', error);
   }
 };
 
-export const toggleLikePost = async (
-  postId: string,
-  setPost: Dispatch<SetStateAction<PostType | null>>
-) => {
+export const toggleLikePost = async (postId: string) => {
   try {
     const token = localStorage.getItem('token');
     const response = await axios.post(
@@ -120,8 +89,7 @@ export const toggleLikePost = async (
       }
     );
     if (response.status === 200) {
-      const updatedPost = response.data;
-      setPost(updatedPost);
+      return response.data;
     }
   } catch (error) {
     console.error('Error toggling like on post:', error);
@@ -155,7 +123,7 @@ export const toggleSavePost = async (
     if (response.status === 200) {
       const updatedUser = response.data;
       //console.log('updated user after saving post', updatedUser);
-      getUserProfile(setUser);
+      //getUserProfile(setUser);
       //setUser(updatedUser);
       console.log(' user from post context', user);
       console.log('updated user from post context', updatedUser);

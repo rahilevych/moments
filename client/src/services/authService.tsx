@@ -46,7 +46,6 @@ export const signIn = async (
   username: string,
   password: string,
   user: UserType | null,
-  setUser: Dispatch<SetStateAction<UserType | null>>,
   navigate: NavigateFunction
 ) => {
   try {
@@ -58,7 +57,6 @@ export const signIn = async (
     if (response.status === 200) {
       const { token } = response.data;
       localStorage.setItem('token', token);
-      await getUserProfile(setUser);
       if (user) {
         navigate(`/home`);
       }
@@ -68,9 +66,7 @@ export const signIn = async (
   }
 };
 
-export const getUserProfile = async (
-  setUser: Dispatch<SetStateAction<UserType | null>>
-) => {
+export const getUserProfile = async () => {
   const token = localStorage.getItem('token');
   if (!token) {
     console.error('No token found in localStorage');
@@ -83,7 +79,6 @@ export const getUserProfile = async (
       },
     });
     if (response.status === 200) {
-      setUser(response.data.user);
       return response.data.user;
     }
   } catch (error) {
