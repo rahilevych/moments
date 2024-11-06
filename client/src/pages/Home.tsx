@@ -13,6 +13,7 @@ const Home = () => {
   const init = async () => {
     setPosts(await getPosts());
   };
+
   useEffect(() => {
     init();
   }, []);

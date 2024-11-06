@@ -4,6 +4,7 @@ import {
   MagnifyingGlass,
   PaperPlaneTilt,
   PlusSquare,
+  User,
 } from '@phosphor-icons/react';
 import { useContext, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -56,7 +57,7 @@ const NavComponent = () => {
       </div>
 
       <Modal isOpen={isSearchModalOpen} onClose={toggleSearchModal}>
-        <SearchPage />
+        <SearchPage onClose={toggleSearchModal} />
       </Modal>
 
       <div className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'>
@@ -81,11 +82,18 @@ const NavComponent = () => {
       <div
         className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'
         onClick={handleNavigateToProfile}>
-        <img
-          src={user?.user_img}
-          alt='User Avatar'
-          className='w-10 h-10 rounded-full'
-        />
+        {user && user.user_img ? (
+          <img
+            src={user.user_img}
+            alt='Profile'
+            className='w-full h-full object-cover'
+          />
+        ) : (
+          <User
+            size={34}
+            className='w-full h-full rounded-full border-2 border-gray-300 '
+          />
+        )}
         <p>{user?.username}</p>
       </div>
     </nav>

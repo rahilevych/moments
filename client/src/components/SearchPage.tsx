@@ -4,7 +4,7 @@ import { getAllUsers } from '../services/userService';
 import { Search } from './Search';
 import UsersList from './UsersList';
 
-const SearchPage = () => {
+const SearchPage = ({ onClose }: { onClose: () => void }) => {
   const { users, setUsers, user } = useContext(UserContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredUsers, setFilteredUsers] = useState(users);
@@ -25,13 +25,13 @@ const SearchPage = () => {
   }, [users]);
 
   return (
-    <div className='p-4'>
+    <div className='p-4 max-h-[calc(100vh-150px)] overflow-y-auto'>
       <Search
         setFilteredUsers={setFilteredUsers}
         setSearchQuery={setSearchQuery}
         title={'Search Users'}
       />
-      <UsersList filteredUsers={filteredUsers} />
+      <UsersList filteredUsers={filteredUsers} onClose={onClose} />
     </div>
   );
 };

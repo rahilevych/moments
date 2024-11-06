@@ -11,6 +11,7 @@ import { UserType } from '../types/UserType';
 import Modal from './Modal';
 import Following from './Following';
 import Followers from './Followers';
+import { User } from '@phosphor-icons/react';
 
 const ProfileHeader = () => {
   const { user, setUser, profileUser, setProfileUser } =
@@ -48,12 +49,19 @@ const ProfileHeader = () => {
 
   return (
     <div className='profile-header flex flex-col items-center md:flex-row md:justify-between p-4 border-b border-gray-200'>
-      <div className='profile-avatar w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden'>
-        <img
-          src={profileUser.user_img}
-          alt='Profile'
-          className='w-full h-full object-cover'
-        />
+      <div className='flex justify-center profile-avatar w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden'>
+        {profileUser.user_img ? (
+          <img
+            src={profileUser.user_img}
+            alt='Profile'
+            className='w-full h-full object-cover'
+          />
+        ) : (
+          <User
+            size={34}
+            className='w-full h-full rounded-full border-2 border-gray-300 '
+          />
+        )}
       </div>
       <div className='profile-info flex flex-col md:ml-6 mt-4 md:mt-0'>
         <h2 className='text-2xl font-bold'>{profileUser.username}</h2>
@@ -72,10 +80,10 @@ const ProfileHeader = () => {
             following
           </div>
           <Modal isOpen={isFollowingOpen} onClose={toggleFollowingModal}>
-            <Following />
+            <Following onClose={toggleFollowerModal} />
           </Modal>
           <Modal isOpen={isFollowerOpen} onClose={toggleFollowerModal}>
-            <Followers />
+            <Followers onClose={toggleFollowerModal} />
           </Modal>
         </div>
         <div className='flex space-x-2 mt-4'>

@@ -1,11 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
 import UsersList from './UsersList';
 import { Search } from './Search';
-
 import { UserContext } from '../context/UserContext';
-import { PostContext } from '../context/PostContext';
 
-const Followers = () => {
+const Followers = ({ onClose }: { onClose: () => void }) => {
   const { profileUser, users, setUsers } = useContext(UserContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredUsers, setFilteredUsers] = useState(users);
@@ -26,13 +24,13 @@ const Followers = () => {
   }, [users]);
 
   return (
-    <div className='p-4'>
+    <div className='p-4 max-h-[calc(100vh-150px)] overflow-y-auto'>
       <Search
         setFilteredUsers={setFilteredUsers}
         setSearchQuery={setSearchQuery}
         title={'Search followers'}
       />
-      <UsersList filteredUsers={filteredUsers} />
+      <UsersList filteredUsers={filteredUsers} onClose={onClose} />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { Trash, X } from '@phosphor-icons/react';
+import { X } from '@phosphor-icons/react';
 import React from 'react';
 
 interface ModalProps {
@@ -11,13 +11,16 @@ const Modal = (props: ModalProps) => {
   if (!props.isOpen) return null;
 
   return (
-    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 mt-0  '>
-      <button
-        onClick={props.onClose}
-        className='text-white-500 absolute top-2 right-2 text-2xl cursor-pointer'>
-        <X size={32} />
-      </button>
-      <div className='bg-white  rounded-lg shadow-lg relative overflow-auto w-auto max-w-[80vh]  max-h-[80vh] min-w-96 min-h-96'>
+    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+      <div
+        className='relative bg-white rounded-lg shadow-lg w-full max-w-4xl md:max-w-5xl p-6 md:p-8'
+        style={{ maxHeight: '90vh' }}>
+        <button
+          onClick={props.onClose}
+          className='absolute top-4 right-4 text-gray-500 hover:text-gray-700'
+          aria-label='Close'>
+          <X size={24} />
+        </button>
         {props.children}
       </div>
     </div>

@@ -6,8 +6,8 @@ import { CommentContext } from '../context/CommentContext';
 import { CaretLeft, Images } from '@phosphor-icons/react';
 
 const AddPost = () => {
-  const { setCaption, caption, setPost, setPosts } = useContext(PostContext);
-  const { setComments } = useContext(CommentContext);
+  const { setCaption, caption } = useContext(PostContext);
+
   const { user } = useContext(UserContext);
   const selectedFile = useRef<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -37,7 +37,7 @@ const AddPost = () => {
       formData.append('image_url', selectedFile.current);
       formData.append('caption', caption);
       formData.append('user_id', user?._id);
-      await addPost(formData, setPost, setPosts, setComments);
+      await addPost(formData);
       setIsPostAdded(true);
       setImagePreview(null);
       selectedFile.current = null;
