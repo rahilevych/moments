@@ -6,7 +6,7 @@ export interface PostType {
   user_id: UserType;
   image_url: string;
   caption: string;
-  likes: UserType[];
+  likes: string[];
   comments: CommentType[];
   createdAt: Date;
 }
