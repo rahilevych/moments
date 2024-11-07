@@ -16,4 +16,7 @@ export const multerUpload = multer({
     }
     cb(null, true);
   },
+  limits: {
+    fileSize: 25 * 1024 * 1024,
+  },
 });

@@ -9,7 +9,7 @@ const AddPost = () => {
   const { user } = useContext(UserContext);
   const selectedFile = useRef<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isPostAdded, setIsPostAdded] = useState(false);
+  const [, setIsPostAdded] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -24,7 +24,7 @@ const AddPost = () => {
   };
 
   const handleBackToUpload = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    _: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     setImagePreview(null);
   };

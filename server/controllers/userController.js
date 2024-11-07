@@ -4,8 +4,6 @@ import { encryptPass } from '../utils/passServices.js';
 import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import { secret } from '../config/token.js';
-import { Post } from '../models/PostModel.js';
-import { populate } from 'dotenv';
 
 export const registration = async (request, response) => {
   try {
@@ -65,7 +63,7 @@ export const login = async (request, response) => {
 
 export const getUserProfile = async (request, response) => {
   if (request.user) {
-    response.status(200).json({
+    return response.status(200).json({
       message: 'user profile information',
       user: {
         _id: request.user._id,

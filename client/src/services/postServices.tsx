@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { baseUrl } from '../utils/baseUrl';
-import { Dispatch, SetStateAction } from 'react';
+
 import { UserType } from '../types/UserType';
 
 export const addPost = async (formData: FormData) => {
@@ -32,7 +32,7 @@ export const getPosts = async () => {
     });
     if (response.status === 200) {
       const result = response.data.data;
-      console.log('>>>>>>>>>>>>posts', response.data.data);
+
       return result;
     }
   } catch (error) {
@@ -99,8 +99,7 @@ export const toggleLikePost = async (postId: string) => {
 export const toggleSavePost = async (
   postId: string,
   userId: string,
-  user: UserType,
-  setUser: Dispatch<SetStateAction<UserType | null>>
+  user: UserType
 ) => {
   try {
     const token = localStorage.getItem('token');
@@ -122,9 +121,7 @@ export const toggleSavePost = async (
 
     if (response.status === 200) {
       const updatedUser = response.data;
-      //console.log('updated user after saving post', updatedUser);
-      //getUserProfile(setUser);
-      //setUser(updatedUser);
+
       console.log(' user from post context', user);
       console.log('updated user from post context', updatedUser);
     }

@@ -57,7 +57,7 @@ const Profile = () => {
         if (avatarFile) {
           formDataToSend.append('user_img', formData.user_img);
         }
-        const data = await updateUser(user, formDataToSend);
+        await updateUser(user, formDataToSend);
         setUser(await getUserProfile());
         setUser(await getUserById(user._id));
         setIsEditing(false);

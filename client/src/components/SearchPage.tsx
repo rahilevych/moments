@@ -6,7 +6,7 @@ import UsersList from './UsersList';
 
 const SearchPage = ({ onClose }: { onClose: () => void }) => {
   const { users, setUsers, user } = useContext(UserContext);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [, setSearchQuery] = useState('');
   const [filteredUsers, setFilteredUsers] = useState(users);
 
   const fetchUsers = async () => {

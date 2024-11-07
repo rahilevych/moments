@@ -6,7 +6,7 @@ import { UserContext } from '../context/UserContext';
 
 const Following = ({ onClose }: { onClose: () => void }) => {
   const { profileUser, users, setUsers } = useContext(UserContext);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [, setSearchQuery] = useState('');
   const [filteredUsers, setFilteredUsers] = useState(users);
 
   const fetchUsers = async () => {
