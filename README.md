@@ -1,4 +1,4 @@
-# 🖼️ instclone (constantly updated)
+# 🖼️ instclone 
 A simplified version of Instagram built with the MERN stack and TypeScript. The main goal of this project was to gain new knowledge in Express.js, Node.js, and MongoDB. This website is my first full-stack web application using Express.js and Node.js. 
 
 ## 🗃️ Technologies
@@ -18,7 +18,7 @@ There are two types of users: registered and unregistered. Unregistered users ca
 
 - Manage liked posts: add or remove posts from their liked list
 - Add comments: share reviews and feedback on posts
-- Manage their posts: add or delete posts
+- Manage their posts: add posts
 - View the list of all users in the database
 - Search for users
 - Subscribe/unsubscribe to/from users
