@@ -17,7 +17,7 @@ There are two types of users: registered and unregistered. Unregistered users ca
 ### Registered users can:
 
 - Manage liked posts: add or remove posts from their liked list
-- Add/delete comments: share reviews and feedback on posts
+- Add comments: share reviews and feedback on posts
 - Manage their posts: add or delete posts
 - View the list of all users in the database
 - Search for users
@@ -63,7 +63,8 @@ The client-side is organized with protected routes to ensure that only logged-in
   
 ## ⬆️ How Can It Be Improved?
 - Add chat
-- Add history
+- Add histories
 - Impove Home page with recommendations
-- 
+- Add save page
+  
 ## 🎥 Demo: https://instclone-client.vercel.app/
