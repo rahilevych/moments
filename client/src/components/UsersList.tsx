@@ -36,27 +36,29 @@ const UsersList = (props: Props) => {
       {props.filteredUsers?.map((followingUser) => (
         <div
           key={followingUser._id}
-          className='flex justify-between items-center space-x-4 p-4 border border-gray-200 rounded-md'>
+          className='flex flex-col sm:flex-row justify-between items-center space-x-4 sm:p-4 p-3 border border-gray-200 rounded-md'>
           <div className='flex items-center gap-2'>
             {followingUser.user_img ? (
               <img
                 src={followingUser.user_img}
                 alt='Profile'
-                className='w-8 h-8 rounded-full border-2object-cover'
+                className='w-12 h-12 sm:w-8 sm:h-8 rounded-full border-2 object-cover'
               />
             ) : (
               <User
                 size={34}
-                className='w-full h-full rounded-full border-2 border-gray-300 '
+                className='w-12 h-12 sm:w-8 sm:h-8 rounded-full border-2 border-gray-300'
               />
             )}
-            <span className='font-medium'>{followingUser.username}</span>
+            <span className='font-medium text-sm sm:text-base'>
+              {followingUser.username}
+            </span>
           </div>
 
-          <div className='ml-auto '>
+          <div className='mt-3 sm:mt-0 sm:ml-auto flex gap-2 sm:gap-4'>
             <button
               onClick={() => handleSubscribe(followingUser._id)}
-              className={`px-4 py-2 rounded-md ${
+              className={`px-4 py-2 rounded-md text-sm sm:text-base h-10 w-full sm:w-auto flex items-center justify-center ${
                 isSubscribed(followingUser)
                   ? 'bg-gray-500 text-white'
                   : 'bg-blue-500 text-white'
@@ -67,7 +69,7 @@ const UsersList = (props: Props) => {
             <NavLink to={`/user/${followingUser._id}`}>
               <button
                 onClick={handleViewProfileClick}
-                className='px-4 py-2 ml-4 bg-blue-500 text-white rounded-md'>
+                className='px-4 py-2 ml-2 sm:ml-4 bg-blue-500 text-white rounded-md text-sm sm:text-base h-10 w-full sm:w-auto flex items-center justify-center'>
                 View Profile
               </button>
             </NavLink>

@@ -45,7 +45,7 @@ const ProfileHeader = () => {
   };
 
   const isCurrentUser = user?._id === profileUser._id;
-  console.log('profile user from heaedr', profileUser);
+  console.log('profile user from header', profileUser);
 
   return (
     <div className='profile-header flex flex-col items-center md:flex-row md:justify-between p-4 border-b border-gray-200'>
@@ -63,9 +63,13 @@ const ProfileHeader = () => {
           />
         )}
       </div>
-      <div className='profile-info flex flex-col md:ml-6 mt-4 md:mt-0'>
-        <h2 className='text-2xl font-bold'>{profileUser.username}</h2>
-        <div className='stats flex mt-2'>
+
+      <div className='profile-info flex flex-col items-center md:items-start mt-4 md:mt-0 md:ml-6'>
+        <h2 className='text-2xl font-bold text-center md:text-left'>
+          {profileUser.username}
+        </h2>
+
+        <div className='stats flex flex-wrap justify-center md:justify-start mt-2'>
           <div className='mr-4'>
             <span className='font-bold'>{profileUser.posts.length}</span> posts
           </div>
@@ -79,13 +83,15 @@ const ProfileHeader = () => {
             <span className='font-bold'>{profileUser.following.length}</span>{' '}
             following
           </div>
-          <Modal isOpen={isFollowingOpen} onClose={toggleFollowingModal}>
-            <Following onClose={toggleFollowerModal} />
-          </Modal>
-          <Modal isOpen={isFollowerOpen} onClose={toggleFollowerModal}>
-            <Followers onClose={toggleFollowerModal} />
-          </Modal>
         </div>
+
+        <Modal isOpen={isFollowingOpen} onClose={toggleFollowingModal}>
+          <Following onClose={toggleFollowerModal} />
+        </Modal>
+        <Modal isOpen={isFollowerOpen} onClose={toggleFollowerModal}>
+          <Followers onClose={toggleFollowerModal} />
+        </Modal>
+
         <div className='flex space-x-2 mt-4'>
           {isCurrentUser ? (
             <>

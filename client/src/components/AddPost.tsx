@@ -2,12 +2,10 @@ import React, { useContext, useRef, useState } from 'react';
 import { PostContext } from '../context/PostContext';
 import { UserContext } from '../context/UserContext';
 import { addPost } from '../services/postServices';
-import { CommentContext } from '../context/CommentContext';
 import { CaretLeft, Images } from '@phosphor-icons/react';
 
 const AddPost = () => {
   const { setCaption, caption } = useContext(PostContext);
-
   const { user } = useContext(UserContext);
   const selectedFile = useRef<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -24,6 +22,7 @@ const AddPost = () => {
   const handleInputChangeCaption = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCaption(e.target.value);
   };
+
   const handleBackToUpload = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -52,7 +51,7 @@ const AddPost = () => {
           <h2 className='font-bold text-center text-gray-600 border-b-2 border-gray-300 w-full py-2'>
             Create new post
           </h2>
-          <div className='bg-white p-2 w-full h-full flex flex-col items-center justify-between '>
+          <div className='bg-white p-2 w-full h-full flex flex-col items-center justify-between'>
             <div className='p-10'>
               <label
                 className='block text-sm font-medium text-gray-700 mb-2'
@@ -85,7 +84,7 @@ const AddPost = () => {
                 className='font-bold text-center text-gray-600 cursor-pointer'
               />
             </button>
-            <h2 className='font-bold text-center text-gray-600 '>
+            <h2 className='font-bold text-center text-gray-600'>
               Create new post
             </h2>
           </div>
@@ -95,7 +94,7 @@ const AddPost = () => {
               <img
                 src={imagePreview}
                 alt='Preview'
-                className='w-full h-96 rounded-md'
+                className='w-full h-96 rounded-md object-cover'
               />
               <form onSubmit={submitForm} method='post'>
                 <div className='mb-6 pt-4'>

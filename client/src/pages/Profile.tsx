@@ -61,7 +61,6 @@ const Profile = () => {
         setUser(await getUserProfile());
         setUser(await getUserById(user._id));
         setIsEditing(false);
-        //setUser(await updateUser(user, formDataToSend));
       }
     } catch (error) {
       console.error('Error saving user data:', error);
@@ -75,7 +74,7 @@ const Profile = () => {
   };
 
   return (
-    <div className='container bg-white flex flex-col items-center justify-start gap-10 p-10 min-h-screen '>
+    <div className='container bg-white flex flex-col items-center justify-start gap-10 p-10 min-h-screen'>
       <div className='flex flex-col items-center h-full'>
         <div className='relative'>
           {formData?.user_img ? (
@@ -122,7 +121,7 @@ const Profile = () => {
           {formData?.username}
         </h1>
       </div>
-      <div className='flex flex-col gap-3 mt-2  '>
+      <div className='flex flex-col gap-3 mt-2 w-full sm:w-96'>
         <div>
           <label className='block text-sm font-medium text-gray-700'>
             Email:
@@ -133,7 +132,7 @@ const Profile = () => {
             value={formData?.email ?? ''}
             onChange={handleChange}
             disabled={!isEditing}
-            className='mt-1 block w-96 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500'
+            className='mt-1 block w-full sm:w-96 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500'
           />
         </div>
         <div>
@@ -146,7 +145,7 @@ const Profile = () => {
             value={formData?.username ?? ''}
             onChange={handleChange}
             disabled={!isEditing}
-            className='mt-1 block w-96 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500'
+            className='mt-1 block w-full sm:w-96 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500'
           />
         </div>
         <div>
@@ -159,11 +158,11 @@ const Profile = () => {
             value={formData?.fullname ?? ''}
             onChange={handleChange}
             disabled={!isEditing}
-            className='mt-1 block w-96 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500'
+            className='mt-1 block w-full sm:w-96 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500'
           />
         </div>
       </div>
-      <div className='container mx-auto flex justify-center gap-5'>
+      <div className='flex justify-center gap-5 mt-5 w-full'>
         <button
           className={`px-4 py-2 rounded-md font-semibold text-white transition-colors ${
             isEditing

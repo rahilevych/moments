@@ -13,7 +13,7 @@ const Modal = (props: ModalProps) => {
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
       <div
-        className='relative bg-white rounded-lg shadow-lg w-full max-w-4xl md:max-w-5xl p-6 md:p-8'
+        className='relative bg-white rounded-lg shadow-lg w-full max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-4xl p-6 md:p-8 overflow-auto'
         style={{ maxHeight: '90vh' }}>
         <button
           onClick={props.onClose}
@@ -21,7 +21,9 @@ const Modal = (props: ModalProps) => {
           aria-label='Close'>
           <X size={24} />
         </button>
-        {props.children}
+        <div className='overflow-y-auto max-h-[calc(100vh-2rem)]'>
+          {props.children}
+        </div>
       </div>
     </div>
   );

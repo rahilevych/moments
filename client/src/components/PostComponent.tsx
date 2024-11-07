@@ -1,4 +1,3 @@
-import profile from '../assets/images/profile.png';
 import { PostType } from '../types/PostType';
 import { useContext, useEffect, useState } from 'react';
 import Modal from './Modal';
@@ -11,6 +10,7 @@ import { getUserById } from '../services/userService';
 import PostIconsNav from './PostIconsNav';
 
 import PostForm from './PostForm';
+import { User } from '@phosphor-icons/react';
 
 interface Props {
   post: PostType;
@@ -41,23 +41,29 @@ const PostComponent = (props: Props) => {
   }, []);
 
   return (
-    <div className='post flex flex-col w-2/5 h-fit border border-gray-200 rounded-lg my-4 bg-white'>
+    <div className='post flex flex-col w-full sm:w-3/4 md:w-2/3 lg:w-2/5 h-fit border border-gray-200 rounded-lg my-4 bg-white'>
       <div className='post__navigation flex flex-row px-4 py-2'>
         <div className='post__user flex flex-row items-center'>
-          <div className='rounded-full w-10 h-10 overflow-hidden'>
-            <img
-              src={profile}
-              alt='profile'
-              className='w-full h-full object-cover'
-            />
+          <div className='rounded-full w-8 h-8 sm:w-10 sm:h-10 overflow-hidden'>
+            {props.post.user_id.user_img ? (
+              <img
+                src={props.post.user_id.user_img}
+                alt='Profile'
+                className='w-full h-full object-cover'
+              />
+            ) : (
+              <User
+                size={28}
+                className='w-full h-full rounded-full border-2 border-gray-300'
+              />
+            )}
           </div>
-          <p className='pl-4'>{props.post.user_id.username}</p>
-        </div>
-        <div className='post__menu ml-auto'>
-          <button className='text-gray-400'>...</button>
+          <p className='pl-3 sm:pl-4 text-sm sm:text-base'>
+            {props.post.user_id.username}
+          </p>
         </div>
       </div>
-      <div className='post__img w-full h-96'>
+      <div className='post__img w-full h-56 sm:h-72 md:h-80 lg:h-96'>
         <img
           src={props.post.image_url}
           alt='post'
@@ -69,16 +75,18 @@ const PostComponent = (props: Props) => {
       </div>
 
       <PostIconsNav post={props.post} fetchPost={fetchPost} />
-      <div className='post__description px-4 py-2'>{props.post.caption}</div>
+      <div className='post__description px-4 py-2 text-sm sm:text-base'>
+        {props.post.caption}
+      </div>
       <div
-        className='post__comments px-4 py-2 text-sm text-gray-400 cursor-pointer'
+        className='post__comments px-4 py-2 text-xs sm:text-sm text-gray-400 cursor-pointer'
         onClick={toggleOpenModal}>
         {props.post.comments.length > 0
           ? `View all ${props.post.comments.length} comments`
           : 'Add first comment'}
       </div>
 
-      <div className='flex flex-row w-full  px-4 pb-4'>
+      <div className='flex flex-row w-full px-4 pb-4'>
         <PostForm />
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { UserType } from '../types/UserType';
 type Props = {

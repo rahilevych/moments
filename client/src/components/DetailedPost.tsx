@@ -37,12 +37,12 @@ const DetailedPost = (props: Props) => {
   }, []);
 
   return (
-    <div className='p-5 flex items-center justify-between bg-white w-full'>
-      <div className='flex gap-7 w-full'>
-        <div className='w-full flex-grow'>
+    <div className='p-5 flex flex-col lg:flex-row items-start justify-between bg-white w-full'>
+      <div className='flex flex-col lg:flex-row gap-7 w-full'>
+        <div className='w-full lg:w-3/5'>
           <div className='post__navigation flex flex-row px-4 py-2'>
             <div className='post__user flex flex-row items-center'>
-              <div className='rounded-full '>
+              <div className='rounded-full'>
                 <img
                   alt='User'
                   className='w-10 h-10 rounded-full'
@@ -66,7 +66,7 @@ const DetailedPost = (props: Props) => {
           </div>
         </div>
 
-        <div className='flex flex-col justify-between w-full min-w-60 p-4 border-l'>
+        <div className='flex flex-col justify-between w-full min-w-60 p-4 border-l lg:border-l-0 lg:w-2/5'>
           <h3 className='text-lg font-semibold mb-4'>Comments</h3>
           <div className='max-h-96 overflow-y-auto'>
             {post?.comments && post.comments.length > 0 ? (

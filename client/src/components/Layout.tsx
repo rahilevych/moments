@@ -3,12 +3,12 @@ import NavComponent from './NavComponent';
 
 const Layout = () => {
   return (
-    <div className='flex'>
-      <div className='w-64 bg-white h-screen shadow-md fixed'>
-        {' '}
+    <div className='flex flex-col lg:flex-row'>
+      <div className='w-full lg:w-64 bg-white h-auto lg:h-screen shadow-md lg:fixed'>
         <NavComponent />
       </div>
-      <div className='ml-64 p-4 w-full'>
+
+      <div className='flex-1 p-4 lg:ml-64'>
         <Outlet />
       </div>
     </div>
