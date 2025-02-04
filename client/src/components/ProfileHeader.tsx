@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../context/UserContext';
 import { logout } from '../services/authService';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -46,7 +46,7 @@ const ProfileHeader = () => {
 
   const isCurrentUser = user?._id === profileUser._id;
   console.log('profile user from header', profileUser);
-
+  useEffect(() => {}, [handleSubscribe]);
   return (
     <div className='profile-header flex flex-col items-center md:flex-row md:justify-between p-4 border-b border-gray-200'>
       <div className='flex justify-center profile-avatar w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden'>

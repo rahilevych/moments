@@ -10,7 +10,11 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {}, [user]);
+  useEffect(() => {
+    if (user) {
+      navigate('/user/home', { replace: true });
+    }
+  }, [user, navigate]);
   const handleInputChangeUsername = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -24,18 +28,17 @@ const SignIn = () => {
     }
   };
   const login = async () => {
-    setUser(await getUserProfile());
-    setUser(user && (await getUserById(user?._id)));
-
     await signIn(username, password, user, navigate);
+    const profile = await getUserProfile();
+    setUser(profile && (await getUserById(profile?._id)));
+    console.log(user);
   };
+
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     login();
   };
-  if (user) {
-    return <Navigate to={`/user/home`} replace={true} />;
-  }
+
   return (
     <div className='min-h-screen flex items-center justify-center bg-gray-100'>
       <div className='w-full max-w-md bg-white p-8 rounded-lg shadow-md'>

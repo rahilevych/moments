@@ -58,7 +58,7 @@ export const signIn = async (
       const { token } = response.data;
       localStorage.setItem('token', token);
       if (user) {
-        navigate(`/home`);
+        navigate(`/user/home`);
       }
     }
   } catch (error) {
