@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import { UserType } from '../types/UserType';
+import { getUserById } from '../services/userService';
 
 type UserContextType = {
   user: UserType | null;
@@ -16,38 +17,38 @@ type UserContextType = {
   setUsers: Dispatch<SetStateAction<UserType[] | null>>;
   followingUser: UserType | null;
   setFollowingUser: Dispatch<SetStateAction<UserType | null>>;
+  fetchUser: (id: string) => Promise<void>;
+  fetchUsers: () => Promise<void>;
 };
 
-const initUserContextValue: UserContextType = {
-  user: null,
-  setUser: () => {
-    throw new Error('context not initialised');
-  },
-  profileUser: null,
-  setProfileUser: () => {
-    throw new Error('context not initialised');
-  },
-  users: null,
-  setUsers: () => {
-    throw new Error('context not initialised');
-  },
-  followingUser: null,
-  setFollowingUser: () => {
-    throw new Error('context not initialised');
-  },
-};
+export const UserContext = createContext<UserContextType | undefined>(
+  undefined
+);
 
 type UserContextProviderProps = {
   children: ReactNode;
 };
-
-export const UserContext = createContext<UserContextType>(initUserContextValue);
 
 export const UserContextProvider = ({ children }: UserContextProviderProps) => {
   const [user, setUser] = useState<UserType | null>(null);
   const [users, setUsers] = useState<UserType[] | null>(null);
   const [followingUser, setFollowingUser] = useState<UserType | null>(null);
   const [profileUser, setProfileUser] = useState<UserType | null>(null);
+
+  const fetchUser = async (id: string) => {
+    try {
+      const userData = await getUserById(id);
+      if (userData) setUser(userData);
+    } catch (error) {
+      console.error('Cannot find a user, try again');
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      profileUser && setUsers(profileUser.followers);
+    } catch (error) {}
+  };
 
   return (
     <UserContext.Provider
@@ -60,6 +61,8 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
         setUsers,
         followingUser,
         setFollowingUser,
+        fetchUser,
+        fetchUsers,
       }}>
       {children}
     </UserContext.Provider>
