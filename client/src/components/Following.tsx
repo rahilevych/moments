@@ -1,19 +1,12 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search } from './Search';
 import UsersList from './UsersList';
-
-import { UserContext } from '../context/UserContext';
+import { useUser } from '../hooks/useUser';
 
 const Following = ({ onClose }: { onClose: () => void }) => {
-  const { profileUser, users, setUsers } = useContext(UserContext);
+  const { fetchUsers, users } = useUser();
   const [, setSearchQuery] = useState('');
   const [filteredUsers, setFilteredUsers] = useState(users);
-
-  const fetchUsers = async () => {
-    try {
-      profileUser && setUsers(profileUser?.following);
-    } catch (error) {}
-  };
 
   useEffect(() => {
     fetchUsers();

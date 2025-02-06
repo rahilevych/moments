@@ -1,39 +1,20 @@
-import { useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
-
-import { PostContext } from '../context/PostContext';
-
+import { useEffect } from 'react';
 import profile from '../assets/images/profile.png';
-import { UserContext } from '../context/UserContext';
-import { getPostById } from '../services/postServices';
-
-import { getUserById } from '../services/userService';
 import { PostType } from '../types/PostType';
 import PostIconsNav from './PostIconsNav';
 import PostForm from './PostForm';
+import { usePost } from '../hooks/usePost';
 
 interface Props {
   post: PostType;
 }
 
-const DetailedPost = (props: Props) => {
-  const { id } = useParams();
-  const { post, setPost } = useContext(PostContext);
-  const { setProfileUser } = useContext(UserContext);
-
-  const fetchPost = async () => {
-    try {
-      if (id) setProfileUser(await getUserById(id));
-      setPost(await getPostById(props.post._id));
-    } catch (error) {
-      console.error('Error by getting user', error);
-    }
-  };
+const DetailedPost: React.FC<Props> = ({ post }) => {
+  //const { id } = useParams();
+  const { fetchPost } = usePost();
 
   useEffect(() => {
-    fetchPost();
-    console.log('post>>>>>>>>>>>>>>', post);
-    console.log('id>>>>>>>>>>>>>>', id);
+    fetchPost(post._id);
   }, []);
 
   return (
@@ -90,7 +71,7 @@ const DetailedPost = (props: Props) => {
             )}
           </div>
           <div className='flex flex-col gap-4 w-full relative mt-4 justify-between'>
-            <PostIconsNav post={props.post} fetchPost={fetchPost} />
+            <PostIconsNav post={post} fetchPost={fetchPost} />
             <PostForm />
           </div>
         </div>

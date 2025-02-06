@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../context/UserContext';
+import { useState } from 'react';
+
 import { logout } from '../services/authService';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
@@ -12,13 +12,14 @@ import Modal from './Modal';
 import Following from './Following';
 import Followers from './Followers';
 import { User } from '@phosphor-icons/react';
+import { useUser } from '../hooks/useUser';
 
 const ProfileHeader = () => {
-  const { user, setUser, profileUser, setProfileUser } =
-    useContext(UserContext);
   const navigate = useNavigate();
   const [isFollowingOpen, setIsFollowingOpen] = useState(false);
   const [isFollowerOpen, setIsFollowerOpen] = useState(false);
+  const { user, setUser, profileUser, setProfileUser } = useUser();
+
   const toggleFollowingModal = () => {
     setIsFollowingOpen(!isFollowingOpen);
   };
@@ -46,7 +47,7 @@ const ProfileHeader = () => {
 
   const isCurrentUser = user?._id === profileUser._id;
   console.log('profile user from header', profileUser);
-  useEffect(() => {}, [handleSubscribe]);
+
   return (
     <div className='profile-header flex flex-col items-center md:flex-row md:justify-between p-4 border-b border-gray-200'>
       <div className='flex justify-center profile-avatar w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden'>

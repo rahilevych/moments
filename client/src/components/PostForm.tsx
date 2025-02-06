@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
-import { PostContext } from '../context/PostContext';
 import { CommentContext } from '../context/CommentContext';
-import { UserContext } from '../context/UserContext';
 import { addComment } from '../services/commentService';
 import { getPostById } from '../services/postServices';
+import { useUser } from '../hooks/useUser';
+import { usePost } from '../hooks/usePost';
 
 const PostForm = () => {
-  const { post, setPost } = useContext(PostContext);
-  const { user } = useContext(UserContext);
+  const { post, setPost } = usePost();
+  const { user } = useUser();
   const { setComment } = useContext(CommentContext);
 
   const { setText, text } = useContext(CommentContext);

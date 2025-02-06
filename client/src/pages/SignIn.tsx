@@ -1,11 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserContext } from '../context/UserContext';
+
 import { getUserProfile, signIn } from '../services/authService';
-import { getUserById } from '../services/userService';
+
+import { useUser } from '../hooks/useUser';
 
 const SignIn = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, fetchUser } = useUser();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const SignIn = () => {
   const login = async () => {
     await signIn(username, password, user, navigate);
     const profile = await getUserProfile();
-    setUser(profile && (await getUserById(profile?._id)));
+    fetchUser(profile._id);
     console.log(user);
   };
 

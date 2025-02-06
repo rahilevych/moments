@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../context/UserContext';
+import { useEffect, useState } from 'react';
 import { getAllUsers } from '../services/userService';
 import { Search } from './Search';
 import UsersList from './UsersList';
+import { useUser } from '../hooks/useUser';
 
 const SearchPage = ({ onClose }: { onClose: () => void }) => {
-  const { users, setUsers, user } = useContext(UserContext);
+  const { users, setUsers, user } = useUser();
   const [, setSearchQuery] = useState('');
   const [filteredUsers, setFilteredUsers] = useState(users);
 

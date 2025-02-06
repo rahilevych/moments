@@ -1,9 +1,8 @@
-import { useContext } from 'react';
 import { UserType } from '../types/UserType';
-import { UserContext } from '../context/UserContext';
 import { getUserById, toggleSubscribe } from '../services/userService';
 import { NavLink } from 'react-router-dom';
 import { User } from '@phosphor-icons/react';
+import { useUser } from '../hooks/useUser';
 
 type Props = {
   filteredUsers: UserType[] | null;
@@ -11,7 +10,7 @@ type Props = {
 };
 
 const UsersList = (props: Props) => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useUser();
 
   const isSubscribed = (otherUser: UserType) => {
     return (

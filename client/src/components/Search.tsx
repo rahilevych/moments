@@ -1,13 +1,12 @@
-import { useContext } from 'react';
-import { UserContext } from '../context/UserContext';
 import { UserType } from '../types/UserType';
+import { useUser } from '../hooks/useUser';
 type Props = {
   setFilteredUsers: (users: UserType[]) => void;
   setSearchQuery: (query: string) => void;
   title: string;
 };
 export const Search = (props: Props) => {
-  const { users } = useContext(UserContext);
+  const { users } = useUser();
 
   const handleSearch = (query: string) => {
     if (!users) {

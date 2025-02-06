@@ -1,13 +1,14 @@
-import React, { useState, useRef, useContext, useEffect } from 'react';
-import { UserContext } from '../context/UserContext';
+import React, { useState, useRef, useEffect } from 'react';
+
 import { UserType } from '../types/UserType';
 import { User as UserImg } from '@phosphor-icons/react';
 import { getUserById, updateUser } from '../services/userService';
 import { useParams } from 'react-router-dom';
 import { getUserProfile } from '../services/authService';
+import { useUser } from '../hooks/useUser';
 
 const Profile = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useUser();
   const { id } = useParams<{ id: string }>();
   const [formData, setFormData] = useState<UserType | null>(null);
   const [isEditing, setIsEditing] = useState(false);
