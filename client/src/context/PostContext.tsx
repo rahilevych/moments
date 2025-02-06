@@ -6,6 +6,7 @@ import {
   SetStateAction,
 } from 'react';
 import { PostType } from '../types/PostType';
+import { getPostById } from '../services/postServices';
 
 type PostContextType = {
   post: PostType | null;
@@ -15,31 +16,16 @@ type PostContextType = {
   setFile: Dispatch<SetStateAction<React.MutableRefObject<File | null>>>;
   setCaption: Dispatch<SetStateAction<string>>;
   caption: string;
+  fetchPost: (id: string) => Promise<void>;
+  fetchPosts: () => Promise<void>;
 };
 
-const initPostContextValue: PostContextType = {
-  post: null,
-  posts: null,
-  caption: '',
-  setPost: () => {
-    throw new Error('context not initialised');
-  },
-  setPosts: () => {
-    throw new Error('context not initialised');
-  },
-  setCaption: () => {
-    throw new Error('context not initialised');
-  },
-  setFile: () => {
-    throw new Error('context not initialised');
-  },
-};
-
+export const PostContext = createContext<PostContextType | undefined>(
+  undefined
+);
 type PostContextProviderProps = {
   children: ReactNode;
 };
-
-export const PostContext = createContext<PostContextType>(initPostContextValue);
 
 export const PostContextProvider = ({ children }: PostContextProviderProps) => {
   const [post, setPost] = useState<PostType | null>(null);
@@ -48,6 +34,16 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
     current: null,
   });
   const [caption, setCaption] = useState<string>('');
+
+  const fetchPost = async (id: string) => {
+    try {
+      setPost(await getPostById(id));
+    } catch (error) {}
+  };
+  const fetchPosts = async () => {
+    try {
+    } catch (error) {}
+  };
 
   return (
     <PostContext.Provider
@@ -59,6 +55,8 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
         setFile,
         setCaption,
         caption,
+        fetchPost,
+        fetchPosts,
       }}>
       {children}
     </PostContext.Provider>
