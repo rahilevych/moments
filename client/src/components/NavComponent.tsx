@@ -6,18 +6,19 @@ import {
   PlusSquare,
   User,
 } from '@phosphor-icons/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { PostContext } from '../context/PostContext';
-import { UserContext } from '../context/UserContext';
+
 import AddPost from '../components/AddPost';
 import Modal from '../components/Modal';
 import { getUserPostsByUserId } from '../services/postServices';
 import SearchPage from './SearchPage';
+import { useUser } from '../hooks/useUser';
+import { usePost } from '../hooks/usePost';
 
 const NavComponent = () => {
-  const { user, setProfileUser, profileUser } = useContext(UserContext);
-  const { setPosts } = useContext(PostContext);
+  const { user, setProfileUser, profileUser } = useUser();
+  const { setPosts } = usePost();
 
   const navigate = useNavigate();
   const [isAddPostModalOpen, setIsAddPostModalOpen] = useState(false);

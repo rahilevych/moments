@@ -1,14 +1,14 @@
-import { useContext, useState } from 'react';
-import { UserContext } from '../context/UserContext';
+import { useState } from 'react';
 import Modal from './Modal';
 import DetailedPost from './DetailedPost';
 import { PostType } from '../types/PostType';
+import { useUser } from '../hooks/useUser';
 
 interface Props {
   posts: PostType[];
 }
 const UserPosts = (props: Props) => {
-  const { user } = useContext(UserContext);
+  const { user } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   if (!user) {

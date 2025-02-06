@@ -1,16 +1,18 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import ProfileHeader from '../components/ProfileHeader';
 import UserPosts from '../components/UserPosts';
-import { PostContext } from '../context/PostContext';
+
 import { useParams } from 'react-router-dom';
-import { UserContext } from '../context/UserContext';
+
 import { getUserPostsByUserId } from '../services/postServices';
 import { getUserById } from '../services/userService';
+import { useUser } from '../hooks/useUser';
+import { usePost } from '../hooks/usePost';
 
 const UserPage = () => {
   const { id } = useParams<{ id: string }>();
-  const { setProfileUser } = useContext(UserContext);
-  const { posts, setPosts } = useContext(PostContext);
+  const { setProfileUser } = useUser();
+  const { posts, setPosts } = usePost();
 
   const init = async () => {
     if (id) {

@@ -1,13 +1,14 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import PostComponent from '../components/PostComponent';
 import { NavLink } from 'react-router-dom';
-import { UserContext } from '../context/UserContext';
-import { PostContext } from '../context/PostContext';
+
 import { getPosts } from '../services/postServices';
+import { useUser } from '../hooks/useUser';
+import { usePost } from '../hooks/usePost';
 
 const Home = () => {
-  const { user } = useContext(UserContext);
-  const { posts, setPosts } = useContext(PostContext);
+  const { user } = useUser();
+  const { posts, setPosts } = usePost();
 
   const init = async () => {
     setPosts(await getPosts());

@@ -1,10 +1,10 @@
-import { useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { PostType } from '../types/PostType';
 import { toggleLikePost } from '../services/postServices';
 import { ChatCircle, Heart } from '@phosphor-icons/react';
-import { PostContext } from '../context/PostContext';
 import { timeAgo } from '../utils/timeAgo';
-import { UserContext } from '../context/UserContext';
+import { useUser } from '../hooks/useUser';
+import { usePost } from '../hooks/usePost';
 
 interface Props {
   post: PostType;
@@ -12,8 +12,8 @@ interface Props {
 }
 
 const PostIconsNav = (props: Props) => {
-  const { setPost } = useContext(PostContext);
-  const { user } = useContext(UserContext);
+  const { setPost } = usePost();
+  const { user } = useUser();
   const [liked, setLiked] = useState(false);
 
   useEffect(() => {

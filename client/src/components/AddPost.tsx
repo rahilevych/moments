@@ -1,12 +1,13 @@
-import React, { useContext, useRef, useState } from 'react';
-import { PostContext } from '../context/PostContext';
-import { UserContext } from '../context/UserContext';
+import React, { useRef, useState } from 'react';
+
 import { addPost } from '../services/postServices';
 import { CaretLeft, Images } from '@phosphor-icons/react';
+import { useUser } from '../hooks/useUser';
+import { usePost } from '../hooks/usePost';
 
 const AddPost = () => {
-  const { setCaption, caption } = useContext(PostContext);
-  const { user } = useContext(UserContext);
+  const { setCaption, caption } = usePost();
+  const { user } = useUser();
   const selectedFile = useRef<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [, setIsPostAdded] = useState(false);
