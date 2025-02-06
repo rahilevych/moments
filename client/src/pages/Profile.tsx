@@ -1,5 +1,5 @@
-import React, { useState, useRef, useContext, useEffect } from 'react';
-import { UserContext } from '../context/UserContext';
+import React, { useState, useRef, useEffect } from 'react';
+
 import { UserType } from '../types/UserType';
 import { User as UserImg } from '@phosphor-icons/react';
 import { getUserById, updateUser } from '../services/userService';

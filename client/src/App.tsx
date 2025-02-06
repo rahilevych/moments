@@ -5,16 +5,17 @@ import { Route, Routes } from 'react-router-dom';
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import UserPage from './pages/UserPage';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Profile from './pages/Profile';
-import { UserContext } from './context/UserContext';
+
 import { getUserProfile } from './services/authService';
 import { getUserById } from './services/userService';
+import { useUser } from './hooks/useUser';
 
 function App() {
-  const { setUser } = useContext(UserContext);
+  const { setUser } = useUser();
 
   const setUserProfile = async () => {
     const user = await getUserProfile();
