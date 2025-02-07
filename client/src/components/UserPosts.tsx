@@ -1,32 +1,33 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from './Modal';
 import DetailedPost from './DetailedPost';
-import { PostType } from '../types/PostType';
-import { useUser } from '../hooks/useUser';
 
-interface Props {
-  posts: PostType[];
-}
-const UserPosts = (props: Props) => {
-  const { user } = useUser();
+import { useUser } from '../hooks/useUser';
+import { usePost } from '../hooks/usePost';
+
+const UserPosts = () => {
+  const { user, profileUser } = useUser();
+  const { posts, fetchPosts, setCurrentPost } = usePost();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPost, setSelectedPost] = useState(null);
   if (!user) {
     return null;
   }
   const openModal = (post: any) => {
-    setSelectedPost(post);
+    setCurrentPost(post);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setSelectedPost(null);
+    setCurrentPost(null);
     setIsModalOpen(false);
   };
+  useEffect(() => {
+    profileUser && fetchPosts(profileUser?._id);
+  }, []);
 
   return (
     <div className='post-grid grid grid-cols-3 gap-2 p-4'>
-      {props.posts?.map((post) => (
+      {posts?.map((post) => (
         <div
           key={post._id}
           className='post-item w-full h-48 overflow-hidden cursor-pointer'
@@ -40,7 +41,7 @@ const UserPosts = (props: Props) => {
       ))}
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        {selectedPost && <DetailedPost post={selectedPost} />}
+        <DetailedPost />
       </Modal>
     </div>
   );

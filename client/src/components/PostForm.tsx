@@ -1,16 +1,16 @@
-import React, { useContext } from 'react';
-import { CommentContext } from '../context/CommentContext';
+import React, { useState } from 'react';
 import { addComment } from '../services/commentService';
-import { getPostById } from '../services/postServices';
 import { useUser } from '../hooks/useUser';
 import { usePost } from '../hooks/usePost';
 
-const PostForm = () => {
-  const { post, setPost } = usePost();
+import { PostType } from '../types/PostType';
+interface Props {
+  post: PostType;
+}
+const PostForm: React.FC<Props> = ({ post }) => {
+  const { fetchPost } = usePost();
   const { user } = useUser();
-  const { setComment } = useContext(CommentContext);
-
-  const { setText, text } = useContext(CommentContext);
+  const [text, setText] = useState<string>('');
 
   const handleInputChangeComment = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
@@ -24,8 +24,8 @@ const PostForm = () => {
         formData.append('text', text);
         formData.append('user_id', user._id);
         formData.append('post_id', post._id);
-        setComment(await addComment(formData));
-        setPost(await getPostById(post._id));
+        await addComment(formData);
+        fetchPost(post._id);
         setText('');
       } else {
         console.error('User, post or text is missing');

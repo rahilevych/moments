@@ -1,21 +1,15 @@
 import { useEffect } from 'react';
 import PostComponent from '../components/PostComponent';
 import { NavLink } from 'react-router-dom';
-
-import { getPosts } from '../services/postServices';
 import { useUser } from '../hooks/useUser';
 import { usePost } from '../hooks/usePost';
 
 const Home = () => {
   const { user } = useUser();
-  const { posts, setPosts } = usePost();
-
-  const init = async () => {
-    setPosts(await getPosts());
-  };
+  const { posts, fetchPosts } = usePost();
 
   useEffect(() => {
-    init();
+    user && fetchPosts(user?._id);
   }, []);
 
   return (
