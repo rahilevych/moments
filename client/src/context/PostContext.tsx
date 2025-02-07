@@ -6,18 +6,18 @@ import {
   SetStateAction,
 } from 'react';
 import { PostType } from '../types/PostType';
-import { getPostById } from '../services/postServices';
+import { getPostById, getUserPostsByUserId } from '../services/postServices';
 
 type PostContextType = {
-  post: PostType | null;
+  currentPost: PostType | null;
   posts: PostType[] | null;
-  setPost: Dispatch<SetStateAction<PostType | null>>;
+  setCurrentPost: Dispatch<SetStateAction<PostType | null>>;
   setPosts: Dispatch<SetStateAction<PostType[] | null>>;
   setFile: Dispatch<SetStateAction<React.MutableRefObject<File | null>>>;
   setCaption: Dispatch<SetStateAction<string>>;
   caption: string;
   fetchPost: (id: string) => Promise<void>;
-  fetchPosts: () => Promise<void>;
+  fetchPosts: (id: string) => Promise<void>;
 };
 
 export const PostContext = createContext<PostContextType | undefined>(
@@ -28,7 +28,7 @@ type PostContextProviderProps = {
 };
 
 export const PostContextProvider = ({ children }: PostContextProviderProps) => {
-  const [post, setPost] = useState<PostType | null>(null);
+  const [currentPost, setCurrentPost] = useState<PostType | null>(null);
   const [posts, setPosts] = useState<PostType[] | null>(null);
   const [_, setFile] = useState<React.MutableRefObject<File | null>>({
     current: null,
@@ -37,21 +37,24 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
 
   const fetchPost = async (id: string) => {
     try {
-      setPost(await getPostById(id));
+      const data = await getPostById(id);
+      setCurrentPost(data);
     } catch (error) {}
   };
-  const fetchPosts = async () => {
+  const fetchPosts = async (id: string) => {
     try {
+      const data = await getUserPostsByUserId(id);
+      setPosts(data);
     } catch (error) {}
   };
 
   return (
     <PostContext.Provider
       value={{
-        post,
+        currentPost,
         posts,
         setPosts,
-        setPost,
+        setCurrentPost,
         setFile,
         setCaption,
         caption,

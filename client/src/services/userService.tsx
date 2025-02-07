@@ -50,6 +50,7 @@ export const getUserById = async (id: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log('currentus', response.data);
     return response.data;
   } catch (error) {
     console.error('Error', error);
