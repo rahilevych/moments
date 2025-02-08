@@ -6,7 +6,7 @@ import { usePost } from '../hooks/usePost';
 
 const Home = () => {
   const { user } = useUser();
-  const { posts, fetchPosts, currentPost, setCurrentPost } = usePost();
+  const { posts, fetchPosts } = usePost();
 
   useEffect(() => {
     user && fetchPosts(user?._id);
