@@ -2,11 +2,12 @@ import { PostType } from '../types/PostType';
 import { useState } from 'react';
 import Modal from './Modal';
 import DetailedPost from './DetailedPost';
-import PostIconsNav from './PostIconsNav';
+
 import PostForm from './PostForm';
 import { User } from '@phosphor-icons/react';
 
 import { usePost } from '../hooks/usePost';
+import { PostIconsNav } from './PostIconsNav';
 
 interface Props {
   post: PostType;

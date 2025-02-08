@@ -4,9 +4,11 @@ import {
   useState,
   Dispatch,
   SetStateAction,
+  useEffect,
 } from 'react';
 import { PostType } from '../types/PostType';
 import { getPostById, getUserPostsByUserId } from '../services/postServices';
+import socket from '../services/socketService';
 
 type PostContextType = {
   currentPost: PostType | null;
@@ -16,8 +18,9 @@ type PostContextType = {
   setFile: Dispatch<SetStateAction<React.MutableRefObject<File | null>>>;
   setCaption: Dispatch<SetStateAction<string>>;
   caption: string;
-  fetchPost: (id: string) => Promise<void>;
+  fetchPost: (id: string) => Promise<PostType>;
   fetchPosts: (id: string) => Promise<void>;
+  updatePostLikes: (updatedPost: PostType) => void;
 };
 
 export const PostContext = createContext<PostContextType | undefined>(
@@ -30,6 +33,7 @@ type PostContextProviderProps = {
 export const PostContextProvider = ({ children }: PostContextProviderProps) => {
   const [currentPost, setCurrentPost] = useState<PostType | null>(null);
   const [posts, setPosts] = useState<PostType[] | null>(null);
+
   const [_, setFile] = useState<React.MutableRefObject<File | null>>({
     current: null,
   });
@@ -39,6 +43,7 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
     try {
       const data = await getPostById(id);
       setCurrentPost(data);
+      return data;
     } catch (error) {}
   };
   const fetchPosts = async (id: string) => {
@@ -47,6 +52,27 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
       setPosts(data);
     } catch (error) {}
   };
+  const updatePostLikes = (updatedPost: PostType) => {
+    setPosts((prevPosts) =>
+      prevPosts
+        ? prevPosts.map((p) => (p._id === updatedPost._id ? updatedPost : p))
+        : null
+    );
+
+    if (currentPost?._id === updatedPost._id) {
+      setCurrentPost(updatedPost);
+    }
+  };
+
+  useEffect(() => {
+    socket.on('update_likes', ({ post }) => {
+      updatePostLikes(post);
+    });
+
+    return () => {
+      socket.off('update_likes');
+    };
+  }, [currentPost]);
 
   return (
     <PostContext.Provider
@@ -60,6 +86,7 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
         caption,
         fetchPost,
         fetchPosts,
+        updatePostLikes,
       }}>
       {children}
     </PostContext.Provider>
