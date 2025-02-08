@@ -17,14 +17,17 @@ initWebSocket(server);
 const addMiddlewares = () => {
   app.use(
     cors({
-      origin: ['http://localhost:5175', 'https://instclone-client.vercel.app'],
+      origin: [
+        'http://localhost:5175',
+        'https://instclone-client.onrender.com',
+      ],
       credentials: true,
     })
   );
   app.use((req, res, next) => {
     res.header(
       'Access-Control-Allow-Origin',
-      'https://instclone-client.vercel.app'
+      'https://instclone-client.onrender.com'
     );
     res.header(
       'Access-Control-Allow-Methods',

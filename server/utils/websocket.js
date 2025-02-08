@@ -8,7 +8,10 @@ let io;
 export const initWebSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: ['http://localhost:5175', 'https://instclone-client.vercel.app'],
+      origin: [
+        'http://localhost:5175',
+        'https://instclone-client.onrender.com',
+      ],
       methods: ['GET', 'POST'],
       credentials: true,
     },
