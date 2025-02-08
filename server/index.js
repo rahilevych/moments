@@ -48,9 +48,9 @@ const addRoutes = () => {
 };
 
 const startServer = () => {
-  const PORT = process.env.PORT || 5001;
-  server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT}`);
+  const port = process.env.PORT || 5001;
+  server.listen(port, () => {
+    console.log('Server is running in port ', port);
   });
 };
 
