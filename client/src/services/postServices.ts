@@ -75,27 +75,6 @@ export const getUserPostsByUserId = async (userId: string) => {
   }
 };
 
-export const toggleLikePost = async (postId: string) => {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await axios.post(
-      `${baseUrl}/posts/${postId}/like`,
-      {},
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    if (response.status === 200) {
-      return response.data;
-    }
-  } catch (error) {
-    console.error('Error toggling like on post:', error);
-  }
-};
-
 export const toggleSavePost = async (
   postId: string,
   userId: string,
