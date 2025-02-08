@@ -1,7 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import { PORT } from './config/serverConfig.js';
-
 import mongoose from 'mongoose';
 import mongoDBURL from './config/dbConfig.js';
 import postsRouter from './routes/postsRoutes.js';
@@ -10,11 +8,14 @@ import passport from 'passport';
 import passportStrategy from '../server/utils/passportConfig.js';
 import { cloudinaryConfig } from './config/cloudinary.js';
 import usersRouter from './routes/usersRoutes.js';
-
+import { initWebSocket } from './utils/websocket.js';
+import http from 'http';
 const app = express();
-const addMiddlewares = () => {
-  app.use(cors({}));
+const server = http.createServer(app);
+initWebSocket(server);
 
+const addMiddlewares = () => {
+  app.use(cors({ origin: '*' }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   cloudinaryConfig();
@@ -30,29 +31,20 @@ const addRoutes = () => {
 
 const startServer = () => {
   const port = process.env.PORT || 5001;
-
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.log('Server is running in port ', port);
   });
 };
 
 const connectMongoDB = async () => {
-  await mongoose.connect(mongoDBURL);
-  console.log('Mongo DB is running');
+  try {
+    await mongoose.connect(mongoDBURL);
+    console.log('MongoDB is running');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
+  }
 };
-// const connectMongoDb = () => {
-//   mongoose
-//     .connect(mongoDBURL)
-//     .then(() => {
-//       console.log(`App is listerning to port:${PORT}`);
-//       app.listen(PORT, () => {
-//         console.log(`App is listerning to port: ${PORT}`);
-//       });
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
-// };
 
 (async function () {
   addMiddlewares();
