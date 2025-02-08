@@ -1,32 +1,40 @@
-import { useState, useEffect } from 'react';
-import { PostType } from '../types/PostType';
-import { toggleLikePost } from '../services/postServices';
 import { ChatCircle, Heart } from '@phosphor-icons/react';
-import { timeAgo } from '../utils/timeAgo';
-import { useUser } from '../hooks/useUser';
+import socket from '../services/socketService';
+import { useEffect, useState } from 'react';
 import { usePost } from '../hooks/usePost';
+import { useUser } from '../hooks/useUser';
+import { PostType } from '../types/PostType';
+import { timeAgo } from '../utils/timeAgo';
 
 interface Props {
   post: PostType;
-  fetchPost: any;
 }
-
-const PostIconsNav = (props: Props) => {
-  const { setPost } = usePost();
+export const PostIconsNav: React.FC<Props> = ({ post }) => {
+  const { updatePostLikes, fetchPost } = usePost();
   const { user } = useUser();
-  const [liked, setLiked] = useState(false);
+  const [localPost, setLocalPost] = useState<PostType>(post);
+  const liked = localPost.likes.includes(user?._id!);
+
+  const handleLikeClick = () => {
+    socket.emit('like', localPost._id);
+  };
 
   useEffect(() => {
-    user && setLiked(props.post.likes.includes(user?._id));
-  }, [props.post.likes]);
+    const handleUpdateLikes = ({ post: updatedPost }: { post: PostType }) => {
+      if (updatedPost._id === localPost._id) {
+        updatePostLikes(updatedPost);
 
-  const handleLikeClick = async () => {
-    try {
-      props.post && setPost(await toggleLikePost(props.post._id));
-      setLiked(!liked);
-      await props.fetchPost();
-    } catch (error) {}
-  };
+        fetchPost(updatedPost._id);
+        setLocalPost(updatedPost);
+      }
+    };
+
+    socket.on('update_likes', handleUpdateLikes);
+
+    return () => {
+      socket.off('update_likes', handleUpdateLikes);
+    };
+  }, [localPost._id, updatePostLikes]);
 
   return (
     <div className='flex flex-col'>
@@ -35,22 +43,20 @@ const PostIconsNav = (props: Props) => {
           <Heart
             size={24}
             onClick={handleLikeClick}
-            weight={liked ? 'fill' : 'regular'}
-            color={liked ? 'red' : 'black'}
+            weight={liked == true ? 'fill' : 'regular'}
+            color={liked == true ? 'red' : 'black'}
           />
           <ChatCircle size={24} />
         </div>
       </div>
       <div className='post__likes px-4'>
-        {props.post.likes.length > 0
-          ? `${props.post.likes.length} likes`
+        {localPost.likes.length > 0
+          ? `${localPost.likes.length} likes`
           : '0 likes'}
       </div>
       <div className='px-4 text-xs text-gray-400'>
-        {timeAgo(props.post?.createdAt || new Date())}
+        {timeAgo(localPost?.createdAt || new Date())}
       </div>
     </div>
   );
 };
-
-export default PostIconsNav;

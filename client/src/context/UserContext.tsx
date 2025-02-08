@@ -38,7 +38,9 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
   const fetchUser = async (id: string) => {
     try {
       const userData = await getUserById(id);
-      if (userData) setUser(userData);
+      if (userData) {
+        setUser(userData);
+      }
     } catch (error) {
       console.error('Cannot find a user, try again');
     }

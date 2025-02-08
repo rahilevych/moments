@@ -2,6 +2,7 @@ import { Post } from '../models/PostModel.js';
 import { User } from '../models/UserModel.js';
 import { imageUpload } from '../utils/imageManagement.js';
 import { removeTempFile } from '../utils/tempFileManagment.js';
+import { getIo } from '../utils/websocket.js';
 
 export const addPost = async (request, response) => {
   console.log(request.file);
@@ -75,26 +76,27 @@ export const toggleSavePostById = async (request, response) => {
   }
 };
 
-export const toggleLikePostById = async (request, response) => {
+export const toggleLikePostById = async (postId, userId) => {
   try {
-    const { id } = request.params;
-    const userId = request.user._id;
-    console.log('id>>>', id);
-    console.log('userId>>>', userId);
-    const post = await Post.findById(id);
+    const post = await Post.findById(postId);
     if (!post) {
-      return response.status(404).json({ message: 'Post not found' });
+      throw new Error('Post not found');
     }
-    const index = post.likes.indexOf(userId);
-    if (index === -1) {
-      post.likes.push(userId);
+
+    const likeIndex = post.likes.indexOf(userId);
+    if (likeIndex !== -1) {
+      post.likes.splice(likeIndex, 1);
     } else {
-      post.likes.splice(index, 1);
+      post.likes.push(userId);
     }
+
     await post.save();
-    return response.status(200).json(post);
+    const io = getIo();
+    io.emit('update_likes', { post });
+
+    return post;
   } catch (error) {
-    response.status(500).send({ message: error.message });
+    throw new Error(error.message);
   }
 };
 

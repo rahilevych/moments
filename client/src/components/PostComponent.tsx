@@ -1,11 +1,13 @@
 import { PostType } from '../types/PostType';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Modal from './Modal';
 import DetailedPost from './DetailedPost';
-import PostIconsNav from './PostIconsNav';
+
 import PostForm from './PostForm';
 import { User } from '@phosphor-icons/react';
+
 import { usePost } from '../hooks/usePost';
+import { PostIconsNav } from './PostIconsNav';
 
 interface Props {
   post: PostType;
@@ -13,15 +15,16 @@ interface Props {
 
 const PostComponent: React.FC<Props> = ({ post }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { fetchPost } = usePost();
-  const toggleOpenModal = () => {
-    setIsModalOpen(!isModalOpen);
-    console.log(isModalOpen);
-  };
+  const { setCurrentPost } = usePost();
 
-  useEffect(() => {
-    fetchPost(post._id);
-  }, []);
+  const openModal = (post: any) => {
+    setCurrentPost(post);
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setCurrentPost(null);
+    setIsModalOpen(false);
+  };
 
   return (
     <div className='post flex flex-col w-full sm:w-3/4 md:w-2/3 lg:w-2/5 h-fit border border-gray-200 rounded-lg my-4 bg-white'>
@@ -52,25 +55,25 @@ const PostComponent: React.FC<Props> = ({ post }) => {
           alt='post'
           className='w-full h-full object-cover'
         />
-        <Modal isOpen={isModalOpen} onClose={toggleOpenModal}>
-          {<DetailedPost post={post} />}
+        <Modal isOpen={isModalOpen} onClose={closeModal}>
+          {<DetailedPost />}
         </Modal>
       </div>
 
-      <PostIconsNav post={post} fetchPost={fetchPost} />
+      <PostIconsNav post={post} />
       <div className='post__description px-4 py-2 text-sm sm:text-base'>
         {post.caption}
       </div>
       <div
         className='post__comments px-4 py-2 text-xs sm:text-sm text-gray-400 cursor-pointer'
-        onClick={toggleOpenModal}>
+        onClick={() => openModal(post)}>
         {post.comments.length > 0
           ? `View all ${post.comments.length} comments`
           : 'Add first comment'}
       </div>
 
       <div className='flex flex-row w-full px-4 pb-4'>
-        <PostForm />
+        <PostForm post={post} />
       </div>
     </div>
   );
