@@ -10,6 +10,7 @@ export const initWebSocket = (server) => {
     cors: {
       origin: [
         'http://localhost:5175',
+        'http://localhost:3000',
         'https://instclone-client.onrender.com',
       ],
       methods: ['GET', 'POST'],
