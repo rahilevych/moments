@@ -1,6 +1,5 @@
 import { ChatCircle, Heart } from '@phosphor-icons/react';
 import socket from '../services/socketService';
-import { useEffect, useState } from 'react';
 import { usePost } from '../hooks/usePost';
 import { useUser } from '../hooks/useUser';
 import { PostType } from '../types/PostType';
@@ -10,31 +9,15 @@ interface Props {
   post: PostType;
 }
 export const PostIconsNav: React.FC<Props> = ({ post }) => {
-  const { updatePostLikes, fetchPost } = usePost();
+  const { fetchPost } = usePost();
   const { user } = useUser();
-  const [localPost, setLocalPost] = useState<PostType>(post);
-  const liked = localPost.likes.includes(user?._id!);
 
-  const handleLikeClick = () => {
-    socket.emit('like', localPost._id);
+  const liked = post.likes.includes(user?._id!);
+
+  const handleLikeClick = async () => {
+    socket.emit('like', post._id);
+    post && (await fetchPost(post._id));
   };
-
-  useEffect(() => {
-    const handleUpdateLikes = ({ post: updatedPost }: { post: PostType }) => {
-      if (updatedPost._id === localPost._id) {
-        updatePostLikes(updatedPost);
-
-        fetchPost(updatedPost._id);
-        setLocalPost(updatedPost);
-      }
-    };
-
-    socket.on('update_likes', handleUpdateLikes);
-
-    return () => {
-      socket.off('update_likes', handleUpdateLikes);
-    };
-  }, [localPost._id, updatePostLikes]);
 
   return (
     <div className='flex flex-col'>
@@ -50,12 +33,10 @@ export const PostIconsNav: React.FC<Props> = ({ post }) => {
         </div>
       </div>
       <div className='post__likes px-4'>
-        {localPost.likes.length > 0
-          ? `${localPost.likes.length} likes`
-          : '0 likes'}
+        {post.likes.length > 0 ? `${post.likes.length} likes` : '0 likes'}
       </div>
       <div className='px-4 text-xs text-gray-400'>
-        {timeAgo(localPost?.createdAt || new Date())}
+        {timeAgo(post?.createdAt || new Date())}
       </div>
     </div>
   );

@@ -1,8 +1,9 @@
 import { io, Socket } from 'socket.io-client';
 import { getToken } from '../utils/tokenServices';
 import { PostType } from '../types/PostType';
+import { baseUrl } from '../utils/baseUrl';
 
-const SOCKET_URL = 'http://localhost:5001';
+const SOCKET_URL = baseUrl;
 
 interface ServerToClientEvents {
   update_likes: (data: { post: PostType }) => void;

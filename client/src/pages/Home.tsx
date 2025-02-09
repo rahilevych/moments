@@ -1,15 +1,19 @@
 import { useEffect } from 'react';
 import PostComponent from '../components/PostComponent';
-import { NavLink } from 'react-router-dom';
-import { useUser } from '../hooks/useUser';
+
 import { usePost } from '../hooks/usePost';
 
-const Home = () => {
-  const { user } = useUser();
-  const { posts, fetchPosts } = usePost();
+import { getPosts } from '../services/postServices';
 
+const Home = () => {
+  const { posts, setPosts } = usePost();
+
+  const fetchHome = async () => {
+    const homePosts = await getPosts();
+    setPosts(homePosts);
+  };
   useEffect(() => {
-    user && fetchPosts(user?._id);
+    fetchHome();
   }, []);
 
   return (
@@ -20,19 +24,8 @@ const Home = () => {
       </div>
 
       <div className=' flex flex-col items-center w-full bg-white justify-center'>
-        {user?.following?.length
-          ? user.following
-              .flatMap((followedUser) => followedUser.posts || [])
-              .map((post) => <PostComponent post={post} key={post._id} />)
-          : posts &&
-            posts.map((post) => (
-              <NavLink
-                key={post._id}
-                to={`../${user?._id}/post/${post._id}`}
-                className='w-full flex items-start justify-center'>
-                <PostComponent post={post} />
-              </NavLink>
-            ))}
+        {posts &&
+          posts.map((post, index) => <PostComponent post={post} key={index} />)}
       </div>
     </div>
   );

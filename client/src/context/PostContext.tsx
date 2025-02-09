@@ -52,16 +52,23 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
       setPosts(data);
     } catch (error) {}
   };
+
   const updatePostLikes = (updatedPost: PostType) => {
     setPosts((prevPosts) =>
       prevPosts
-        ? prevPosts.map((p) => (p._id === updatedPost._id ? updatedPost : p))
+        ? [
+            ...prevPosts.map((p) =>
+              p._id === updatedPost._id ? { ...p, likes: updatedPost.likes } : p
+            ),
+          ]
         : null
     );
 
-    if (currentPost?._id === updatedPost._id) {
-      setCurrentPost(updatedPost);
-    }
+    setCurrentPost((prev) =>
+      prev && prev._id === updatedPost._id
+        ? { ...prev, likes: updatedPost.likes }
+        : prev
+    );
   };
 
   useEffect(() => {

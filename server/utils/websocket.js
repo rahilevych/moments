@@ -8,7 +8,11 @@ let io;
 export const initWebSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: 'http://localhost:5175',
+      origin: [
+        'http://localhost:5175',
+        'http://localhost:3000',
+        'https://instclone-client.onrender.com',
+      ],
       methods: ['GET', 'POST'],
       credentials: true,
     },
