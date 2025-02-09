@@ -18,7 +18,7 @@ const addMiddlewares = () => {
   app.use(
     cors({
       origin: [
-        'http://localhost:5175',
+        'http://localhost:3000',
         'https://instclone-client.onrender.com',
       ],
       credentials: true,
@@ -28,6 +28,7 @@ const addMiddlewares = () => {
     res.header(
       'Access-Control-Allow-Origin',
       'https://instclone-client.onrender.com'
+      // 'http://localhost:3000'
     );
     res.header(
       'Access-Control-Allow-Methods',
