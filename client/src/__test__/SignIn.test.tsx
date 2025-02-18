@@ -99,4 +99,29 @@ describe('SignIn Component', () => {
       });
     });
   });
+
+  it('should show an error message when sign in fails', async () => {
+    const user = userEvent.setup();
+
+    (useUser as jest.Mock).mockReturnValue({
+      user: null,
+      fetchUser: jest.fn(),
+    });
+
+    (signIn as jest.Mock).mockRejectedValue(new Error('Incorrect password'));
+
+    render(<SignIn />, { wrapper: MemoryRouter });
+
+    const usernameInput = screen.getByLabelText(/username/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const button = screen.getByRole('button', { name: /sign in/i });
+
+    await user.type(usernameInput, 'wronguser');
+    await user.type(passwordInput, 'wrongpassword');
+    await user.click(button);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Incorrect password/i)).toBeInTheDocument();
+    });
+  });
 });
