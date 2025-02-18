@@ -42,27 +42,20 @@ export const signUp = async (
   }
 };
 
-export const signIn = async (
-  username: string,
-  password: string,
-  user: UserType | null,
-  navigate: NavigateFunction
-) => {
+export const signIn = async (username: string, password: string) => {
   try {
     const response = await axios.post(`${baseUrl}/users/login`, {
       username,
       password,
     });
 
-    if (response.status === 200) {
-      const { token } = response.data;
-      localStorage.setItem('token', token);
-      if (user) {
-        navigate(`/user/home`);
-      }
+    const { token } = response.data;
+    localStorage.setItem('token', token);
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data?.message || 'Something went wrong');
     }
-  } catch (error) {
-    console.error('Error during signing in', error);
+    throw new Error('Network error');
   }
 };
 

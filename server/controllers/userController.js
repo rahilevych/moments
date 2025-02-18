@@ -4,6 +4,7 @@ import { encryptPass } from '../utils/passServices.js';
 import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import { secret } from '../config/token.js';
+import mongoose from 'mongoose';
 
 export const registration = async (request, response) => {
   try {
@@ -11,7 +12,7 @@ export const registration = async (request, response) => {
     if (!errors.isEmpty()) {
       return response
         .status(400)
-        .json({ message: 'Error during registration', errors });
+        .json({ message: 'Validation error', errors: errors.array() });
     }
 
     const { email, username, fullname, password } = request.body;
@@ -48,17 +49,24 @@ const generateAccessToken = (id) => {
 };
 
 export const login = async (request, response) => {
-  const { username, password } = request.body;
-  const user = await User.findOne({ username });
-  if (!user) {
-    return response.status(400).json({ massage: `user ${username} not found` });
+  try {
+    const { username, password } = request.body;
+    const user = await User.findOne({ username });
+    if (!user) {
+      return response.status(404).json({ message: `Incorrect username` });
+    }
+    const validPassword = bcrypt.compareSync(password, user.password);
+    if (!validPassword) {
+      return response.status(401).json({ message: `Incorrect password` });
+    }
+    const token = generateAccessToken(user._id);
+    return response.json({ token });
+  } catch (error) {
+    console.error('Login error:', error);
+    return response
+      .status(500)
+      .json({ message: error.message || 'Internal server error' });
   }
-  const validPassword = bcrypt.compareSync(password, user.password);
-  if (!validPassword) {
-    return response.status(400).json({ massage: `Incorrect password` });
-  }
-  const token = generateAccessToken(user._id);
-  return response.json({ token });
 };
 
 export const getUserProfile = async (request, response) => {
@@ -98,21 +106,27 @@ export const updateUser = async (request, response) => {
       (key) => updateData[key] === undefined && delete updateData[key]
     );
 
-    console.log('Data to update:', updateData);
+    if (Object.keys(updateData).length === 0) {
+      return response.status(400).json({ message: 'No data to update' });
+    }
 
     const updatedUser = await User.findByIdAndUpdate(id, updateData, {
       new: true,
     });
-    console.log('updated user: ' + updatedUser);
+    if (!updatedUser) {
+      return response.status(404).json({ message: 'User not found' });
+    }
 
     return response
       .status(200)
       .json({ message: 'Profile was updated', user: updatedUser });
   } catch (error) {
     console.error('Error updating user:', error);
-    return response.status(500).json({ message: error.message });
+    return response
+      .status(500)
+      .json({ message: error.message || 'Server error' });
   } finally {
-    if (request.file) {
+    if (request.file && typeof removeTempFile === 'function') {
       removeTempFile(request.file);
     }
   }
@@ -132,44 +146,34 @@ export const toggleSubscribeBtn = async (request, response) => {
     const { otherUserId } = request.params;
     const userId = request.user._id;
 
+    if (!mongoose.Types.ObjectId.isValid(otherUserId)) {
+      return response.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    if (userId.toString() === otherUserId) {
+      return response
+        .status(400)
+        .json({ message: 'You cannot subscribe to yourself' });
+    }
+
     const user = await User.findById(userId);
     const otherUser = await User.findById(otherUserId);
-
-    console.log('user from  back', user);
-    console.log('user2 from  back', otherUser);
 
     if (!user || !otherUser) {
       return response.status(404).json({ message: 'User not found' });
     }
 
     const isFollowing = user.following.includes(otherUserId);
-    const isFollower = otherUser.followers.includes(userId);
-
-    if (isFollowing && isFollower) {
+    if (isFollowing) {
       user.following = user.following.filter(
         (id) => id.toString() !== otherUserId
       );
       otherUser.followers = otherUser.followers.filter(
         (id) => id.toString() !== userId
       );
-    } else if (!isFollowing && !isFollower) {
+    } else {
       user.following.push(otherUserId);
       otherUser.followers.push(userId);
-    } else {
-      if (isFollowing) {
-        user.following = user.following.filter(
-          (id) => id.toString() !== otherUserId
-        );
-      } else {
-        user.following.push(otherUserId);
-      }
-      if (isFollower) {
-        otherUser.followers = otherUser.followers.filter(
-          (id) => id.toString() !== userId
-        );
-      } else {
-        otherUser.followers.push(userId);
-      }
     }
 
     await user.save();
@@ -179,7 +183,9 @@ export const toggleSubscribeBtn = async (request, response) => {
     return response.status(200).json({ data: users });
   } catch (error) {
     console.error('Error by subscribing:', error.message);
-    return response.status(500).json({ message: 'Server error' });
+    return response
+      .status(500)
+      .json({ message: error.message || 'Server error' });
   }
 };
 
