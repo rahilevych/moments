@@ -24,7 +24,9 @@ const UserPage = () => {
   }, [id]);
 
   return (
-    <div className='profile-page flex flex-col items-center px-4 sm:px-8 py-4 sm:py-8'>
+    <div
+      data-testid='user page'
+      className='profile-page flex flex-col items-center px-4 sm:px-8 py-4 sm:py-8'>
       <ProfileHeader />
       <div className='w-full max-w-4xl'>{posts && <UserPosts />}</div>
     </div>

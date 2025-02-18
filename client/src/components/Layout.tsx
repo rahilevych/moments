@@ -3,7 +3,7 @@ import NavComponent from './NavComponent';
 
 const Layout = () => {
   return (
-    <div className='flex flex-col lg:flex-row'>
+    <div data-testid='layout' className='flex flex-col lg:flex-row'>
       <div className='w-full lg:w-64 bg-white h-auto lg:h-screen shadow-md lg:fixed'>
         <NavComponent />
       </div>
