@@ -9,6 +9,7 @@ const SignIn = () => {
   const { user, fetchUser } = useUser();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,10 +30,20 @@ const SignIn = () => {
     }
   };
   const login = async () => {
-    await signIn(username, password, user, navigate);
-    const profile = await getUserProfile();
-    fetchUser(profile._id);
-    console.log(user);
+    try {
+      await signIn(username, password);
+      const profile = await getUserProfile();
+      if (!profile || !profile._id) {
+        console.error('Error:profile not found');
+        return;
+      }
+      fetchUser(profile._id);
+      navigate('/user/home', { replace: true });
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      }
+    }
   };
 
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
@@ -41,7 +52,9 @@ const SignIn = () => {
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-gray-100'>
+    <div
+      data-testid='sign-in'
+      className='min-h-screen flex items-center justify-center bg-gray-100'>
       <div className='w-full max-w-md bg-white p-8 rounded-lg shadow-md'>
         <h2 className='mb-8 text-2xl font-bold text-center text-gray-900'>
           Sign in to your account
@@ -49,7 +62,7 @@ const SignIn = () => {
         <form className='space-y-6' onSubmit={submitForm} method='post'>
           <div>
             <label
-              htmlFor='email'
+              htmlFor='username'
               className='block text-sm font-medium text-gray-900'>
               Username
             </label>
@@ -99,6 +112,7 @@ const SignIn = () => {
               className='flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'>
               Sign in
             </button>
+            {error && <p className='text-red-500 text-sm'>{error}</p>}
           </div>
         </form>
 

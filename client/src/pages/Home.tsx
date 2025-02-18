@@ -17,7 +17,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className=' flex flex-col items-center w-full'>
+    <div data-testid='home' className=' flex flex-col items-center w-full'>
       <div className='flex flex-col items-start w-full p-4'>
         <div className='text-lg font-medium mb-2'>Recommendations for you</div>
         <hr className='border-t border-gray-300 w-full mb-4' />
