@@ -21,6 +21,15 @@ jest.mock('../services/authService', () => ({
   signIn: jest.fn(),
 }));
 
+function initInputs() {
+  return {
+    usernameInput: screen.getByLabelText(/username/i),
+    passwordInput: screen.getByLabelText(/password/i),
+    button: screen.getByRole('button', { name: /sign in/i }),
+    user: userEvent.setup(),
+  };
+}
+
 describe('SignIn Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -48,8 +57,6 @@ describe('SignIn Component', () => {
   });
 
   it('should allow a user to sign in and navigate to home', async () => {
-    const user = userEvent.setup();
-
     (signIn as jest.Mock).mockResolvedValue({});
 
     (getUserProfile as jest.Mock).mockResolvedValue({
@@ -60,9 +67,7 @@ describe('SignIn Component', () => {
 
     render(<SignIn />, { wrapper: MemoryRouter });
 
-    const usernameInput = screen.getByLabelText(/username/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const button = screen.getByRole('button', { name: /sign in/i });
+    const { usernameInput, passwordInput, button, user } = initInputs();
 
     await user.type(usernameInput, 'testuser');
     await user.type(passwordInput, 'password123');
@@ -78,15 +83,11 @@ describe('SignIn Component', () => {
   });
 
   it('should show an error message when sign in fails', async () => {
-    const user = userEvent.setup();
-
     (signIn as jest.Mock).mockRejectedValue(new Error('Incorrect password'));
 
     render(<SignIn />, { wrapper: MemoryRouter });
 
-    const usernameInput = screen.getByLabelText(/username/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const button = screen.getByRole('button', { name: /sign in/i });
+    const { usernameInput, passwordInput, button, user } = initInputs();
 
     await user.type(usernameInput, 'wronguser');
     await user.type(passwordInput, 'wrongpassword');
@@ -95,5 +96,26 @@ describe('SignIn Component', () => {
     await waitFor(() => {
       expect(screen.getByText(/Incorrect password/i)).toBeInTheDocument();
     });
+  });
+
+  it('should show validation error if username is invalid', async () => {
+    render(<SignIn />, { wrapper: MemoryRouter });
+    const { usernameInput, user } = initInputs();
+    user.type(usernameInput, 'd');
+    user.tab();
+    expect(
+      await screen.findByText(/Username must be 3-20 characters/i)
+    ).toBeInTheDocument();
+  });
+  it('should show validation error if password is invalid', async () => {
+    render(<SignIn />, { wrapper: MemoryRouter });
+    const { passwordInput, user } = initInputs();
+
+    user.type(passwordInput, '123');
+    user.tab();
+
+    expect(
+      await screen.findByText(/Password must be at least 6 characters/i)
+    ).toBeInTheDocument();
   });
 });
