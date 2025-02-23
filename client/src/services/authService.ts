@@ -8,8 +8,7 @@ export const signUp = async (
   email: string,
   username: string,
   password: string,
-  fullname: string,
-  navigate: NavigateFunction
+  fullname: string
 ) => {
   try {
     const response = await axios.post(
@@ -27,18 +26,17 @@ export const signUp = async (
       }
     );
 
-    if (response.status === 201) {
-      navigate('/login');
-    } else {
-      console.error('Unexpected response status:', response.status);
+    return { success: true };
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      const message = error.response.data.message || 'Registration failed';
+      return {
+        success: false,
+        field: message.includes('email') ? 'email' : 'username',
+        message,
+      };
     }
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error('Axios error with data:', error.response?.data);
-      console.error('Axios error :', error.message);
-    } else {
-      console.error('Error by signing up:', error);
-    }
+    return { success: false, message: 'Network error' };
   }
 };
 
