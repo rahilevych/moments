@@ -18,11 +18,25 @@ export const registration = async (request, response) => {
     const { email, username, fullname, password } = request.body;
     console.log('Request Body:', request.body);
 
-    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
-    if (existingUser) {
+    const existingEmailUser = await User.findOne({ email });
+    const existingUsernameUser = await User.findOne({ username });
+
+    if (existingEmailUser) {
       return response
         .status(400)
-        .json({ message: 'User with this email or username already exists' });
+        .json({
+          field: 'email',
+          message: 'User with this email already exists',
+        });
+    }
+
+    if (existingUsernameUser) {
+      return response
+        .status(400)
+        .json({
+          field: 'username',
+          message: 'User with this username already exists',
+        });
     }
 
     const hashedPass = await encryptPass(password);
