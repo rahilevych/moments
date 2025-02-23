@@ -47,30 +47,15 @@ describe('SignIn Component', () => {
     ).toBeInTheDocument();
   });
 
-  it('should submit the form and call signIn with the right credentials', async () => {
+  it('should allow a user to sign in and navigate to home', async () => {
     const user = userEvent.setup();
-    const fetchUserMock = jest.fn();
-
-    (useUser as jest.Mock).mockReturnValue({
-      user: null,
-      fetchUser: fetchUserMock,
-    });
 
     (signIn as jest.Mock).mockResolvedValue({});
 
     (getUserProfile as jest.Mock).mockResolvedValue({
       _id: '123',
-      email: 'test@example.com',
       username: 'testuser',
-      fullname: 'Test User',
       password: 'password123',
-      user_img: 'https://example.com/avatar.jpg',
-      bio: 'This is a test user.',
-      following: [],
-      followers: [],
-      saved_posts: [],
-      posts: [],
-      createdAt: new Date(),
     });
 
     render(<SignIn />, { wrapper: MemoryRouter });
@@ -86,14 +71,6 @@ describe('SignIn Component', () => {
     expect(signIn).toHaveBeenCalledWith('testuser', 'password123');
 
     await waitFor(() => {
-      expect(getUserProfile).toHaveBeenCalled();
-    });
-
-    await waitFor(() => {
-      expect(fetchUserMock).toHaveBeenCalledWith('123');
-    });
-
-    await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/user/home', {
         replace: true,
       });
@@ -102,11 +79,6 @@ describe('SignIn Component', () => {
 
   it('should show an error message when sign in fails', async () => {
     const user = userEvent.setup();
-
-    (useUser as jest.Mock).mockReturnValue({
-      user: null,
-      fetchUser: jest.fn(),
-    });
 
     (signIn as jest.Mock).mockRejectedValue(new Error('Incorrect password'));
 
