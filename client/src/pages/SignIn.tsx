@@ -1,34 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
 import { getUserProfile, signIn } from '../services/authService';
-
 import { useUser } from '../hooks/useUser';
+import { validatePassword, validateUsername } from '../utils/validation';
 
 const SignIn = () => {
   const { user, fetchUser } = useUser();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState({
+    username: '',
+    password: '',
+  });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user) {
-      navigate('/user/home', { replace: true });
-    }
-  }, [user, navigate]);
-  const handleInputChangeUsername = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = e.target.value;
-    setUsername(value);
+  const handleInputChange = (field: 'username' | 'password', value: string) => {
+    if (field == 'username') setUsername(value);
+
+    if (field == 'password') setPassword(value);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [field]:
+        field === 'username'
+          ? validateUsername(value)
+          : validatePassword(value),
+    }));
   };
 
-  const handleInputChangePass = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value) {
-      setPassword(e.target.value);
-    }
-  };
   const login = async () => {
     try {
       await signIn(username, password);
@@ -48,8 +47,21 @@ const SignIn = () => {
 
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const usernameError = validateUsername(username);
+
+    const passwordError = validatePassword(password);
+    if (usernameError || passwordError) {
+      return;
+    }
     login();
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate('/user/home', { replace: true });
+    }
+  }, [user, navigate]);
 
   return (
     <div
@@ -68,13 +80,18 @@ const SignIn = () => {
             </label>
             <div className='mt-2'>
               <input
-                onChange={handleInputChangeUsername}
+                onChange={(e) => handleInputChange('username', e.target.value)}
                 id='username'
-                name='username'
-                type='username'
+                type='text'
+                autoComplete='username'
                 required
-                className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6'
+                className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ${
+                  errors.username ? 'ring-red-500' : 'ring-gray-300'
+                } placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6`}
               />
+              {errors.username && (
+                <p className='text-red-500 text-sm mt-1'>{errors.username}</p>
+              )}
             </div>
           </div>
 
@@ -95,14 +112,18 @@ const SignIn = () => {
             </div>
             <div className='mt-2'>
               <input
-                onChange={handleInputChangePass}
+                onChange={(e) => handleInputChange('password', e.target.value)}
                 id='password'
-                name='password'
                 type='password'
-                autoComplete='current-password'
+                autoComplete='new-password'
                 required
-                className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6'
+                className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ${
+                  errors.password ? 'ring-red-500' : 'ring-gray-300'
+                } placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6`}
               />
+              {errors.password && (
+                <p className='text-red-500 text-sm mt-1'>{errors.password}</p>
+              )}
             </div>
           </div>
 
