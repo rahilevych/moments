@@ -5,27 +5,31 @@ import { UserType } from '../types/UserType';
 export const getAllUsers = async () => {
   try {
     const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
     const response = await axios.get(`${baseUrl}/users`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    if (response.status === 200) {
-      const result = response.data;
-      return result.data;
+    return response.data.users;
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error(
+        `Error fetching users: ${error.response.status} - ${error.response.data?.message}`
+      );
+      throw new Error(error.response.data?.message || 'Failed to fetch users');
     }
-  } catch (error) {
-    console.error('Error fetching users', error);
+    console.error('Network or unexpected error:', error);
+    throw new Error('Network error. Please try again.');
   }
 };
 
 export const toggleSubscribe = async (otherUserId: string, userId: string) => {
   try {
     const token = localStorage.getItem('token');
-    if (!userId) {
-      console.error('User ID is not defined');
-      return;
-    }
+    if (!userId) throw new Error('User ID is not defined');
     const response = await axios.post(
       `${baseUrl}/users/${otherUserId}/subscribe`,
       {},
@@ -36,25 +40,42 @@ export const toggleSubscribe = async (otherUserId: string, userId: string) => {
         },
       }
     );
+
     return response;
-  } catch (error) {
-    console.error('Error by subscribing:', error);
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data.message || 'Server error');
+    }
+    throw new Error('Network error. Please try again.');
   }
 };
 
 export const getUserById = async (id: string) => {
   try {
     const token = localStorage.getItem('token');
+    if (!token) throw new Error('No authentication token found');
+
     const response = await axios.get(`${baseUrl}/users/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
-    console.log('currentus', response.data);
+
+    console.log('Fetched user:', response.data);
     return response.data;
-  } catch (error) {
-    console.error('Error', error);
-    throw error;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      console.error('API error:', {
+        status: error.response?.status,
+        message: error.response?.data?.message || error.message,
+      });
+
+      throw new Error(
+        error.response?.data?.message ||
+          `Request failed with status ${error.response?.status}`
+      );
+    } else {
+      console.error('Unexpected error:', error);
+      throw new Error('An unexpected error occurred');
+    }
   }
 };
 
@@ -64,15 +85,19 @@ export const updateUser = async (user: UserType, formData: FormData) => {
       `${baseUrl}/users/edit/${user._id}`,
       formData,
       {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'multipart/form-data' },
       }
     );
 
-    if (response.status === 200) {
-      return response.data;
+    return response.data.user;
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error(
+        `Error updating user: ${error.response.status} - ${error.response.data?.message}`
+      );
+      throw new Error(error.response.data?.message || 'Failed to update user');
     }
-  } catch (error) {
-    console.error('Error loading user data:', error);
-    throw error;
+    console.error('Network or unexpected error:', error);
+    throw new Error('Network error. Please try again.');
   }
 };
