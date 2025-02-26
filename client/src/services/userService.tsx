@@ -1,35 +1,31 @@
 import axios from 'axios';
 import { baseUrl } from '../utils/baseUrl';
 import { UserType } from '../types/UserType';
+import { handleAxiosError } from '../utils/apiUtils';
 
 export const getAllUsers = async () => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
-      throw new Error('No authentication token found');
+      return { success: false, error: 'No authentication token found' };
     }
     const response = await axios.get(`${baseUrl}/users`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data.users;
+    return { success: true, data: response.data.users };
   } catch (error: any) {
-    if (axios.isAxiosError(error) && error.response) {
-      console.error(
-        `Error fetching users: ${error.response.status} - ${error.response.data?.message}`
-      );
-      throw new Error(error.response.data?.message || 'Failed to fetch users');
-    }
-    console.error('Network or unexpected error:', error);
-    throw new Error('Network error. Please try again.');
+    return handleAxiosError(error, 'Error getting users');
   }
 };
 
 export const toggleSubscribe = async (otherUserId: string, userId: string) => {
   try {
     const token = localStorage.getItem('token');
-    if (!userId) throw new Error('User ID is not defined');
+    if (!userId) {
+      return { success: false, error: 'User ID is not defined' };
+    }
     const response = await axios.post(
       `${baseUrl}/users/${otherUserId}/subscribe`,
       {},
@@ -41,46 +37,35 @@ export const toggleSubscribe = async (otherUserId: string, userId: string) => {
       }
     );
 
-    return response;
+    return { success: true, data: response.data };
   } catch (error: any) {
-    if (error.response) {
-      throw new Error(error.response.data.message || 'Server error');
-    }
-    throw new Error('Network error. Please try again.');
+    return handleAxiosError(error, 'Error by subscribing');
   }
 };
 
 export const getUserById = async (id: string) => {
   try {
     const token = localStorage.getItem('token');
-    if (!token) throw new Error('No authentication token found');
+    if (!token) {
+      return { success: false, error: 'No authentication token found' };
+    }
 
     const response = await axios.get(`${baseUrl}/users/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    console.log('Fetched user:', response.data);
-    return response.data;
+    return { success: true, data: response.data };
   } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      console.error('API error:', {
-        status: error.response?.status,
-        message: error.response?.data?.message || error.message,
-      });
-
-      throw new Error(
-        error.response?.data?.message ||
-          `Request failed with status ${error.response?.status}`
-      );
-    } else {
-      console.error('Unexpected error:', error);
-      throw new Error('An unexpected error occurred');
-    }
+    return handleAxiosError(error, 'Error getting user');
   }
 };
 
 export const updateUser = async (user: UserType, formData: FormData) => {
   try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return { success: false, error: 'No authentication token found' };
+    }
     const response = await axios.put(
       `${baseUrl}/users/edit/${user._id}`,
       formData,
@@ -89,15 +74,8 @@ export const updateUser = async (user: UserType, formData: FormData) => {
       }
     );
 
-    return response.data.user;
+    return { success: true, data: response.data.user };
   } catch (error: any) {
-    if (axios.isAxiosError(error) && error.response) {
-      console.error(
-        `Error updating user: ${error.response.status} - ${error.response.data?.message}`
-      );
-      throw new Error(error.response.data?.message || 'Failed to update user');
-    }
-    console.error('Network or unexpected error:', error);
-    throw new Error('Network error. Please try again.');
+    return handleAxiosError(error, 'Error updating user');
   }
 };
