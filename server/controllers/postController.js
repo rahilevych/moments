@@ -1,6 +1,4 @@
-import { Post } from '../models/PostModel.js';
 import PostService from '../services/postService.js';
-import { getIo } from '../utils/websocket.js';
 
 export const addPost = async (request, response) => {
   try {
@@ -25,7 +23,7 @@ export const getUserPostsByUserId = async (request, response) => {
 export const getAllPosts = async (request, response) => {
   try {
     const result = await PostService.getAllPosts();
-    return response.status(result.status).json(result);
+    return response.status(result.status).json(result.data);
   } catch (error) {
     return response.status(500).json({ message: 'Internal server error' });
   }
@@ -69,32 +67,34 @@ export const getPostById = async (request, response) => {
 //   }
 // };
 
-export const toggleLikePostById = async (postId, userId) => {
-  try {
-    const post = await Post.findById(postId);
-    if (!post) {
-      throw new Error('Post not found');
-    }
-    if (!userId) {
-      throw new Error('Unauthorized: userId is missing');
-    }
+// export const toggleLikePostById = async (postId, userId) => {
+//   try {
+//     const post = await Post.findById(postId);
+//     if (!post) {
+//       throw new Error('Post not found');
+//     }
+//     if (!userId) {
+//       throw new Error('Unauthorized: userId is missing');
+//     }
 
-    const likeIndex = post.likes.indexOf(userId);
-    if (likeIndex !== -1) {
-      post.likes.splice(likeIndex, 1);
-    } else {
-      post.likes.push(userId);
-    }
+//     //const likeIndex = post.likes.indexOf(userId);
+//     const likeIndex = post.likes.findIndex((id) => id.toString() === userId);
+//     console.log(likeIndex);
+//     if (likeIndex !== -1) {
+//       post.likes.splice(likeIndex, 1);
+//     } else {
+//       post.likes.push(userId);
+//     }
 
-    await post.save();
-    const io = getIo();
-    io.emit('update_likes', { post });
+//     await post.save();
+//     const io = getIo();
+//     io.emit('update_likes', { post });
 
-    return post;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
+//     return post;
+//   } catch (error) {
+//     throw new Error(error.message);
+//   }
+// };
 
 // export const updatePostById = async (request, response) => {
 //   try {

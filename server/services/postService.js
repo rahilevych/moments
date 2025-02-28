@@ -2,7 +2,6 @@ import { Post } from '../models/PostModel.js';
 import { User } from '../models/UserModel.js';
 import { imageUpload } from '../utils/imageManagement.js';
 import { removeTempFile } from '../utils/tempFileManagment.js';
-import { getIo } from '../utils/websocket.js';
 
 export default class PostService {
   static async addPost(file, newPost, userId) {
@@ -101,6 +100,33 @@ export default class PostService {
     } catch (error) {
       console.error(`Error fetching post with id: ${id} - ${error.message}`);
       return { status: 500, data: { message: 'Server error' } };
+    }
+  }
+  static async toggleLikePost(postId, userId) {
+    try {
+      const post = await Post.findById(postId);
+      if (!post) {
+        return { status: 404, data: { message: 'Post not found' } };
+      }
+      if (!userId) {
+        return {
+          status: 400,
+          data: { message: 'User ID is required to toggle like.' },
+        };
+      }
+      const likeIndex = post.likes.findIndex((id) => id.toString() === userId);
+      if (likeIndex !== -1) {
+        post.likes.splice(likeIndex, 1);
+      } else {
+        post.likes.push(userId);
+      }
+      await post.save();
+      return { status: 200, data: post };
+    } catch (error) {
+      return {
+        status: 500,
+        data: { message: 'Server error', error: error.message },
+      };
     }
   }
 }
