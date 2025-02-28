@@ -4,15 +4,24 @@ import profile from '../assets/images/profile.png';
 import PostForm from './PostForm';
 import { usePost } from '../hooks/usePost';
 import { PostIconsNav } from './PostIconsNav';
+import socket from '../services/socketService';
 
 const DetailedPost = () => {
   const { fetchPost, currentPost } = usePost();
+  if (!currentPost) {
+    return <div>Loading...</div>;
+  }
+  useEffect(() => {
+    fetchPost(currentPost._id);
+  }, []);
 
   useEffect(() => {
-    if (currentPost?._id) {
-      fetchPost(currentPost._id);
-    }
-  }, [currentPost?._id]);
+    socket.emit('join', currentPost._id);
+    return () => {
+      socket.emit('leave', currentPost._id);
+    };
+  }, [currentPost._id]);
+
   return (
     <div className='p-5 flex flex-col lg:flex-row items-start justify-between bg-white w-full'>
       <div className='flex flex-col lg:flex-row gap-7 w-full'>
@@ -71,7 +80,7 @@ const DetailedPost = () => {
           )}
 
           <div className='flex flex-col gap-4 w-full relative mt-4 justify-between'>
-            {currentPost && <PostIconsNav post={currentPost} />}{' '}
+            {currentPost && <PostIconsNav postId={currentPost._id} />}{' '}
             {currentPost && <PostForm post={currentPost} />}
           </div>
         </div>

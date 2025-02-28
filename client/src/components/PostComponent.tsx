@@ -1,5 +1,5 @@
 import { PostType } from '../types/PostType';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from './Modal';
 import DetailedPost from './DetailedPost';
 
@@ -8,14 +8,26 @@ import { User } from '@phosphor-icons/react';
 
 import { usePost } from '../hooks/usePost';
 import { PostIconsNav } from './PostIconsNav';
+import socket from '../services/socketService';
 
 interface Props {
-  post: PostType;
+  postId: string;
 }
 
-const PostComponent: React.FC<Props> = ({ post }) => {
+const PostComponent: React.FC<Props> = ({ postId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { setCurrentPost } = usePost();
+  const { setCurrentPost, posts } = usePost();
+  const post: PostType | undefined = posts?.find((p) => p._id === postId);
+  if (!post) {
+    return <div>Loading...</div>;
+  }
+
+  useEffect(() => {
+    socket.emit('join', postId);
+    return () => {
+      socket.emit('leave', postId);
+    };
+  }, [postId]);
 
   const openModal = (post: any) => {
     setCurrentPost(post);
@@ -60,7 +72,7 @@ const PostComponent: React.FC<Props> = ({ post }) => {
         </Modal>
       </div>
 
-      <PostIconsNav post={post} />
+      <PostIconsNav postId={post._id} />
       <div className='post__description px-4 py-2 text-sm sm:text-base'>
         {post.caption}
       </div>
