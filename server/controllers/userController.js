@@ -10,7 +10,7 @@ export const registration = async (request, response) => {
         .json({ message: 'Validation error', errors: errors.array() });
     }
     const userData = request.body;
-    console.log(userData);
+    //console.log(userData);
     const result = await UserService.registerUser(userData);
     return response.status(result.status).json(result.data);
   } catch (error) {

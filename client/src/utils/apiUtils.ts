@@ -7,9 +7,14 @@ export const handleAxiosError = (error: any, message: string) => {
     );
     return {
       success: false,
+      data: null,
       error: error.response.data?.message || 'Server Error',
     };
   }
   console.error('Network or unexpected error:', error);
-  return { success: false, error: 'Network error. Please try again.' };
+  return {
+    success: false,
+    data: null,
+    error: 'Network error. Please try again.',
+  };
 };

@@ -56,16 +56,19 @@ export default class UserService {
     try {
       const user = await User.findOne({ username });
       if (!user) {
-        return { status: 404, data: { message: `Incorrect username` } };
+        return { status: 404, data: { message: `User not found` } };
       }
 
       const validPassword = bcrypt.compareSync(password, user.password);
+
       if (!validPassword) {
         return { status: 401, data: { message: `Incorrect password` } };
       }
       const token = generateAccessToken(user._id);
+
       return { status: 200, data: { token } };
     } catch (error) {
+      console.error('Login error:', error);
       return { status: 500, data: { message: 'Server error' } };
     }
   }
@@ -73,6 +76,7 @@ export default class UserService {
     if (!user) {
       return { status: 401, data: { message: 'Unauthorized' } };
     }
+
     return { status: 200, data: { message: 'User profile info', user } };
   }
 

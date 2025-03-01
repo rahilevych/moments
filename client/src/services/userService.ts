@@ -7,14 +7,18 @@ export const getAllUsers = async () => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
-      return { success: false, error: 'No authentication token found' };
+      return {
+        success: false,
+        error: 'No authentication token found',
+        data: null,
+      };
     }
     const response = await axios.get(`${baseUrl}/users`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    return { success: true, data: response.data.users };
+    return { success: true, data: response.data.users, error: null };
   } catch (error: any) {
     return handleAxiosError(error, 'Error getting users');
   }
@@ -24,7 +28,7 @@ export const toggleSubscribe = async (otherUserId: string, userId: string) => {
   try {
     const token = localStorage.getItem('token');
     if (!userId) {
-      return { success: false, error: 'User ID is not defined' };
+      return { success: false, error: 'User ID is not defined', data: null };
     }
     const response = await axios.post(
       `${baseUrl}/users/${otherUserId}/subscribe`,
@@ -37,7 +41,7 @@ export const toggleSubscribe = async (otherUserId: string, userId: string) => {
       }
     );
 
-    return { success: true, data: response.data };
+    return { success: true, data: response.data, error: null };
   } catch (error: any) {
     return handleAxiosError(error, 'Error by subscribing');
   }
@@ -47,14 +51,18 @@ export const getUserById = async (id: string) => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
-      return { success: false, error: 'No authentication token found' };
+      return {
+        success: false,
+        error: 'No authentication token found',
+        data: null,
+      };
     }
 
     const response = await axios.get(`${baseUrl}/users/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    return { success: true, data: response.data };
+    return { success: true, data: response.data, error: null };
   } catch (error: any) {
     return handleAxiosError(error, 'Error getting user');
   }
@@ -64,7 +72,11 @@ export const updateUser = async (user: UserType, formData: FormData) => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
-      return { success: false, error: 'No authentication token found' };
+      return {
+        success: false,
+        error: 'No authentication token found',
+        data: null,
+      };
     }
     const response = await axios.put(
       `${baseUrl}/users/edit/${user._id}`,
@@ -74,7 +86,7 @@ export const updateUser = async (user: UserType, formData: FormData) => {
       }
     );
 
-    return { success: true, data: response.data.user };
+    return { success: true, data: response.data.user, error: null };
   } catch (error: any) {
     return handleAxiosError(error, 'Error updating user');
   }

@@ -4,6 +4,7 @@ import { baseUrl } from '../utils/baseUrl';
 import { UserType } from '../types/UserType';
 import { Dispatch, SetStateAction } from 'react';
 import { handleAxiosError } from '../utils/apiUtils';
+import { disconnectSocket } from './socketService';
 
 export const signUp = async (
   email: string,
@@ -18,9 +19,17 @@ export const signUp = async (
       { headers: { 'Content-Type': 'application/json' } }
     );
 
-    return { success: true };
+    return { success: true, error: null };
   } catch (error: any) {
-    return handleAxiosError(error, 'Registration error');
+    if (axios.isAxiosError(error) && error.response) {
+      const message = error.response.data.message || 'Registration failed';
+      return {
+        success: false,
+        field: message.includes('email') ? 'email' : 'username',
+        message,
+      };
+    }
+    return { success: false, message: 'Network error' };
   }
 };
 
@@ -30,7 +39,7 @@ export const signIn = async (username: string, password: string) => {
       username,
       password,
     });
-    return { success: true, data: response.data.token };
+    return { success: true, data: response.data.token, error: null };
   } catch (error: any) {
     return handleAxiosError(error, 'Error by sign in');
   }
@@ -47,7 +56,7 @@ export const getUserProfile = async () => {
     const response = await axios.get(`${baseUrl}/users/profile`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return { success: true, data: response.data.user };
+    return { success: true, data: response.data.user, error: null };
   } catch (error: any) {
     return handleAxiosError(error, 'Error getting user profile');
   }
@@ -59,5 +68,6 @@ export const logout = (
 ) => {
   setUser(null);
   localStorage.removeItem('token');
+  disconnectSocket();
   navigate('/');
 };

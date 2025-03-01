@@ -14,8 +14,8 @@ export const addPost = async (formData: FormData) => {
     });
 
     return response.status === 201
-      ? { success: true, data: response.data }
-      : { success: false, error: 'Unexpected response status' };
+      ? { success: true, data: response.data, error: null }
+      : { success: false, error: 'Unexpected response status', data: null };
   } catch (error: any) {
     return handleAxiosError(error, 'Error adding post');
   }
@@ -31,8 +31,8 @@ export const getPosts = async () => {
     });
 
     return response.status === 200
-      ? { success: true, data: response.data.posts }
-      : { success: false, error: 'Unexpected response status' };
+      ? { success: true, data: response.data.posts, error: null }
+      : { success: false, error: 'Unexpected response status', data: null };
   } catch (error: any) {
     return handleAxiosError(error, 'Error fetching posts');
   }
@@ -48,8 +48,8 @@ export const getPostById = async (postId: string) => {
     });
 
     return response.status === 200
-      ? { success: true, data: response.data }
-      : { success: false, error: 'Unexpected response status' };
+      ? { success: true, data: response.data.post, error: null }
+      : { success: false, error: 'Unexpected response status', data: null };
   } catch (error: any) {
     return handleAxiosError(error, 'Error fetching post');
   }
@@ -65,8 +65,8 @@ export const getUserPostsByUserId = async (userId: string) => {
     });
 
     return response.status === 200
-      ? { success: true, data: response.data.posts }
-      : { success: false, error: 'Unexpected response status' };
+      ? { success: true, data: response.data.posts, error: null }
+      : { success: false, error: 'Unexpected response status', data: null };
   } catch (error: any) {
     return handleAxiosError(error, 'Error fetching user posts');
   }

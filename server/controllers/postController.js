@@ -33,7 +33,7 @@ export const getPostById = async (request, response) => {
   const { id } = request.params;
   try {
     const result = await PostService.getPostById(id);
-    console.log(`Fetching post with id: ${id}`);
+    //console.log(`Fetching post with id: ${id}`);
     return response.status(result.status).json(result.data);
   } catch (error) {
     console.error(`Error fetching post with id: ${id} - ${error.message}`);
