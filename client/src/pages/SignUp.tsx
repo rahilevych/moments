@@ -58,7 +58,7 @@ const SignUp = () => {
     if (!result.success) {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        ...(result.field ? { [result.field]: result.message } : {}),
+        ...(result.field ? { [result.field]: result.error } : {}),
       }));
       return;
     }
@@ -67,7 +67,9 @@ const SignUp = () => {
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-gray-100'>
+    <div
+      data-testid='sign-up'
+      className='min-h-screen flex items-center justify-center bg-gray-100'>
       <div className='w-full max-w-md bg-white p-8 rounded-lg shadow-md'>
         <h2 className='mb-8 text-2xl font-bold text-center text-gray-900'>
           Sign up for a new account

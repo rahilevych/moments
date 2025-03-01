@@ -2,17 +2,26 @@ import { useEffect, useState } from 'react';
 import { getAllUsers } from '../services/userService';
 import { Search } from './Search';
 import UsersList from './UsersList';
-import { useUser } from '../hooks/useUser';
+import { useAuth } from '../hooks/useAuth';
+import { UserType } from '../types/UserType';
 
 const SearchPage = ({ onClose }: { onClose: () => void }) => {
-  const { users, setUsers, user } = useUser();
+  const { user } = useAuth();
+  const [users, setUsers] = useState<UserType[] | null>(null);
   const [, setSearchQuery] = useState('');
   const [filteredUsers, setFilteredUsers] = useState(users);
 
   const fetchUsers = async () => {
     try {
-      setUsers(await getAllUsers());
-    } catch (error) {}
+      const response = await getAllUsers();
+      if (response.success) {
+        setUsers(response.data);
+      } else {
+        console.error('Failed to fetch users:', response.error);
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+    }
   };
 
   useEffect(() => {
@@ -26,11 +35,14 @@ const SearchPage = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <div className='p-4 max-h-[calc(100vh-150px)] overflow-y-auto'>
-      <Search
-        setFilteredUsers={setFilteredUsers}
-        setSearchQuery={setSearchQuery}
-        title={'Search Users'}
-      />
+      {users && (
+        <Search
+          users={users}
+          setFilteredUsers={setFilteredUsers}
+          setSearchQuery={setSearchQuery}
+          title={'Search Users'}
+        />
+      )}
       <UsersList filteredUsers={filteredUsers} onClose={onClose} />
     </div>
   );
