@@ -1,35 +1,34 @@
 import { useState } from 'react';
-
 import { logout } from '../services/authService';
 import { NavLink, useNavigate } from 'react-router-dom';
-import {
-  getAllUsers,
-  getUserById,
-  toggleSubscribe,
-} from '../services/userService';
+import { toggleSubscribe } from '../services/userService';
 import { UserType } from '../types/UserType';
 import Modal from './Modal';
-import Following from './Following';
-import Followers from './Followers';
+import ConnectionsList from './ConnectionsList';
 import { User } from '@phosphor-icons/react';
-import { useUser } from '../hooks/useUser';
+import { useAuth } from '../hooks/useAuth';
 
-const ProfileHeader = () => {
+interface Props {
+  profileUser: UserType;
+}
+
+const ProfileHeader: React.FC<Props> = ({ profileUser }) => {
   const navigate = useNavigate();
-  const [isFollowingOpen, setIsFollowingOpen] = useState(false);
-  const [isFollowerOpen, setIsFollowerOpen] = useState(false);
-  const { user, setUser, profileUser, setProfileUser } = useUser();
-
-  const toggleFollowingModal = () => {
-    setIsFollowingOpen(!isFollowingOpen);
-  };
-  const toggleFollowerModal = () => {
-    setIsFollowerOpen(!isFollowerOpen);
-  };
+  const [modalType, setModalType] = useState<'followers' | 'following' | null>(
+    null
+  );
+  const { user, setUser } = useAuth();
 
   if (!profileUser) {
     return null;
   }
+
+  const handleOpenModal = (type: 'followers' | 'following') => {
+    setModalType(type);
+  };
+  const handleCloseModal = () => {
+    setModalType(null);
+  };
 
   const isSubscribed = (otherUser: UserType) => {
     return (
@@ -37,11 +36,14 @@ const ProfileHeader = () => {
       user.following.some((followedUser) => followedUser._id === otherUser?._id)
     );
   };
+
   const handleSubscribe = async (otherUserId: string) => {
-    if (user) {
-      await toggleSubscribe(otherUserId, user._id);
-      await getAllUsers();
-      setProfileUser(await getUserById(profileUser._id));
+    if (!user) return;
+
+    const response = await toggleSubscribe(otherUserId, user._id);
+    if (!response.success) {
+      console.error('Subscription failed:', response.error);
+      return;
     }
   };
 
@@ -75,23 +77,30 @@ const ProfileHeader = () => {
             <span className='font-bold'>{profileUser.posts.length}</span> posts
           </div>
 
-          <div className='mr-4 cursor-pointer' onClick={toggleFollowerModal}>
+          <div
+            className='mr-4 cursor-pointer'
+            onClick={() => handleOpenModal('followers')}>
             <span className='font-bold'>{profileUser.followers.length}</span>{' '}
             followers
           </div>
 
-          <div className='mr-4' onClick={toggleFollowingModal}>
+          <div
+            className='mr-4 cursor-pointer'
+            onClick={() => handleOpenModal('following')}>
             <span className='font-bold'>{profileUser.following.length}</span>{' '}
             following
           </div>
         </div>
 
-        <Modal isOpen={isFollowingOpen} onClose={toggleFollowingModal}>
-          <Following onClose={toggleFollowerModal} />
-        </Modal>
-        <Modal isOpen={isFollowerOpen} onClose={toggleFollowerModal}>
-          <Followers onClose={toggleFollowerModal} />
-        </Modal>
+        {modalType && (
+          <Modal isOpen={modalType !== null} onClose={handleCloseModal}>
+            <ConnectionsList
+              profileUser={profileUser}
+              modalType={modalType}
+              onClose={handleCloseModal}
+            />
+          </Modal>
+        )}
 
         <div className='flex space-x-2 mt-4'>
           {isCurrentUser ? (

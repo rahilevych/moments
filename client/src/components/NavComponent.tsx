@@ -8,18 +8,13 @@ import {
 } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-
 import AddPost from '../components/AddPost';
 import Modal from '../components/Modal';
-import { getUserPostsByUserId } from '../services/postServices';
 import SearchPage from './SearchPage';
-import { useUser } from '../hooks/useUser';
-import { usePost } from '../hooks/usePost';
+import { useAuth } from '../hooks/useAuth';
 
 const NavComponent = () => {
-  const { user, setProfileUser, profileUser } = useUser();
-  const { setPosts } = usePost();
-
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [isAddPostModalOpen, setIsAddPostModalOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
@@ -27,10 +22,6 @@ const NavComponent = () => {
 
   const handleNavigateToProfile = () => {
     if (user && user._id) {
-      setProfileUser(profileUser);
-      async () => {
-        setPosts(await getUserPostsByUserId(user._id));
-      };
       navigate(`/user/${user._id}`);
     }
   };

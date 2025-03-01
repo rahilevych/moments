@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { addComment } from '../services/commentService';
-import { useUser } from '../hooks/useUser';
+import { useAuth } from '../hooks/useAuth';
 import { usePost } from '../hooks/usePost';
 
 import { PostType } from '../types/PostType';
@@ -9,7 +9,7 @@ interface Props {
 }
 const PostForm: React.FC<Props> = ({ post }) => {
   const { fetchPost } = usePost();
-  const { user } = useUser();
+  const { user } = useAuth();
   const [text, setText] = useState<string>('');
 
   const handleInputChangeComment = (e: React.ChangeEvent<HTMLInputElement>) => {

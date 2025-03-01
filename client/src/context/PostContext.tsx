@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { PostType } from '../types/PostType';
 import { getPostById, getUserPostsByUserId } from '../services/postServices';
-import socket from '../services/socketService';
+import { useAuth } from '../hooks/useAuth';
 
 type PostContextType = {
   currentPost: PostType | null;
@@ -33,53 +33,74 @@ type PostContextProviderProps = {
 export const PostContextProvider = ({ children }: PostContextProviderProps) => {
   const [currentPost, setCurrentPost] = useState<PostType | null>(null);
   const [posts, setPosts] = useState<PostType[] | null>(null);
-
   const [_, setFile] = useState<React.MutableRefObject<File | null>>({
     current: null,
   });
   const [caption, setCaption] = useState<string>('');
+  const { socket } = useAuth();
 
   const fetchPost = async (id: string) => {
     try {
-      const data = await getPostById(id);
-      setCurrentPost(data);
-      return data;
-    } catch (error) {}
+      const response = await getPostById(id);
+
+      if (!response.success) {
+        return;
+      }
+
+      setCurrentPost(response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch post:', error);
+    }
   };
   const fetchPosts = async (id: string) => {
     try {
-      const data = await getUserPostsByUserId(id);
-      setPosts(data);
-    } catch (error) {}
+      const response = await getUserPostsByUserId(id);
+      if (!response.success) {
+        return;
+      }
+      setPosts(response.data);
+    } catch (error) {
+      console.error('Failed to fetch posts:', error);
+    }
   };
 
   const updatePostLikes = (updatedPost: PostType) => {
     setPosts((prevPosts) =>
       prevPosts
-        ? [
-            ...prevPosts.map((p) =>
-              p._id === updatedPost._id ? { ...p, likes: updatedPost.likes } : p
-            ),
-          ]
-        : null
+        ? prevPosts.map((p) =>
+            p._id === updatedPost._id
+              ? { ...p, likes: [...updatedPost.likes] }
+              : p
+          )
+        : []
     );
 
     setCurrentPost((prev) =>
       prev && prev._id === updatedPost._id
-        ? { ...prev, likes: updatedPost.likes }
+        ? { ...prev, likes: [...updatedPost.likes] }
         : prev
     );
   };
 
   useEffect(() => {
-    socket.on('update_likes', ({ post }) => {
-      updatePostLikes(post);
-    });
+    if (!socket) return;
+
+    const handleUpdateLikes = ({ currentPost }: { currentPost: PostType }) => {
+      console.log('Received update_likes event:', currentPost);
+      try {
+        updatePostLikes(currentPost);
+      } catch (error) {
+        console.error('Error updating likes:', error);
+      }
+    };
+
+    socket.on('update_likes', handleUpdateLikes);
 
     return () => {
-      socket.off('update_likes');
+      socket.off('update_likes', handleUpdateLikes);
     };
-  }, [currentPost]);
+  }, [socket]);
 
   return (
     <PostContext.Provider

@@ -2,11 +2,16 @@ import { useEffect, useState } from 'react';
 import Modal from './Modal';
 import DetailedPost from './DetailedPost';
 
-import { useUser } from '../hooks/useUser';
+import { useAuth } from '../hooks/useAuth';
 import { usePost } from '../hooks/usePost';
+import { UserType } from '../types/UserType';
 
-const UserPosts = () => {
-  const { user, profileUser } = useUser();
+interface Props {
+  profileUser: UserType;
+}
+
+const UserPosts: React.FC<Props> = ({ profileUser }) => {
+  const { user } = useAuth();
   const { posts, fetchPosts, setCurrentPost } = usePost();
   const [isModalOpen, setIsModalOpen] = useState(false);
   if (!user) {
@@ -23,7 +28,7 @@ const UserPosts = () => {
   };
   useEffect(() => {
     profileUser && fetchPosts(profileUser?._id);
-  }, []);
+  }, [profileUser]);
 
   return (
     <div className='post-grid grid grid-cols-3 gap-2 p-4'>

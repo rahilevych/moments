@@ -9,9 +9,19 @@ const Home = () => {
   const { posts, setPosts } = usePost();
 
   const fetchHome = async () => {
-    const homePosts = await getPosts();
-    setPosts(homePosts);
+    try {
+      const response = await getPosts();
+
+      if (!response.success) {
+        return;
+      }
+      console.log(response.data);
+      setPosts(response.data);
+    } catch (error) {
+      console.error('Error fetching home posts:', error);
+    }
   };
+
   useEffect(() => {
     fetchHome();
   }, []);
@@ -25,7 +35,9 @@ const Home = () => {
 
       <div className=' flex flex-col items-center w-full bg-white justify-center'>
         {posts &&
-          posts.map((post, index) => <PostComponent post={post} key={index} />)}
+          posts.map((post, index) => (
+            <PostComponent postId={post._id} key={index} />
+          ))}
       </div>
     </div>
   );

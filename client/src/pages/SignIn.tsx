@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getUserProfile, signIn } from '../services/authService';
-import { useUser } from '../hooks/useUser';
+import { useAuth } from '../hooks/useAuth';
 import { validatePassword, validateUsername } from '../utils/validation';
+import { useUserApi } from '../hooks/useUserApi';
 
 const SignIn = () => {
-  const { user, fetchUser } = useUser();
+  const { user, setUser, setToken, setSocket } = useAuth();
+  const { fetchUser } = useUserApi();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -30,15 +32,36 @@ const SignIn = () => {
 
   const login = async () => {
     try {
-      await signIn(username, password);
-      const profile = await getUserProfile();
-      if (!profile || !profile._id) {
-        console.error('Error:profile not found');
+      const responseSignIn = await signIn(username, password);
+
+      if (!responseSignIn.success) {
+        console.error('Login failed:', responseSignIn.error);
+        setError(responseSignIn.error);
         return;
       }
-      fetchUser(profile._id);
+
+      const token = responseSignIn.data;
+      localStorage.setItem('token', token);
+      setToken(token);
+
+      const responseUserProfile = await getUserProfile();
+      if (!responseUserProfile.success) {
+        console.error('Failed to get user profile:', responseUserProfile.error);
+        setError(responseUserProfile.error);
+        return;
+      }
+
+      const profile = responseUserProfile.data;
+      if (!profile || !profile._id) {
+        console.error('Error: Profile not found');
+        setError('Profile not found');
+        return;
+      }
+      const data = await fetchUser(profile._id);
+      setUser(data);
       navigate('/user/home', { replace: true });
     } catch (error) {
+      console.error('Unexpected error:', error);
       if (error instanceof Error) {
         setError(error.message);
       }

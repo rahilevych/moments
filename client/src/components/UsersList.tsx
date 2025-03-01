@@ -2,7 +2,7 @@ import { UserType } from '../types/UserType';
 import { getUserById, toggleSubscribe } from '../services/userService';
 import { NavLink } from 'react-router-dom';
 import { User } from '@phosphor-icons/react';
-import { useUser } from '../hooks/useUser';
+import { useAuth } from '../hooks/useAuth';
 
 type Props = {
   filteredUsers: UserType[] | null;
@@ -10,7 +10,7 @@ type Props = {
 };
 
 const UsersList = (props: Props) => {
-  const { user, setUser } = useUser();
+  const { user, setUser } = useAuth();
 
   const isSubscribed = (otherUser: UserType) => {
     return (
@@ -20,9 +20,18 @@ const UsersList = (props: Props) => {
   };
 
   const handleSubscribe = async (otherUserId: string) => {
-    if (user) {
-      await toggleSubscribe(otherUserId, user._id);
-      setUser(await getUserById(user._id));
+    if (!user) return;
+
+    const response = await toggleSubscribe(otherUserId, user._id);
+    if (!response.success) {
+      console.error('Subscription failed:', response.error);
+      return;
+    }
+    const result = await getUserById(user._id);
+    if (result.success) {
+      setUser(result.data);
+    } else {
+      console.error('Failed to fetch updated user:', result.error);
     }
   };
 
