@@ -2,13 +2,12 @@ import { PostType } from '../types/PostType';
 import { useEffect, useState } from 'react';
 import Modal from './Modal';
 import DetailedPost from './DetailedPost';
-
 import PostForm from './PostForm';
 import { User } from '@phosphor-icons/react';
-
 import { usePost } from '../hooks/usePost';
 import { PostIconsNav } from './PostIconsNav';
-import socket from '../services/socketService';
+
+import { useAuth } from '../hooks/useAuth';
 
 interface Props {
   postId: string;
@@ -18,16 +17,17 @@ const PostComponent: React.FC<Props> = ({ postId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { setCurrentPost, posts } = usePost();
   const post: PostType | undefined = posts?.find((p) => p._id === postId);
+  const { socket } = useAuth();
   if (!post) {
     return <div>Loading...</div>;
   }
 
   useEffect(() => {
-    socket.emit('join', postId);
+    socket?.emit('join', postId);
     return () => {
-      socket.emit('leave', postId);
+      socket?.emit('leave', postId);
     };
-  }, [postId]);
+  }, [postId, socket]);
 
   const openModal = (post: any) => {
     setCurrentPost(post);

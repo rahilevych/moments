@@ -1,21 +1,33 @@
 import { io, Socket } from 'socket.io-client';
 import { baseUrl } from '../utils/baseUrl';
-import { PostType } from '../types/PostType';
+import {
+  ClientToServerEvents,
+  ServerToClientEvents,
+} from '../types/soketTypes';
 
-interface ServerToClientEvents {
-  update_likes: (data: { currentPost: PostType }) => void;
-}
+let socket: Socket<ServerToClientEvents, ClientToServerEvents> | null = null;
 
-interface ClientToServerEvents {
-  like: (postId: string) => void;
-  join: (postId: string) => void;
-  leave: (postId: string) => void;
-}
+export const initializeSocket = (
+  token: string
+): Socket<ServerToClientEvents, ClientToServerEvents> => {
+  if (socket) {
+    socket.disconnect();
+  }
+  socket = io(baseUrl, {
+    auth: { token },
+    withCredentials: true,
+  });
 
-const token: string = localStorage.getItem('token') || '';
+  socket.on('connect', () => {
+    console.log('Socket connected:', socket?.id);
+  });
 
-const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(baseUrl, {
-  auth: { token },
-});
+  return socket;
+};
 
-export default socket;
+export const disconnectSocket = (): void => {
+  if (socket) {
+    socket.disconnect();
+    socket = null;
+  }
+};

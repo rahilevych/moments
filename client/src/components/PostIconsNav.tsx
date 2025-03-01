@@ -1,7 +1,7 @@
 import { ChatCircle, Heart } from '@phosphor-icons/react';
-import socket from '../services/socketService';
+
 import { usePost } from '../hooks/usePost';
-import { useUser } from '../hooks/useUser';
+import { useAuth } from '../hooks/useAuth';
 import { PostType } from '../types/PostType';
 import { timeAgo } from '../utils/timeAgo';
 
@@ -10,8 +10,9 @@ interface Props {
 }
 export const PostIconsNav: React.FC<Props> = ({ postId }) => {
   const { posts } = usePost();
-  const { user } = useUser();
+  const { user, socket } = useAuth();
   const post: PostType | undefined = posts?.find((p) => p._id === postId);
+
   if (!post) {
     return <div>Loading...</div>;
   }
@@ -20,7 +21,7 @@ export const PostIconsNav: React.FC<Props> = ({ postId }) => {
 
   const handleLikeClick = async () => {
     console.log('Emitting like event for post:', post._id);
-    socket.emit('like', post._id);
+    socket?.emit('like', post._id);
   };
 
   return (

@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { PostType } from '../types/PostType';
 import { getPostById, getUserPostsByUserId } from '../services/postServices';
-import socket from '../services/socketService';
+import { useAuth } from '../hooks/useAuth';
 
 type PostContextType = {
   currentPost: PostType | null;
@@ -33,11 +33,11 @@ type PostContextProviderProps = {
 export const PostContextProvider = ({ children }: PostContextProviderProps) => {
   const [currentPost, setCurrentPost] = useState<PostType | null>(null);
   const [posts, setPosts] = useState<PostType[] | null>(null);
-
   const [_, setFile] = useState<React.MutableRefObject<File | null>>({
     current: null,
   });
   const [caption, setCaption] = useState<string>('');
+  const { socket } = useAuth();
 
   const fetchPost = async (id: string) => {
     try {
@@ -84,6 +84,8 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
   };
 
   useEffect(() => {
+    if (!socket) return;
+
     const handleUpdateLikes = ({ currentPost }: { currentPost: PostType }) => {
       console.log('Received update_likes event:', currentPost);
       try {
@@ -98,7 +100,7 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
     return () => {
       socket.off('update_likes', handleUpdateLikes);
     };
-  }, []);
+  }, [socket]);
 
   return (
     <PostContext.Provider
