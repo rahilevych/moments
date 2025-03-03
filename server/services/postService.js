@@ -49,7 +49,7 @@ export default class PostService {
           path: 'user_id',
           model: 'User',
         });
-      console.log(posts);
+
       return { status: 200, data: { message: 'User`s posts', posts } };
     } catch (error) {
       return { status: 500, data: { message: 'Error by getting posts' } };
@@ -91,7 +91,7 @@ export default class PostService {
         });
 
       if (!post) {
-        console.warn(`Post with id: ${id} not found`);
+        console.log(`Post with id: ${id} not found`);
         return { status: 404, data: { message: 'Post not found' } };
       }
 

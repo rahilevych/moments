@@ -1,5 +1,10 @@
 import jwt from 'jsonwebtoken';
-import { handleLikeEvent } from './socketHandlers.js';
+import {
+  handleCommentEvent,
+  handleDeleteCommentEvent,
+  handleLikeCommentEvent,
+  handleLikeEvent,
+} from './socketHandlers.js';
 import { User } from '../models/UserModel.js';
 
 export const handleSocketConnection = async (socket) => {
@@ -18,6 +23,15 @@ export const handleSocketConnection = async (socket) => {
       `Client connected: ${socket.id}, User ID: ${socket.data.userId}`
     );
     socket.on('like', (postId) => handleLikeEvent(socket, postId));
+    socket.on('like_comment', (commentId) =>
+      handleLikeCommentEvent(socket, commentId)
+    );
+    socket.on('add_comment', (commentData) =>
+      handleCommentEvent(socket, commentData)
+    );
+    socket.on('delete_comment', (commentId, postId) =>
+      handleDeleteCommentEvent(commentId, postId, socket)
+    );
   } catch (error) {
     console.error('WebSocket auth error:', error);
     socket.disconnect();

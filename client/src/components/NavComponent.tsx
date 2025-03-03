@@ -81,7 +81,7 @@ const NavComponent = () => {
           <SearchPage onClose={toggleSearchModal} />
         </Modal>
 
-        <div className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'>
+        {/* <div className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'>
           <PaperPlaneTilt size={32} />
           <p>Messages</p>
         </div>
@@ -89,7 +89,7 @@ const NavComponent = () => {
         <div className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'>
           <Heart size={32} />
           <p>Notifications</p>
-        </div>
+        </div> */}
 
         <div
           className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'

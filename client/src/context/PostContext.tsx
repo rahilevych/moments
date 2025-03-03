@@ -9,18 +9,15 @@ import {
 import { PostType } from '../types/PostType';
 import { getPostById, getUserPostsByUserId } from '../services/postServices';
 import { useAuth } from '../hooks/useAuth';
+import { CommentType } from '../types/CommentType';
 
 type PostContextType = {
   currentPost: PostType | null;
   posts: PostType[] | null;
   setCurrentPost: Dispatch<SetStateAction<PostType | null>>;
   setPosts: Dispatch<SetStateAction<PostType[] | null>>;
-  setFile: Dispatch<SetStateAction<React.MutableRefObject<File | null>>>;
-  setCaption: Dispatch<SetStateAction<string>>;
-  caption: string;
   fetchPost: (id: string) => Promise<PostType>;
   fetchPosts: (id: string) => Promise<void>;
-  updatePostLikes: (updatedPost: PostType) => void;
 };
 
 export const PostContext = createContext<PostContextType | undefined>(
@@ -33,26 +30,22 @@ type PostContextProviderProps = {
 export const PostContextProvider = ({ children }: PostContextProviderProps) => {
   const [currentPost, setCurrentPost] = useState<PostType | null>(null);
   const [posts, setPosts] = useState<PostType[] | null>(null);
-  const [_, setFile] = useState<React.MutableRefObject<File | null>>({
-    current: null,
-  });
-  const [caption, setCaption] = useState<string>('');
+
   const { socket } = useAuth();
 
   const fetchPost = async (id: string) => {
     try {
       const response = await getPostById(id);
-
       if (!response.success) {
         return;
       }
-
       setCurrentPost(response.data);
       return response.data;
     } catch (error) {
       console.error('Failed to fetch post:', error);
     }
   };
+
   const fetchPosts = async (id: string) => {
     try {
       const response = await getUserPostsByUserId(id);
@@ -82,23 +75,98 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
         : prev
     );
   };
+  const updateCommentLikes = (updatedComment: CommentType) => {
+    setCurrentPost((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        comments: prev.comments?.map((c) =>
+          c._id === updatedComment._id ? updatedComment : c
+        ),
+      };
+    });
+    console.log('update from comment handler', updatedComment);
+  };
+
+  const updatePostComments = (newComment: CommentType) => {
+    setCurrentPost((prev) =>
+      prev && prev._id === newComment.post_id
+        ? { ...prev, comments: [...(prev.comments || []), newComment] }
+        : prev
+    );
+    setPosts((prevPosts) =>
+      prevPosts
+        ? prevPosts.map((p) =>
+            p._id === newComment.post_id
+              ? { ...p, comments: [...(p.comments || []), newComment] }
+              : p
+          )
+        : null
+    );
+  };
+  const removePostComment = (commentId: string, postId: string) => {
+    setCurrentPost((prev) => {
+      if (!prev) {
+        return prev;
+      }
+      if (prev._id !== postId) {
+        return prev;
+      }
+      const updatedComments =
+        prev.comments?.filter((c) => c._id !== commentId) || [];
+      return { ...prev, comments: updatedComments };
+    });
+
+    setPosts((prevPosts) => {
+      if (!prevPosts) {
+        return null;
+      }
+      return prevPosts.map((p) => {
+        if (p._id !== postId) return p;
+        const updatedComments =
+          p.comments?.filter((c) => c._id !== commentId) || [];
+        return { ...p, comments: updatedComments };
+      });
+    });
+  };
 
   useEffect(() => {
     if (!socket) return;
 
     const handleUpdateLikes = ({ currentPost }: { currentPost: PostType }) => {
-      console.log('Received update_likes event:', currentPost);
-      try {
-        updatePostLikes(currentPost);
-      } catch (error) {
-        console.error('Error updating likes:', error);
-      }
+      updatePostLikes(currentPost);
+    };
+    console.log('Setting up socket listeners');
+
+    const handleUpdateCommentLikes = (updatedComment: CommentType) => {
+      console.log('Received update_comment_likes event', updatedComment);
+      updateCommentLikes(updatedComment);
+    };
+
+    const handleCommentAdded = ({ comment }: { comment: CommentType }) => {
+      updatePostComments(comment);
+    };
+
+    const handleCommentDeleted = ({
+      commentId,
+      postId,
+    }: {
+      commentId: string;
+      postId: string;
+    }) => {
+      removePostComment(commentId, postId);
     };
 
     socket.on('update_likes', handleUpdateLikes);
+    socket.on('update_comment_likes', handleUpdateCommentLikes);
+    socket.on('comment_added', handleCommentAdded);
+    socket.on('comment_deleted', handleCommentDeleted);
 
     return () => {
       socket.off('update_likes', handleUpdateLikes);
+      socket.off('update_comment_likes', handleUpdateCommentLikes);
+      socket.off('comment_added', handleCommentAdded);
+      socket.off('comment_deleted', handleCommentDeleted);
     };
   }, [socket]);
 
@@ -109,12 +177,9 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
         posts,
         setPosts,
         setCurrentPost,
-        setFile,
-        setCaption,
-        caption,
+
         fetchPost,
         fetchPosts,
-        updatePostLikes,
       }}>
       {children}
     </PostContext.Provider>
