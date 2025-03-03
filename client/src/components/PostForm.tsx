@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { addComment } from '../services/commentService';
 import { useAuth } from '../hooks/useAuth';
 import { usePost } from '../hooks/usePost';
 
@@ -8,29 +7,31 @@ interface Props {
   post: PostType;
 }
 const PostForm: React.FC<Props> = ({ post }) => {
-  const { fetchPost } = usePost();
-  const { user } = useAuth();
+  const { user, socket } = useAuth();
+  const { setCurrentPost } = usePost();
   const [text, setText] = useState<string>('');
 
   const handleInputChangeComment = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
   };
 
-  const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setCurrentPost(post);
     try {
       if (user && post && text.trim() !== '') {
-        const formData = new FormData();
-        formData.append('text', text);
-        formData.append('user_id', user._id);
-        formData.append('post_id', post._id);
-        await addComment(formData);
-        fetchPost(post._id);
+        socket?.emit('add_comment', {
+          text,
+          user_id: user._id,
+          post_id: post._id,
+        });
         setText('');
       } else {
         console.error('User, post or text is missing');
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+    }
   };
 
   return (

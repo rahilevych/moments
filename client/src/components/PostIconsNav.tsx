@@ -41,7 +41,9 @@ export const PostIconsNav: React.FC<Props> = ({ postId }) => {
         {post.likes.length > 0 ? `${post.likes.length} likes` : '0 likes'}
       </div>
       <div className='px-4 text-xs text-gray-400'>
-        {timeAgo(post?.createdAt || new Date())}
+        {timeAgo(post?.createdAt || new Date(), {
+          format: 'long',
+        })}
       </div>
     </div>
   );
