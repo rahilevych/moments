@@ -3,7 +3,6 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import mongoDBURL from './config/dbConfig.js';
 import postsRouter from './routes/postsRoutes.js';
-import commentsRouter from './routes/commentsRoutes.js';
 import passport from 'passport';
 import passportStrategy from '../server/utils/passportConfig.js';
 import { cloudinaryConfig } from './config/cloudinary.js';
@@ -29,7 +28,6 @@ passport.use(passportStrategy);
 
 app.use('/users', usersRouter);
 app.use('/posts', postsRouter);
-app.use('/comments', commentsRouter);
 
 mongoose
   .connect(mongoDBURL)

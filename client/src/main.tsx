@@ -4,7 +4,7 @@ import App from './App.tsx';
 import './index.css';
 import { BrowserRouter } from 'react-router-dom';
 import { PostContextProvider } from './context/PostContext.tsx';
-import { CommentContextProvider } from './context/CommentContext.tsx';
+
 import { AuthContextProvider } from './context/AuthContext.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -12,9 +12,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <AuthContextProvider>
         <PostContextProvider>
-          <CommentContextProvider>
-            <App />
-          </CommentContextProvider>
+          <App />
         </PostContextProvider>
       </AuthContextProvider>
     </BrowserRouter>

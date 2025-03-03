@@ -29,7 +29,9 @@ type AuthContextProviderProps = {
 
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const [user, setUser] = useState<UserType | null>(null);
-  const [token, setToken] = useState<string>('');
+  const [token, setToken] = useState<string>(() => {
+    return localStorage.getItem('token') || '';
+  });
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
