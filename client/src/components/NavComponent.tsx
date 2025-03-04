@@ -8,18 +8,13 @@ import {
 } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-
 import AddPost from '../components/AddPost';
 import Modal from '../components/Modal';
-import { getUserPostsByUserId } from '../services/postServices';
 import SearchPage from './SearchPage';
-import { useUser } from '../hooks/useUser';
-import { usePost } from '../hooks/usePost';
+import { useAuth } from '../hooks/useAuth';
 
 const NavComponent = () => {
-  const { user, setProfileUser, profileUser } = useUser();
-  const { setPosts } = usePost();
-
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [isAddPostModalOpen, setIsAddPostModalOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
@@ -27,10 +22,6 @@ const NavComponent = () => {
 
   const handleNavigateToProfile = () => {
     if (user && user._id) {
-      setProfileUser(profileUser);
-      async () => {
-        setPosts(await getUserPostsByUserId(user._id));
-      };
       navigate(`/user/${user._id}`);
     }
   };
@@ -90,7 +81,7 @@ const NavComponent = () => {
           <SearchPage onClose={toggleSearchModal} />
         </Modal>
 
-        <div className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'>
+        {/* <div className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'>
           <PaperPlaneTilt size={32} />
           <p>Messages</p>
         </div>
@@ -98,7 +89,7 @@ const NavComponent = () => {
         <div className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'>
           <Heart size={32} />
           <p>Notifications</p>
-        </div>
+        </div> */}
 
         <div
           className='flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg cursor-pointer'
