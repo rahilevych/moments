@@ -1,9 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { useUser } from '../hooks/useUser';
+import { useAuth } from '../hooks/useAuth';
 import SignIn from '../pages/SignIn';
 import { getUserProfile, signIn } from '../services/authService';
+import { useUserApi } from '../hooks/useUserApi';
 
 const mockNavigate = jest.fn();
 
@@ -12,8 +13,11 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-jest.mock('../hooks/useUser', () => ({
-  useUser: jest.fn(),
+jest.mock('../hooks/useAuth', () => ({
+  useAuth: jest.fn(),
+}));
+jest.mock('../hooks/useUserApi', () => ({
+  useUserApi: jest.fn(),
 }));
 
 jest.mock('../services/authService', () => ({
@@ -33,8 +37,12 @@ function initInputs() {
 describe('SignIn Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (useUser as jest.Mock).mockReturnValue({
+    (useAuth as jest.Mock).mockReturnValue({
       user: null,
+      setUser: jest.fn(),
+      setToken: jest.fn(),
+    });
+    (useUserApi as jest.Mock).mockReturnValue({
       fetchUser: jest.fn(),
     });
   });
@@ -57,14 +65,17 @@ describe('SignIn Component', () => {
   });
 
   it('should allow a user to sign in and navigate to home', async () => {
-    (signIn as jest.Mock).mockResolvedValue({});
-
-    (getUserProfile as jest.Mock).mockResolvedValue({
-      _id: '123',
-      username: 'testuser',
-      password: 'password123',
+    (signIn as jest.Mock).mockResolvedValue({
+      success: true,
+      data: 'mockToken',
+      error: null,
     });
 
+    (getUserProfile as jest.Mock).mockResolvedValue({
+      success: true,
+      data: { _id: '123', username: 'testuser', password: 'password123' },
+    });
+    console.log('getUserProfile called');
     render(<SignIn />, { wrapper: MemoryRouter });
 
     const { usernameInput, passwordInput, button, user } = initInputs();

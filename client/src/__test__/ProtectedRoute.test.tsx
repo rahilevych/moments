@@ -4,9 +4,9 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import { renderWithProviders } from './test-utils';
 import SignIn from '../pages/SignIn';
 import Layout from '../components/Layout';
-import { useUser } from '../hooks/useUser';
+import { useAuth } from '../hooks/useAuth';
 
-jest.mock('../hooks/useUser');
+jest.mock('../hooks/useAuth');
 
 describe('ProtectedRoute', () => {
   beforeEach(() => {
@@ -18,7 +18,7 @@ describe('ProtectedRoute', () => {
   });
 
   it('redirects to /login if user and token are missing', async () => {
-    (useUser as jest.Mock).mockReturnValue({ user: null });
+    (useAuth as jest.Mock).mockReturnValue({ user: null });
     jest.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
 
     renderWithProviders(
@@ -42,7 +42,7 @@ describe('ProtectedRoute', () => {
   });
 
   it('renders children if user is authenticated', async () => {
-    (useUser as jest.Mock).mockReturnValue({
+    (useAuth as jest.Mock).mockReturnValue({
       user: { id: '123', name: 'Test User' },
     });
     jest.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
@@ -67,7 +67,7 @@ describe('ProtectedRoute', () => {
   });
 
   it('renders children if token is present in localStorage', async () => {
-    (useUser as jest.Mock).mockReturnValue({ user: null });
+    (useAuth as jest.Mock).mockReturnValue({ user: null });
     jest.spyOn(Storage.prototype, 'getItem').mockReturnValue('fake-token');
 
     renderWithProviders(
