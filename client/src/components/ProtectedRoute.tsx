@@ -1,8 +1,8 @@
 import { Navigate } from 'react-router-dom';
-import { useUser } from '../hooks/useUser';
+import { useAuth } from '../hooks/useAuth';
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const { user } = useUser();
+  const { user } = useAuth();
   const token = localStorage.getItem('token');
 
   if (!user && !token) {

@@ -67,4 +67,4 @@ The client-side is organized with protected routes to ensure that only logged-in
 - Impove Home page with recommendations
 - Add save page
   
-## 🎥 Demo: https://instclone-client.vercel.app/
+## 🎥 Demo: https://instclone-client.onrender.com

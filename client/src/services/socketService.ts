@@ -1,31 +1,33 @@
 import { io, Socket } from 'socket.io-client';
-import { getToken } from '../utils/tokenServices';
-import { PostType } from '../types/PostType';
 import { baseUrl } from '../utils/baseUrl';
+import {
+  ClientToServerEvents,
+  ServerToClientEvents,
+} from '../types/soketTypes';
 
-const SOCKET_URL = baseUrl;
+let socket: Socket<ServerToClientEvents, ClientToServerEvents> | null = null;
 
-interface ServerToClientEvents {
-  update_likes: (data: { post: PostType }) => void;
-}
-interface ClientToServerEvents {
-  like: (postId: string) => void;
-}
-export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-  SOCKET_URL,
-  {
-    withCredentials: true,
-    auth: {
-      token: getToken(),
-    },
+export const initializeSocket = (
+  token: string
+): Socket<ServerToClientEvents, ClientToServerEvents> => {
+  if (socket) {
+    socket.disconnect();
   }
-);
-socket.on('connect', () => {
-  console.log('Connected to WebSocket', socket.id);
-});
+  socket = io(baseUrl, {
+    auth: { token },
+    withCredentials: true,
+  });
 
-socket.on('update_likes', ({ post }) => {
-  console.log(`Post ${post._id} updated with ${post.likes} `);
-});
+  socket.on('connect', () => {
+    console.log('Socket connected:', socket?.id);
+  });
 
-export default socket;
+  return socket;
+};
+
+export const disconnectSocket = (): void => {
+  if (socket) {
+    socket.disconnect();
+    socket = null;
+  }
+};

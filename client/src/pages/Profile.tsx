@@ -4,11 +4,10 @@ import { UserType } from '../types/UserType';
 import { User as UserImg } from '@phosphor-icons/react';
 import { getUserById, updateUser } from '../services/userService';
 import { useParams } from 'react-router-dom';
-import { getUserProfile } from '../services/authService';
-import { useUser } from '../hooks/useUser';
+import { useAuth } from '../hooks/useAuth';
 
 const Profile = () => {
-  const { user, setUser } = useUser();
+  const { user, setUser } = useAuth();
   const { id } = useParams<{ id: string }>();
   const [formData, setFormData] = useState<UserType | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -49,20 +48,31 @@ const Profile = () => {
   };
 
   const handleSaveUpdates = async () => {
+    if (!user || !formData || !id) return;
+
     try {
-      if (user && formData && id) {
-        const formDataToSend = new FormData();
-        formDataToSend.append('username', formData.username);
-        formDataToSend.append('fullname', formData.fullname);
-        formDataToSend.append('email', formData.email);
-        if (avatarFile) {
-          formDataToSend.append('user_img', formData.user_img);
-        }
-        await updateUser(user, formDataToSend);
-        setUser(await getUserProfile());
-        setUser(await getUserById(user._id));
-        setIsEditing(false);
+      const formDataToSend = new FormData();
+      formDataToSend.append('username', formData.username);
+      formDataToSend.append('fullname', formData.fullname);
+      formDataToSend.append('email', formData.email);
+      if (avatarFile) {
+        formDataToSend.append('user_img', formData.user_img);
       }
+
+      const response = await updateUser(user, formDataToSend);
+      if (!response.success) {
+        console.error('Error updating user:', response.error);
+        return;
+      }
+
+      const updatedUser = await getUserById(user._id);
+      if (updatedUser.success) {
+        setUser(updatedUser.data);
+      } else {
+        console.error('Failed to fetch updated user:', updatedUser.error);
+      }
+
+      setIsEditing(false);
     } catch (error) {
       console.error('Error saving user data:', error);
     }
