@@ -57,7 +57,7 @@ const DetailedPost = () => {
           {currentPost?.comments && (
             <div className='max-h-96 overflow-y-auto w-full'>
               {currentPost.comments?.length > 0 ? (
-                currentPost.comments.map((comment, index) => (
+                currentPost.comments.map((comment) => (
                   <div key={comment._id} className='mb-4 flex w-full flex'>
                     <Comment comment={comment} />
                   </div>

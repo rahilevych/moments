@@ -6,7 +6,7 @@ import { validatePassword, validateUsername } from '../utils/validation';
 import { useUserApi } from '../hooks/useUserApi';
 
 const SignIn = () => {
-  const { user, setUser, setToken, setSocket } = useAuth();
+  const { user, setUser, setToken } = useAuth();
   const { fetchUser } = useUserApi();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

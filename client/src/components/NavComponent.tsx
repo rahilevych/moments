@@ -1,8 +1,6 @@
 import {
-  Heart,
   House,
   MagnifyingGlass,
-  PaperPlaneTilt,
   PlusSquare,
   User,
 } from '@phosphor-icons/react';
