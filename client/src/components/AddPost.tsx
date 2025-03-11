@@ -77,7 +77,7 @@ const AddPost = () => {
       ) : (
         <div className='flex flex-col items-center justify-center bg-white w-full p-4'>
           <div className='flex items-center justify-between border-b-2 border-gray-300 w-full py-2'>
-            <button onClick={handleBackToUpload}>
+            <button onClick={handleBackToUpload} aria-label='Back'>
               <CaretLeft
                 size={32}
                 className='font-bold text-center text-gray-600 cursor-pointer'

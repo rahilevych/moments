@@ -39,7 +39,9 @@ const ConnectionsList: React.FC<Props> = ({
   }, [users]);
 
   return (
-    <div className='p-4 max-h-[calc(100vh-150px)] overflow-y-auto'>
+    <div
+      title='connectionsList'
+      className='p-4 max-h-[calc(100vh-150px)] overflow-y-auto'>
       {users && (
         <Search
           setFilteredUsers={setFilteredUsers}

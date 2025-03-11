@@ -1,5 +1,4 @@
-import { ChatCircle, Heart } from '@phosphor-icons/react';
-
+import { Heart } from '@phosphor-icons/react';
 import { usePost } from '../hooks/usePost';
 import { useAuth } from '../hooks/useAuth';
 import { PostType } from '../types/PostType';
@@ -25,7 +24,7 @@ export const PostIconsNav: React.FC<Props> = ({ postId }) => {
   };
 
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col' title='PostIconsNav'>
       <div className='post__reaction px-4 py-2 flex flex-row gap-2 justify-between'>
         <div className='flex flex-row gap-2'>
           <Heart
@@ -34,7 +33,7 @@ export const PostIconsNav: React.FC<Props> = ({ postId }) => {
             weight={liked == true ? 'fill' : 'regular'}
             color={liked == true ? 'red' : 'black'}
           />
-          <ChatCircle size={24} />
+          {/* <ChatCircle size={24} /> */}
         </div>
       </div>
       <div className='post__likes px-4'>

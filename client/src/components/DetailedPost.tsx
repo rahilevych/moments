@@ -22,7 +22,9 @@ const DetailedPost = () => {
   }, [currentPost?._id, socket]);
 
   return (
-    <div className='p-5 flex flex-col lg:flex-row items-start justify-between bg-white w-full'>
+    <div
+      title='detailedpost'
+      className='p-5 flex flex-col lg:flex-row items-start justify-between bg-white w-full'>
       <div className='flex flex-col lg:flex-row gap-7 w-full'>
         <div className='w-full lg:w-3/5'>
           <div className='post__navigation flex flex-row px-4 py-2'>

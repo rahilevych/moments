@@ -40,6 +40,7 @@ const NavComponent = () => {
     <nav className='flex flex-col lg:flex-row items-start p-4 space-y-6 lg:space-x-4 lg:space-y-0'>
       <div className='lg:hidden'>
         <button
+          aria-label='menu'
           onClick={toggleMenu}
           className='p-2 flex flex-col justify-center items-center space-y-1'>
           <span
