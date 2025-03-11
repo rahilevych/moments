@@ -11,7 +11,7 @@ export interface UserType {
 
   following: UserType[];
   followers: UserType[];
-  saved_posts: PostType[];
+  saved_posts: string[];
   posts: PostType[];
   createdAt: Date;
 }

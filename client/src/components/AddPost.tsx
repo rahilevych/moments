@@ -2,10 +2,9 @@ import React, { useRef, useState } from 'react';
 import { addPost } from '../services/postServices';
 import { CaretLeft, Images } from '@phosphor-icons/react';
 import { useAuth } from '../hooks/useAuth';
-import { usePost } from '../hooks/usePost';
 
 const AddPost = () => {
-  const { setCaption, caption } = usePost();
+  const [caption, setCaption] = useState<string>('');
   const { user } = useAuth();
   const selectedFile = useRef<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -78,7 +77,7 @@ const AddPost = () => {
       ) : (
         <div className='flex flex-col items-center justify-center bg-white w-full p-4'>
           <div className='flex items-center justify-between border-b-2 border-gray-300 w-full py-2'>
-            <button onClick={handleBackToUpload}>
+            <button onClick={handleBackToUpload} aria-label='Back'>
               <CaretLeft
                 size={32}
                 className='font-bold text-center text-gray-600 cursor-pointer'

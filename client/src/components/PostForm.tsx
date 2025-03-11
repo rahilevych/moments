@@ -35,7 +35,7 @@ const PostForm: React.FC<Props> = ({ post }) => {
   };
 
   return (
-    <div className='flex flex-row justify-between w-full'>
+    <div className='flex flex-row justify-between w-full' title='PostForm'>
       <form onSubmit={submitForm} className='flex w-full'>
         <input
           className='w-full pl-[10px] border rounded-full'

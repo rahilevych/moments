@@ -77,7 +77,8 @@ const PostComponent: React.FC<Props> = ({ postId }) => {
         {post.caption}
       </div>
       <div
-        className='post__comments px-4 py-2 text-xs sm:text-sm text-gray-400 cursor-pointer'
+        className='post__comments px-4 py-2 text-xs sm:text-sm text-gray-400 cursor-pointer '
+        title='click'
         onClick={() => openModal(post)}>
         {post.comments.length > 0
           ? `View all ${post.comments.length} comments`

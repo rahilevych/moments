@@ -9,8 +9,8 @@ import SignIn from '../pages/SignIn';
 import App from '../App';
 import { getUserProfile } from '../services/authService';
 
-jest.mock('../hooks/useUser', () => ({
-  useUser: jest.fn().mockReturnValue({
+jest.mock('../hooks/useAuth', () => ({
+  useAuth: jest.fn().mockReturnValue({
     user: {
       _id: '123',
       email: 'test@example.com',
@@ -89,9 +89,12 @@ test('renders SignIn page', () => {
   expect(screen.getByTestId('sign-in')).toBeInTheDocument();
 });
 
-test('renders UserPage', () => {
-  renderWithProviders(<UserPage />, { route: '/user/profile' });
-  expect(screen.getByTestId('user page')).toBeInTheDocument();
+test('renders UserPage', async () => {
+  renderWithProviders(<UserPage />, { route: '/user/123' });
+
+  await waitFor(() => {
+    expect(screen.getByTestId('user page')).toBeInTheDocument();
+  });
 });
 
 test('renders HomePage', () => {

@@ -34,7 +34,9 @@ const SearchPage = ({ onClose }: { onClose: () => void }) => {
   }, [users]);
 
   return (
-    <div className='p-4 max-h-[calc(100vh-150px)] overflow-y-auto'>
+    <div
+      className='p-4 max-h-[calc(100vh-150px)] overflow-y-auto '
+      title='search page'>
       {users && (
         <Search
           users={users}

@@ -22,7 +22,9 @@ const DetailedPost = () => {
   }, [currentPost?._id, socket]);
 
   return (
-    <div className='p-5 flex flex-col lg:flex-row items-start justify-between bg-white w-full'>
+    <div
+      title='detailedpost'
+      className='p-5 flex flex-col lg:flex-row items-start justify-between bg-white w-full'>
       <div className='flex flex-col lg:flex-row gap-7 w-full'>
         <div className='w-full lg:w-3/5'>
           <div className='post__navigation flex flex-row px-4 py-2'>
@@ -57,7 +59,7 @@ const DetailedPost = () => {
           {currentPost?.comments && (
             <div className='max-h-96 overflow-y-auto w-full'>
               {currentPost.comments?.length > 0 ? (
-                currentPost.comments.map((comment, index) => (
+                currentPost.comments.map((comment) => (
                   <div key={comment._id} className='mb-4 flex w-full flex'>
                     <Comment comment={comment} />
                   </div>

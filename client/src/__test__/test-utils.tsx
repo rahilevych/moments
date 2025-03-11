@@ -1,8 +1,7 @@
 import { render } from '@testing-library/react';
 import { PostContextProvider } from '../context/PostContext';
 import { MemoryRouter } from 'react-router-dom';
-import { UserContextProvider } from '../context/UserContext';
-import { CommentContextProvider } from '../context/CommentContext';
+import { AuthContextProvider } from '../context/AuthContext';
 
 export const renderWithProviders = (
   ui: React.ReactElement,
@@ -10,11 +9,9 @@ export const renderWithProviders = (
 ) => {
   return render(
     <MemoryRouter initialEntries={[route]}>
-      <UserContextProvider>
-        <PostContextProvider>
-          <CommentContextProvider>{ui}</CommentContextProvider>
-        </PostContextProvider>
-      </UserContextProvider>
+      <AuthContextProvider>
+        <PostContextProvider>{ui}</PostContextProvider>
+      </AuthContextProvider>
     </MemoryRouter>
   );
 };

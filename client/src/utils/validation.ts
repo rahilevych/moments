@@ -8,7 +8,7 @@ export const validateUsername = (value: string) => {
     : 'Username must be 3-20 characters';
 };
 export const validateFullname = (value: string) => {
-  return value.length >= 6 ? '' : 'Full name must be at least 4 characters ';
+  return value.length >= 4 ? '' : 'Full name must be at least 4 characters ';
 };
 export const validatePassword = (value: string) => {
   return value.length >= 6 ? '' : 'Password must be at least 6 characters';

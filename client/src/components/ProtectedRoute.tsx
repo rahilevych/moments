@@ -6,7 +6,7 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const token = localStorage.getItem('token');
 
   if (!user && !token) {
-    return <Navigate to='/login' />;
+    return <Navigate to='/login' replace />;
   }
 
   return children;
