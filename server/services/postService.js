@@ -1,118 +1,85 @@
 import { Post } from '../models/PostModel.js';
 import { User } from '../models/UserModel.js';
+import ApiError from '../utils/ApiError.js';
 import { imageUpload } from '../utils/imageManagement.js';
-import { removeTempFile } from '../utils/tempFileManagment.js';
 
 export default class PostService {
   static async addPost(file, newPost, userId) {
-    try {
-      if (!userId) {
-        return {
-          status: 400,
-          data: { message: 'User ID is required to fetch posts.' },
-        };
-      }
-      if (file) {
-        const postURL = await imageUpload(file, 'post_images');
-        newPost.image_url = postURL;
-      }
-      const post = await Post.create(newPost);
-      await User.findByIdAndUpdate(userId, { $push: { posts: post._id } });
-      return { status: 201, data: { post, message: 'Post was created !' } };
-    } catch (error) {
-      console.error('Error in addPost:', error);
-      return { status: 500, data: { message: 'Error by creating post' } };
-    } finally {
-      if (file) {
-        removeTempFile(file);
-      }
+    if (!userId) {
+      throw new ApiError('User ID is required to add post', 400);
     }
+    if (file) {
+      const postURL = await imageUpload(file, 'post_images');
+      newPost.image_url = postURL;
+    }
+    const post = await Post.create(newPost);
+    await User.findByIdAndUpdate(userId, { $push: { posts: post._id } });
+    return post;
   }
 
   static async getUserPostsByUserId(userId) {
-    try {
-      if (!userId) {
-        return {
-          status: 400,
-          data: { message: 'User ID is required to fetch posts.' },
-        };
-      }
-      const posts = await Post.find({ user_id: userId })
-        .populate({
-          path: 'comments',
-          populate: {
-            path: 'user_id',
-            model: 'User',
-          },
-        })
-        .populate({
+    if (!userId) {
+      throw new ApiError('User ID is required to fetch posts', 400);
+    }
+    const posts = await Post.find({ user_id: userId })
+      .populate({
+        path: 'comments',
+        populate: {
           path: 'user_id',
           model: 'User',
-        });
+        },
+      })
+      .populate({
+        path: 'user_id',
+        model: 'User',
+      });
 
-      return { status: 200, data: { message: 'User`s posts', posts } };
-    } catch (error) {
-      return { status: 500, data: { message: 'Error by getting posts' } };
-    }
+    return posts;
   }
   static async getAllPosts() {
-    try {
-      const posts = await Post.find({})
-        .populate({
-          path: 'comments',
-          populate: {
-            path: 'user_id',
-            model: 'User',
-          },
-        })
-        .populate({
+    const posts = await Post.find({})
+      .populate({
+        path: 'comments',
+        populate: {
           path: 'user_id',
           model: 'User',
-        });
+        },
+      })
+      .populate({
+        path: 'user_id',
+        model: 'User',
+      });
 
-      return { status: 200, data: { posts } };
-    } catch (error) {
-      return { status: 500, data: { message: 'Error by fetching posts' } };
-    }
+    return posts;
   }
   static async getPostById(id) {
-    try {
-      const post = await Post.findById(id)
-        .populate({
-          path: 'comments',
-          populate: {
-            path: 'user_id',
-            model: 'User',
-          },
-        })
-        .populate({
+    const post = await Post.findById(id)
+      .populate({
+        path: 'comments',
+        populate: {
           path: 'user_id',
           model: 'User',
-        });
+        },
+      })
+      .populate({
+        path: 'user_id',
+        model: 'User',
+      });
 
-      if (!post) {
-        console.log(`Post with id: ${id} not found`);
-        return { status: 404, data: { message: 'Post not found' } };
-      }
-
-      console.log(`Post with id: ${id} found`);
-      return { status: 200, data: { post } };
-    } catch (error) {
-      console.error(`Error fetching post with id: ${id} - ${error.message}`);
-      return { status: 500, data: { message: 'Server error' } };
+    if (!post) {
+      throw new ApiError('Post not found', 404);
     }
+
+    return post;
   }
   static async toggleLikePost(postId, userId) {
     try {
       const post = await Post.findById(postId);
       if (!post) {
-        return { status: 404, data: { message: 'Post not found' } };
+        throw new Error('Post not found');
       }
       if (!userId) {
-        return {
-          status: 400,
-          data: { message: 'User ID is required to toggle like.' },
-        };
+        throw new Error('User ID is required to toggle like');
       }
       const likeIndex = post.likes.findIndex((id) => id.toString() === userId);
       if (likeIndex !== -1) {
@@ -121,12 +88,9 @@ export default class PostService {
         post.likes.push(userId);
       }
       await post.save();
-      return { status: 200, data: post };
+      return post;
     } catch (error) {
-      return {
-        status: 500,
-        data: { message: 'Server error', error: error.message },
-      };
+      throw new Error(error.message || 'Server error');
     }
   }
 }

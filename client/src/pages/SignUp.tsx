@@ -58,8 +58,10 @@ const SignUp = () => {
     if (!result.success) {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        ...(result.field ? { [result.field]: result.error } : {}),
+        ...(result.field ? { [result.field]: result.message } : {}),
       }));
+      console.log(result.message);
+      console.log(result.status);
       return;
     }
 

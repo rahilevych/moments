@@ -7,7 +7,7 @@ export const initSocketServer = (server) => {
   io = new Server(server, {
     cors: {
       origin: [
-        'http://localhost:3000',
+        'http://localhost:3001',
         'https://instclone-client.onrender.com',
       ],
       methods: ['GET', 'POST'],
