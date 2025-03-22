@@ -14,7 +14,7 @@ const PostForm: React.FC<Props> = ({ post }) => {
   const handleInputChangeComment = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
   };
-
+  console.log(post._id);
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setCurrentPost(post);

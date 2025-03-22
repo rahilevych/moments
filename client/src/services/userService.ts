@@ -18,8 +18,8 @@ export const getAllUsers = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    return { success: true, data: response.data.users, error: null };
-  } catch (error: any) {
+    return { success: true, data: response.data, error: null };
+  } catch (error: unknown) {
     return handleAxiosError(error, 'Error getting users');
   }
 };
@@ -42,7 +42,7 @@ export const toggleSubscribe = async (otherUserId: string, userId: string) => {
     );
 
     return { success: true, data: response.data, error: null };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return handleAxiosError(error, 'Error by subscribing');
   }
 };
@@ -63,7 +63,7 @@ export const getUserById = async (id: string) => {
     });
 
     return { success: true, data: response.data, error: null };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return handleAxiosError(error, 'Error getting user');
   }
 };
@@ -86,8 +86,8 @@ export const updateUser = async (user: UserType, formData: FormData) => {
       }
     );
 
-    return { success: true, data: response.data.user, error: null };
-  } catch (error: any) {
+    return { success: true, data: response.data, error: null };
+  } catch (error: unknown) {
     return handleAxiosError(error, 'Error updating user');
   }
 };

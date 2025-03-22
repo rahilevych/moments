@@ -1,20 +1,29 @@
 import axios from 'axios';
 
-export const handleAxiosError = (error: any, message: string) => {
-  if (axios.isAxiosError(error) && error.response) {
-    console.error(
-      `${message}: ${error.response.status} - ${error.response.data?.message}`
-    );
-    return {
-      success: false,
-      data: null,
-      error: error.response.data?.message || 'Server Error',
-    };
+export const handleAxiosError = (error: unknown, message: string) => {
+  if (axios.isAxiosError(error)) {
+    if (error.response) {
+      return {
+        success: false,
+        status: error.response.status,
+        error: error.response?.data.message || message,
+        data: null,
+      };
+    }
+    if (error.request) {
+      return {
+        success: false,
+        status: 0,
+        error: 'Network error. Please check your connection.',
+        data: null,
+      };
+    }
   }
-  console.error('Network or unexpected error:', error);
+
   return {
     success: false,
     data: null,
-    error: 'Network error. Please try again.',
+    status: 0,
+    error: 'Unknown error. Please try later.',
   };
 };

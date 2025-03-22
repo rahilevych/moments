@@ -9,13 +9,14 @@ import { cloudinaryConfig } from './config/cloudinary.js';
 import usersRouter from './routes/usersRoutes.js';
 import http from 'http';
 import { initSocketServer } from './sockets/socketServer.js';
+import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
 const server = http.createServer(app);
 
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'https://instclone-client.onrender.com'],
+    origin: ['http://localhost:3001', 'https://instclone-client.onrender.com'],
     credentials: true,
   })
 );
@@ -28,6 +29,7 @@ passport.use(passportStrategy);
 
 app.use('/users', usersRouter);
 app.use('/posts', postsRouter);
+app.use(errorHandler);
 
 mongoose
   .connect(mongoDBURL)

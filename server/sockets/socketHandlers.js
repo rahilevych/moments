@@ -10,13 +10,8 @@ export const handleLikeEvent = async (socket, postId) => {
       return;
     }
     const result = await PostService.toggleLikePost(postId, userId);
-    if (result.status !== 200) {
-      console.error('Error toggling like:', result.data.message);
-      return;
-    }
-    const updatedPost = result.data;
     const io = getIo();
-    io.to(postId).emit('update_likes', { currentPost: updatedPost });
+    io.to(postId).emit('update_likes', result);
   } catch (error) {
     console.error('Error handling like event:', error);
   }
@@ -29,11 +24,8 @@ export const handleCommentEvent = async (socket, commentData) => {
       return;
     }
     const result = await CommentService.addComment(userId, commentData);
-    if (result.status !== 201) {
-      console.error('Error by commenting:', result.data.message);
-      return;
-    }
-    const comment = result.data;
+    console.log(result);
+    const comment = result;
     const io = getIo();
 
     io.to(commentData.post_id).emit('comment_added', comment);
@@ -51,10 +43,6 @@ export const handleDeleteCommentEvent = async (commentId, postId, socket) => {
     }
 
     const result = await CommentService.deleteComment(commentId, userId);
-    if (result.status !== 200) {
-      console.error('Error deleting comment:', result.data.message);
-      return;
-    }
     const io = getIo();
     io.to(postId).emit('comment_deleted', { commentId, postId });
   } catch (error) {
@@ -69,11 +57,8 @@ export const handleLikeCommentEvent = async (socket, commentId) => {
       return;
     }
     const result = await CommentService.toggleLikeComment(commentId, userId);
-    if (result.status !== 200) {
-      console.error('Error toggling like on comment:', result.data.message);
-      return;
-    }
-    const updatedComment = result.data;
+
+    const updatedComment = result;
     const postId = updatedComment.post_id.toString();
     const io = getIo();
     io.to(postId).emit('update_comment_likes', updatedComment);

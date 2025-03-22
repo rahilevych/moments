@@ -49,9 +49,11 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
   const fetchPosts = async (id: string) => {
     try {
       const response = await getUserPostsByUserId(id);
+
       if (!response.success) {
         return;
       }
+      console.log(response.data);
       setPosts(response.data);
     } catch (error) {
       console.error('Failed to fetch posts:', error);
@@ -133,7 +135,7 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
   useEffect(() => {
     if (!socket) return;
 
-    const handleUpdateLikes = ({ currentPost }: { currentPost: PostType }) => {
+    const handleUpdateLikes = (currentPost: PostType) => {
       updatePostLikes(currentPost);
     };
     console.log('Setting up socket listeners');
@@ -143,7 +145,8 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
       updateCommentLikes(updatedComment);
     };
 
-    const handleCommentAdded = ({ comment }: { comment: CommentType }) => {
+    const handleCommentAdded = (comment: CommentType) => {
+      console.log(comment);
       updatePostComments(comment);
     };
 

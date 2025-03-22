@@ -1,78 +1,77 @@
 import { validationResult } from 'express-validator';
 import UserService from '../services/userService.js';
 
-export const registration = async (request, response) => {
+export const registration = async (request, response, next) => {
   try {
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
-      return response
-        .status(400)
-        .json({ message: 'Validation error', errors: errors.array() });
+      throw new ApiError('Validation error', 400, errors.array());
     }
     const userData = request.body;
-    //console.log(userData);
     const result = await UserService.registerUser(userData);
-    return response.status(result.status).json(result.data);
+    return response.status(201).json(result);
   } catch (error) {
-    return response.status(500).json({ message: 'Server error' });
+    next(error);
   }
 };
 
-export const login = async (request, response) => {
+export const login = async (request, response, next) => {
   try {
     const { username, password } = request.body;
     const result = await UserService.loginUser(username, password);
-    return response.status(result.status).json(result.data);
+
+    return response.status(200).json(result);
   } catch (error) {
-    return response
-      .status(500)
-      .json({ message: error.message || 'Server error' });
+    next(error);
   }
 };
 
-export const getUserProfile = async (request, response) => {
-  const result = await UserService.getProfile(request.user);
-  return response.status(result.status).json(result.data);
+export const getUserProfile = async (request, response, next) => {
+  try {
+    const result = await UserService.getProfile(request.user);
+    return response.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
-export const updateUser = async (request, response) => {
+export const updateUser = async (request, response, next) => {
   try {
     const { id } = request.params;
     const updatedData = request.body;
 
     const result = await UserService.updateUser(id, updatedData);
-    return response.status(result.status).json(result.data);
+    return response.status(200).json(result);
   } catch (error) {
-    return response.status(500).json({ message: 'Server error' });
+    next(error);
   }
 };
 
-export const getAllUsers = async (request, response) => {
+export const getAllUsers = async (request, response, next) => {
   try {
     const result = await UserService.getAllUsers();
-    return response.status(result.status).json(result.data);
+    return response.status(200).json(result);
   } catch (error) {
-    return response.status(500).json({ message: 'Server error' });
+    next(error);
   }
 };
 
-export const toggleSubscribeBtn = async (request, response) => {
+export const toggleSubscribeBtn = async (request, response, next) => {
   try {
     const { otherUserId } = request.params;
     const userId = request.user._id;
     const result = await UserService.toggleSubscribeBtn(userId, otherUserId);
-    return response.status(result.status).json(result.data);
+    return response.status(200).json(result);
   } catch (error) {
-    return response.status(500).json({ message: 'Server error' });
+    next(error);
   }
 };
 
-export const getUserById = async (request, response) => {
+export const getUserById = async (request, response, next) => {
   try {
     const { id } = request.params;
     const result = await UserService.getUserById(id);
-    return response.status(result.status).json(result.data);
+    return response.status(200).json(result);
   } catch (error) {
-    console.error(error);
-    return response.status(500).json({ message: 'Server error' });
+    next(error);
   }
 };
