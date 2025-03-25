@@ -33,7 +33,6 @@ export const PostIconsNav: React.FC<Props> = ({ postId }) => {
             weight={liked == true ? 'fill' : 'regular'}
             color={liked == true ? 'red' : 'black'}
           />
-          {/* <ChatCircle size={24} /> */}
         </div>
       </div>
       <div className='post__likes px-4'>

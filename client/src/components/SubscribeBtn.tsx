@@ -1,29 +1,30 @@
 import { useEffect, useState } from 'react';
 import { UserType } from '../types/UserType';
 import { getUserById, toggleSubscribe } from '../services/userService';
+import { useAuth } from '../hooks/useAuth';
 
 interface Props {
-  user: UserType;
   otherUser: UserType;
-  handleProfileUserChange(profileUser: UserType): void;
 }
 
-const SubscribeBtn = ({ user, otherUser, handleProfileUserChange }: Props) => {
+const SubscribeBtn = ({ otherUser }: Props) => {
+  const { user, setUser } = useAuth();
+  if (!user) return <></>;
   const initState = otherUser.followers.some((u) => u._id === user._id);
   const [isSubscribed, setIsSubscribed] = useState(initState);
 
   const handleSubscribe = async (otherUser: UserType) => {
     const response = await toggleSubscribe(otherUser._id, user._id);
     console.log(response);
-    const result = await getUserById(otherUser._id);
+    const result = await getUserById(user._id);
     if (result.success) {
-      handleProfileUserChange(result.data);
+      setUser(result.data);
     } else {
       console.error('Failed to fetch user:', result.error);
     }
   };
   useEffect(() => {
-    setIsSubscribed(otherUser.followers.some((u) => u._id === user._id));
+    setIsSubscribed(user.following.some((u) => u._id === otherUser._id));
   }, [handleSubscribe]);
   return (
     <button

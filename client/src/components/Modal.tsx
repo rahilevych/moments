@@ -1,5 +1,6 @@
 import { X } from '@phosphor-icons/react';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface ModalProps {
   isOpen: boolean;
@@ -8,6 +9,17 @@ interface ModalProps {
 }
 
 const Modal = (props: ModalProps) => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      props.onClose();
+    };
+    window.addEventListener('popstate', handleRouteChange);
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange);
+    };
+  }, [props]);
   if (!props.isOpen) return null;
 
   return (
