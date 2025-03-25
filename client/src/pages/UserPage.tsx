@@ -23,6 +23,9 @@ const UserPage = () => {
 
     fetchPosts(id);
   };
+  const handleProfileUserChange = (profileUser: UserType) => {
+    setProfileUser(profileUser);
+  };
 
   useEffect(() => {
     init();
@@ -33,7 +36,10 @@ const UserPage = () => {
       <div
         data-testid='user page'
         className='profile-page flex flex-col items-center px-4 sm:px-8 py-4 sm:py-8'>
-        <ProfileHeader profileUser={profileUser} />
+        <ProfileHeader
+          profileUser={profileUser}
+          onProfileUserChange={handleProfileUserChange}
+        />
         <div className='w-full max-w-4xl'>
           {<UserPosts profileUser={profileUser} />}
         </div>

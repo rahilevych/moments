@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import Modal from './Modal';
 import DetailedPost from './DetailedPost';
-
-import { useAuth } from '../hooks/useAuth';
 import { usePost } from '../hooks/usePost';
 import { UserType } from '../types/UserType';
 
@@ -11,12 +9,9 @@ interface Props {
 }
 
 const UserPosts: React.FC<Props> = ({ profileUser }) => {
-  const { user } = useAuth();
   const { posts, fetchPosts, setCurrentPost } = usePost();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  if (!user) {
-    return null;
-  }
+
   const openModal = (post: any) => {
     setCurrentPost(post);
     setIsModalOpen(true);

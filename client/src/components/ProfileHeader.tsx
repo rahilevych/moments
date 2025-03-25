@@ -1,50 +1,30 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { logout } from '../services/authService';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { toggleSubscribe } from '../services/userService';
 import { UserType } from '../types/UserType';
 import Modal from './Modal';
 import ConnectionsList from './ConnectionsList';
 import { User } from '@phosphor-icons/react';
 import { useAuth } from '../hooks/useAuth';
+import SubscribeBtn from './SubscribeBtn';
 
 interface Props {
   profileUser: UserType;
+  onProfileUserChange(profileUser: UserType): void;
 }
 
-const ProfileHeader: React.FC<Props> = ({ profileUser }) => {
+const ProfileHeader = ({ profileUser, onProfileUserChange }: Props) => {
   const navigate = useNavigate();
   const [modalType, setModalType] = useState<'followers' | 'following' | null>(
     null
   );
   const { user, setUser } = useAuth();
 
-  if (!profileUser) {
-    return null;
-  }
-
   const handleOpenModal = (type: 'followers' | 'following') => {
     setModalType(type);
   };
   const handleCloseModal = () => {
     setModalType(null);
-  };
-
-  const isSubscribed = (otherUser: UserType) => {
-    return (
-      user &&
-      user.following.some((followedUser) => followedUser._id === otherUser?._id)
-    );
-  };
-
-  const handleSubscribe = async (otherUserId: string) => {
-    if (!user) return;
-
-    const response = await toggleSubscribe(otherUserId, user._id);
-    if (!response.success) {
-      console.error('Subscription failed:', response.error);
-      return;
-    }
   };
 
   const isCurrentUser = user?._id === profileUser._id;
@@ -118,15 +98,13 @@ const ProfileHeader: React.FC<Props> = ({ profileUser }) => {
               </button>
             </>
           ) : (
-            <button
-              onClick={() => handleSubscribe(profileUser._id)}
-              className={`px-4 py-2 rounded-md ${
-                isSubscribed(profileUser)
-                  ? 'bg-gray-500 text-white'
-                  : 'bg-blue-500 text-white'
-              }`}>
-              {isSubscribed(profileUser) ? 'Unsubscribe' : 'Subscribe'}
-            </button>
+            user && (
+              <SubscribeBtn
+                user={user}
+                otherUser={profileUser}
+                handleProfileUserChange={onProfileUserChange}
+              />
+            )
           )}
         </div>
       </div>

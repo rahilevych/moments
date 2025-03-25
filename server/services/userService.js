@@ -108,19 +108,24 @@ export default class UserService {
 
     const isFollowing = user.following.includes(otherUserId);
     if (isFollowing) {
-      user.following = user.following.filter(
-        (id) => id.toString() !== otherUserId
+      await User.updateOne(
+        { _id: userId },
+        { $pull: { following: otherUserId } }
       );
-      otherUser.followers = otherUser.followers.filter(
-        (id) => id.toString() !== userId
+      await User.updateOne(
+        { _id: otherUserId },
+        { $pull: { followers: userId } }
       );
     } else {
-      user.following.push(otherUserId);
-      otherUser.followers.push(userId);
+      await User.updateOne(
+        { _id: userId },
+        { $addToSet: { following: otherUserId } }
+      );
+      await User.updateOne(
+        { _id: otherUserId },
+        { $addToSet: { followers: userId } }
+      );
     }
-
-    await user.save();
-    await otherUser.save();
 
     return user;
   }
