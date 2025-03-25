@@ -1,4 +1,4 @@
-import axios, { Axios, AxiosError } from 'axios';
+import axios from 'axios';
 import { NavigateFunction } from 'react-router-dom';
 import { baseUrl } from '../utils/baseUrl';
 import { UserType } from '../types/UserType';
