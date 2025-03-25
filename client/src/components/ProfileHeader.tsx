@@ -10,15 +10,15 @@ import SubscribeBtn from './SubscribeBtn';
 
 interface Props {
   profileUser: UserType;
-  onProfileUserChange(profileUser: UserType): void;
 }
 
-const ProfileHeader = ({ profileUser, onProfileUserChange }: Props) => {
+const ProfileHeader = ({ profileUser }: Props) => {
   const navigate = useNavigate();
   const [modalType, setModalType] = useState<'followers' | 'following' | null>(
     null
   );
   const { user, setUser } = useAuth();
+  const isCurrentUser = user?._id === profileUser._id;
 
   const handleOpenModal = (type: 'followers' | 'following') => {
     setModalType(type);
@@ -26,9 +26,6 @@ const ProfileHeader = ({ profileUser, onProfileUserChange }: Props) => {
   const handleCloseModal = () => {
     setModalType(null);
   };
-
-  const isCurrentUser = user?._id === profileUser._id;
-  console.log('profile user from header', profileUser);
 
   return (
     <div className='profile-header flex flex-col items-center md:flex-row md:justify-between p-4 border-b border-gray-200'>
@@ -98,13 +95,7 @@ const ProfileHeader = ({ profileUser, onProfileUserChange }: Props) => {
               </button>
             </>
           ) : (
-            user && (
-              <SubscribeBtn
-                user={user}
-                otherUser={profileUser}
-                handleProfileUserChange={onProfileUserChange}
-              />
-            )
+            user && <SubscribeBtn otherUser={profileUser} />
           )}
         </div>
       </div>
