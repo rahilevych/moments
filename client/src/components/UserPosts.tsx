@@ -26,11 +26,11 @@ const UserPosts: React.FC<Props> = ({ profileUser }) => {
   }, [profileUser]);
 
   return (
-    <div className='post-grid grid grid-cols-3 gap-2 p-4'>
+    <div className='post-grid grid grid-cols-3 gap-2 p-4 '>
       {posts?.map((post) => (
         <div
           key={post._id}
-          className='post-item w-full h-48 overflow-hidden cursor-pointer'
+          className=' w-auto aspect-w-1 aspect-h-1 overflow-hidden cursor-pointer'
           onClick={() => openModal(post)}>
           <img
             src={post.image_url}
