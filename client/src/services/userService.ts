@@ -91,3 +91,24 @@ export const updateUser = async (user: UserType, formData: FormData) => {
     return handleAxiosError(error, 'Error updating user');
   }
 };
+export const deleteUserById = async (userId: string) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return {
+        success: false,
+        error: 'No authentication token found',
+        data: null,
+      };
+    }
+    const response = await axios.delete(`${baseUrl}/users/delete/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return { success: true, data: response.data, error: null };
+  } catch (error: unknown) {
+    return handleAxiosError(error, 'Error delete user');
+  }
+};
