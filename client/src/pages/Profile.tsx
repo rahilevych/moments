@@ -2,12 +2,18 @@ import React, { useState, useRef, useEffect } from 'react';
 
 import { UserType } from '../types/UserType';
 import { User as UserImg } from '@phosphor-icons/react';
-import { getUserById, updateUser } from '../services/userService';
-import { useParams } from 'react-router-dom';
+import {
+  deleteUserById,
+  getUserById,
+  updateUser,
+} from '../services/userService';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { logout } from '../services/authService';
 
 const Profile = () => {
   const { user, setUser } = useAuth();
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [formData, setFormData] = useState<UserType | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -182,6 +188,16 @@ const Profile = () => {
           }`}
           onClick={() => setIsEditing(!isEditing)}>
           {isEditing ? 'Cancel' : 'Edit Profile'}
+        </button>
+        <button
+          className={`px-4 py-2 rounded-md font-semibold text-white transition-colors bg-red-500 hover:bg-red-600 `}
+          onClick={() => {
+            if (window.confirm('Do you want to delete your account?')) {
+              id && deleteUserById(id);
+              logout(setUser, navigate);
+            }
+          }}>
+          Delete profile
         </button>
         {isEditing && (
           <button
