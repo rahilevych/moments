@@ -161,4 +161,14 @@ export default class UserService {
 
     return user;
   }
+
+  static async deleteUserById(userId) {
+    const result = await User.deleteOne({ _id: userId });
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      throw new ApiError('Invalid user ID', 400);
+    }
+    if (result.deletedCount === 0) {
+      throw new ApiError('User not found', 404);
+    }
+  }
 }

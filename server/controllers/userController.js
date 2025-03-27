@@ -75,3 +75,12 @@ export const getUserById = async (request, response, next) => {
     next(error);
   }
 };
+export const deleteUserById = async (request, response, next) => {
+  try {
+    const { id } = request.params;
+    const result = await UserService.deleteUserById(id);
+    return response.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};

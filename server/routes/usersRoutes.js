@@ -1,6 +1,7 @@
 import express, { request, response } from 'express';
 
 import {
+  deleteUserById,
   getAllUsers,
   getUserById,
   getUserProfile,
@@ -24,6 +25,7 @@ usersRouter.get('/', JWTAuth, getAllUsers);
 usersRouter.post('/:otherUserId/subscribe', JWTAuth, toggleSubscribeBtn);
 
 usersRouter.get('/:id', getUserById);
+usersRouter.delete('/delete/:id', JWTAuth, deleteUserById);
 usersRouter.put('/edit/:id', multerUpload.single('user_img'), updateUser);
 
 export default usersRouter;
