@@ -2,13 +2,15 @@ import React, { useRef, useState } from 'react';
 import { addPost } from '../services/postServices';
 import { CaretLeft, Images } from '@phosphor-icons/react';
 import { useAuth } from '../hooks/useAuth';
-
-const AddPost = () => {
+import toast from 'react-hot-toast';
+interface Props {
+  onClose: () => void;
+}
+const AddPost = ({ onClose }: Props) => {
   const [caption, setCaption] = useState<string>('');
   const { user } = useAuth();
   const selectedFile = useRef<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [, setIsPostAdded] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -35,11 +37,17 @@ const AddPost = () => {
       formData.append('image_url', selectedFile.current);
       formData.append('caption', caption);
       formData.append('user_id', user?._id);
-      await addPost(formData);
-      setIsPostAdded(true);
-      setImagePreview(null);
-      selectedFile.current = null;
-      setCaption('');
+
+      try {
+        await addPost(formData);
+        toast.success('Post successfully created!');
+        setImagePreview(null);
+        selectedFile.current = null;
+        setCaption('');
+        onClose();
+      } catch (error) {
+        toast.error('Error create post');
+      }
     }
   };
 

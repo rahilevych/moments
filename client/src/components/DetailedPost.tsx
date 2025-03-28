@@ -5,13 +5,30 @@ import { usePost } from '../hooks/usePost';
 import { PostIconsNav } from './PostIconsNav';
 import { useAuth } from '../hooks/useAuth';
 import { Comment } from './Comment';
+import { Trash } from '@phosphor-icons/react';
+import { deletePostById } from '../services/postServices';
+type Props = {
+  onClose: () => void;
+};
 
-const DetailedPost = () => {
-  const { currentPost } = usePost();
-  const { socket } = useAuth();
+const DetailedPost = ({ onClose }: Props) => {
+  const { currentPost, fetchPosts } = usePost();
+  const { socket, user } = useAuth();
   if (!currentPost) {
     return <div>Loading...</div>;
   }
+
+  const handleDelete = async () => {
+    if (window.confirm('Do you want to delete a post')) {
+      try {
+        await deletePostById(currentPost._id);
+        user && fetchPosts(user?._id);
+      } catch (error) {
+        console.error('Error delete post', error);
+      }
+    }
+    onClose();
+  };
 
   useEffect(() => {
     socket?.emit('join', currentPost?._id);
@@ -21,6 +38,7 @@ const DetailedPost = () => {
     };
   }, [currentPost?._id, socket]);
 
+  const isAuthor = user?._id === currentPost?.user_id._id;
   return (
     <div
       title='detailedpost'
@@ -37,6 +55,14 @@ const DetailedPost = () => {
                 />
               </div>
               <p className='pl-4'>{currentPost?.user_id.username || ''}</p>
+
+              {isAuthor && currentPost && (
+                <div className='absolute top-4 right-12'>
+                  <button onClick={handleDelete}>
+                    <Trash className='w-6 h-6 text-red-500' />
+                  </button>
+                </div>
+              )}
             </div>
             <div className='post__menu ml-auto'></div>
           </div>

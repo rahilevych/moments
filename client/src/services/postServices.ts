@@ -62,3 +62,25 @@ export const getUserPostsByUserId = async (userId: string) => {
     return handleAxiosError(error, 'Error fetching user posts');
   }
 };
+
+export const deletePostById = async (postId: string) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return {
+        success: false,
+        error: 'No authentication token found',
+        data: null,
+      };
+    }
+    const response = await axios.delete(`${baseUrl}/posts/delete/${postId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return { success: true, data: response.data, error: null };
+  } catch (error: unknown) {
+    return handleAxiosError(error, 'Error delete post');
+  }
+};

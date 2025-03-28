@@ -1,7 +1,10 @@
+import mongoose from 'mongoose';
 import { Post } from '../models/PostModel.js';
 import { User } from '../models/UserModel.js';
 import ApiError from '../utils/ApiError.js';
-import { imageUpload } from '../utils/imageManagement.js';
+
+import { Comment } from '../models/CommentModel.js';
+import deleteImageFromCloudinary from './cloudinaryService.js';
 
 export default class PostService {
   static async addPost(file, newPost, userId) {
@@ -9,8 +12,7 @@ export default class PostService {
       throw new ApiError('User ID is required to add post', 400);
     }
     if (file) {
-      const postURL = await imageUpload(file, 'post_images');
-      newPost.image_url = postURL;
+      newPost.image_url = file.path;
     }
     const post = await Post.create(newPost);
     await User.findByIdAndUpdate(userId, { $push: { posts: post._id } });
@@ -92,5 +94,28 @@ export default class PostService {
     } catch (error) {
       throw new Error(error.message || 'Server error');
     }
+  }
+
+  static async deletePostById(postId, userId) {
+    console.log(postId);
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      throw new ApiError('Invalid post ID', 400);
+    }
+    const post = await Post.findById(postId);
+    if (post && post.image_url) {
+      await deleteImageFromCloudinary(post.image_url);
+    }
+
+    if (!post) {
+      throw new ApiError('Post not found', 404);
+    }
+    console.log('post user', post.user_id);
+    console.log(' user', userId);
+    if (post.user_id.toString() !== userId.toString()) {
+      throw new ApiError('You are not authorized to delete this post', 403);
+    }
+    await Comment.deleteMany({ post_id: postId });
+    await User.findByIdAndUpdate(userId, { $pull: { posts: postId } });
+    await Post.deleteOne({ _id: postId });
   }
 }

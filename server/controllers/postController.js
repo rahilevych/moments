@@ -43,3 +43,15 @@ export const getPostById = async (request, response, next) => {
     next(error);
   }
 };
+export const deletePostById = async (request, response, next) => {
+  try {
+    const { id } = request.params;
+
+    const userId = request.user._id;
+    console.log(userId);
+    const result = await PostService.deletePostById(id, userId);
+    return response.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
