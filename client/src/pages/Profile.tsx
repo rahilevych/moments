@@ -41,15 +41,11 @@ const Profile = () => {
       const file = e.target.files[0];
       setAvatarFile(file);
 
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        const result = reader.result as string;
-        setFormData((prevData) => ({
-          ...prevData!,
-          user_img: result,
-        }));
-      };
+      const fileURL = URL.createObjectURL(file);
+      setFormData((prevData) => ({
+        ...prevData!,
+        user_img: fileURL,
+      }));
     }
   };
 
@@ -62,7 +58,7 @@ const Profile = () => {
       formDataToSend.append('fullname', formData.fullname);
       formDataToSend.append('email', formData.email);
       if (avatarFile) {
-        formDataToSend.append('user_img', formData.user_img);
+        formDataToSend.append('user_img', avatarFile);
       }
 
       const response = await updateUser(user, formDataToSend);
