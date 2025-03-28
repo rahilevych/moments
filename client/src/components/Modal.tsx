@@ -9,8 +9,6 @@ interface ModalProps {
 }
 
 const Modal = (props: ModalProps) => {
-  const navigate = useNavigate();
-
   useEffect(() => {
     const handleRouteChange = () => {
       props.onClose();

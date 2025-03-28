@@ -15,7 +15,7 @@ const Home = () => {
       if (!response.success) {
         return;
       }
-      console.log(response.data);
+
       setPosts(response.data);
     } catch (error) {
       console.error('Error fetching home posts:', error);

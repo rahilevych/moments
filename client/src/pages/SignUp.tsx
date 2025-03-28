@@ -60,8 +60,7 @@ const SignUp = () => {
         ...prevErrors,
         ...(result.field ? { [result.field]: result.message } : {}),
       }));
-      console.log(result.message);
-      console.log(result.status);
+
       return;
     }
 

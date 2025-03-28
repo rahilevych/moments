@@ -25,7 +25,6 @@ const SearchPage = ({ onClose }: { onClose: () => void }) => {
   };
 
   useEffect(() => {
-    console.log('user search page>>>', user);
     fetchUsers();
   }, []);
 

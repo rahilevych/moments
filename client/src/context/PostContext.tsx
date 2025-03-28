@@ -87,7 +87,6 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
         ),
       };
     });
-    console.log('update from comment handler', updatedComment);
   };
 
   const updatePostComments = (newComment: CommentType) => {
@@ -138,15 +137,12 @@ export const PostContextProvider = ({ children }: PostContextProviderProps) => {
     const handleUpdateLikes = (currentPost: PostType) => {
       updatePostLikes(currentPost);
     };
-    console.log('Setting up socket listeners');
 
     const handleUpdateCommentLikes = (updatedComment: CommentType) => {
-      console.log('Received update_comment_likes event', updatedComment);
       updateCommentLikes(updatedComment);
     };
 
     const handleCommentAdded = (comment: CommentType) => {
-      console.log(comment);
       updatePostComments(comment);
     };
 

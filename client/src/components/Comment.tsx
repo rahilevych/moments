@@ -19,9 +19,6 @@ export const Comment: React.FC<Props> = ({ comment }) => {
   const liked = comment.likes.some((id) => id === user?._id);
 
   const handleLike = () => {
-    console.log(comment._id);
-    console.log(comment);
-    console.log(liked);
     socket?.emit('like_comment', comment._id);
   };
 

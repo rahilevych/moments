@@ -19,7 +19,6 @@ export const PostIconsNav: React.FC<Props> = ({ postId }) => {
   const liked = post.likes.some((id) => id === user?._id);
 
   const handleLikeClick = async () => {
-    console.log('Emitting like event for post:', post._id);
     socket?.emit('like', post._id);
   };
 

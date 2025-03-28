@@ -31,7 +31,6 @@ const ConnectionsList: React.FC<Props> = ({
   };
   useEffect(() => {
     fetchUsers(modalType, profileUser);
-    console.log('users>>>>');
   }, []);
 
   useEffect(() => {
