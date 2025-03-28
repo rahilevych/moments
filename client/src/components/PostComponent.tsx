@@ -8,6 +8,7 @@ import { usePost } from '../hooks/usePost';
 import { PostIconsNav } from './PostIconsNav';
 
 import { useAuth } from '../hooks/useAuth';
+import { NavLink } from 'react-router-dom';
 
 interface Props {
   postId: string;
@@ -42,23 +43,28 @@ const PostComponent: React.FC<Props> = ({ postId }) => {
     <div className='post flex flex-col w-full sm:w-3/4 md:w-2/3 lg:w-2/5 h-fit border border-gray-200 rounded-lg my-4 bg-white'>
       <div className='post__navigation flex flex-row px-4 py-2'>
         <div className='post__user flex flex-row items-center'>
-          <div className='rounded-full w-8 h-8 sm:w-10 sm:h-10 overflow-hidden'>
-            {post.user_id.user_img ? (
-              <img
-                src={post.user_id.user_img}
-                alt='Profile'
-                className='w-full h-full object-cover'
-              />
-            ) : (
-              <User
-                size={28}
-                className='w-full h-full rounded-full border-2 border-gray-300'
-              />
-            )}
-          </div>
-          <p className='pl-3 sm:pl-4 text-sm sm:text-base'>
-            {post.user_id.username}
-          </p>
+          <NavLink to={`/user/${post?.user_id._id}`} onClick={closeModal}>
+            <div className='rounded-full w-8 h-8 sm:w-10 sm:h-10 overflow-hidden'>
+              {post.user_id.user_img ? (
+                <img
+                  src={post.user_id.user_img}
+                  alt='Profile'
+                  className='w-full h-full object-cover'
+                />
+              ) : (
+                <User
+                  size={28}
+                  className='w-full h-full rounded-full border-2 border-gray-300'
+                />
+              )}
+            </div>
+          </NavLink>
+          <NavLink to={`/user/${post?.user_id._id}`} onClick={closeModal}>
+            {' '}
+            <p className='pl-3 sm:pl-4 text-sm sm:text-base'>
+              {post.user_id.username}
+            </p>
+          </NavLink>
         </div>
       </div>
       <div className='post__img w-full h-56 sm:h-72 md:h-80 lg:h-96'>
@@ -68,7 +74,7 @@ const PostComponent: React.FC<Props> = ({ postId }) => {
           className='w-full h-full object-cover'
         />
         <Modal isOpen={isModalOpen} onClose={closeModal}>
-          {<DetailedPost />}
+          {<DetailedPost onClose={closeModal} />}
         </Modal>
       </div>
 

@@ -2,6 +2,7 @@ import { UserType } from '../types/UserType';
 import { NavLink } from 'react-router-dom';
 import { User } from '@phosphor-icons/react';
 import SubscribeBtn from './SubscribeBtn';
+import { useAuth } from '../hooks/useAuth';
 
 type Props = {
   filteredUsers: UserType[] | null;
@@ -9,6 +10,7 @@ type Props = {
 };
 
 const UsersList = (props: Props) => {
+  const { user } = useAuth();
   const handleViewProfileClick = () => {
     props.onClose();
   };
@@ -45,9 +47,11 @@ const UsersList = (props: Props) => {
               </NavLink>
             </td>
 
-            <td className=' flex '>
-              <SubscribeBtn otherUser={followingUser} />
-            </td>
+            {user?._id != followingUser._id && (
+              <td className=' flex '>
+                <SubscribeBtn otherUser={followingUser} />
+              </td>
+            )}
           </tr>
         ))}
       </tbody>

@@ -7,6 +7,8 @@ import { useAuth } from '../hooks/useAuth';
 import { Comment } from './Comment';
 import { Trash } from '@phosphor-icons/react';
 import { deletePostById } from '../services/postServices';
+import toast from 'react-hot-toast';
+import { NavLink } from 'react-router-dom';
 type Props = {
   onClose: () => void;
 };
@@ -22,11 +24,16 @@ const DetailedPost = ({ onClose }: Props) => {
     if (window.confirm('Do you want to delete a post')) {
       try {
         await deletePostById(currentPost._id);
+        toast.success('Post successfully deleted!');
         user && fetchPosts(user?._id);
       } catch (error) {
-        console.error('Error delete post', error);
+        console.error('Error delete post!', error);
+        toast.error('Error delete post!');
       }
     }
+    onClose();
+  };
+  const handleViewProfileClick = () => {
     onClose();
   };
 
@@ -47,15 +54,22 @@ const DetailedPost = ({ onClose }: Props) => {
         <div className='w-full lg:w-3/5'>
           <div className='post__navigation flex flex-row px-4 py-2'>
             <div className='post__user flex flex-row items-center'>
-              <div className='rounded-full'>
-                <img
-                  alt='User'
-                  className='w-10 h-10 rounded-full'
-                  src={currentPost?.user_id.user_img || profile}
-                />
-              </div>
-              <p className='pl-4'>{currentPost?.user_id.username || ''}</p>
-
+              <NavLink
+                to={`/user/${currentPost?.user_id._id}`}
+                onClick={handleViewProfileClick}>
+                <div className='rounded-full'>
+                  <img
+                    alt='User'
+                    className='w-10 h-10 rounded-full'
+                    src={currentPost?.user_id.user_img || profile}
+                  />
+                </div>
+              </NavLink>
+              <NavLink
+                to={`/user/${currentPost?.user_id._id}`}
+                onClick={handleViewProfileClick}>
+                <p className='pl-4'>{currentPost?.user_id.username || ''}</p>
+              </NavLink>
               {isAuthor && currentPost && (
                 <div className='absolute top-4 right-12'>
                   <button onClick={handleDelete}>
@@ -74,7 +88,7 @@ const DetailedPost = ({ onClose }: Props) => {
             />
           </div>
 
-          <div className='post__description px-4 py-2'>
+          <div className='post__description px-2 py-2'>
             {currentPost?.caption || 'No description available'}
           </div>
         </div>

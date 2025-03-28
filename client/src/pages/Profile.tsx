@@ -10,6 +10,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { logout } from '../services/authService';
+import toast from 'react-hot-toast';
 
 const Profile = () => {
   const { user, setUser } = useAuth();
@@ -70,8 +71,10 @@ const Profile = () => {
       const updatedUser = await getUserById(user._id);
       if (updatedUser.success) {
         setUser(updatedUser.data);
+        toast.success('User was updated');
       } else {
         console.error('Failed to fetch updated user:', updatedUser.error);
+        toast.error('Error update user');
       }
 
       setIsEditing(false);
@@ -83,6 +86,23 @@ const Profile = () => {
   const handleClickFileInput = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
+    }
+  };
+  const handleDeleteUser = async () => {
+    try {
+      if (id) {
+        if (window.confirm('Do you want to delete your account?')) {
+          const result = await deleteUserById(id);
+          if (result.success) {
+            toast.success('Account was deleted !');
+            logout(setUser, navigate);
+          } else {
+            toast.error('Error delete account !');
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -187,12 +207,7 @@ const Profile = () => {
         </button>
         <button
           className={`px-4 py-2 rounded-md font-semibold text-white transition-colors bg-red-500 hover:bg-red-600 `}
-          onClick={() => {
-            if (window.confirm('Do you want to delete your account?')) {
-              id && deleteUserById(id);
-              logout(setUser, navigate);
-            }
-          }}>
+          onClick={handleDeleteUser}>
           Delete profile
         </button>
         {isEditing && (
