@@ -42,6 +42,11 @@ export default class CommentService {
       ) {
         throw new Error('You are not allowed to delete this comment');
       }
+      await Post.findByIdAndUpdate(
+        comment.post_id,
+        { $pull: { comments: comment._id } },
+        { new: true }
+      );
       await Comment.findByIdAndDelete(id);
       return comment;
     } catch (error) {
