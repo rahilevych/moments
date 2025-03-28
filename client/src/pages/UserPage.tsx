@@ -10,7 +10,7 @@ import { useAuth } from '../hooks/useAuth';
 const UserPage = () => {
   const { id } = useParams<{ id: string }>();
   const [profileUser, setProfileUser] = useState<UserType | null>(null);
-  const { fetchPosts } = usePost();
+  const { fetchPosts, posts } = usePost();
   const { user } = useAuth();
 
   const init = async () => {
@@ -28,7 +28,7 @@ const UserPage = () => {
 
   useEffect(() => {
     init();
-  }, [id, user?.following]);
+  }, [id, user?.following, posts?.length]);
 
   return (
     profileUser && (

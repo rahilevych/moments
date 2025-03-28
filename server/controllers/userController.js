@@ -37,9 +37,10 @@ export const getUserProfile = async (request, response, next) => {
 export const updateUser = async (request, response, next) => {
   try {
     const { id } = request.params;
+    const file = request.file;
     const updatedData = request.body;
 
-    const result = await UserService.updateUser(id, updatedData);
+    const result = await UserService.updateUser(id, updatedData, file);
     return response.status(200).json(result);
   } catch (error) {
     next(error);

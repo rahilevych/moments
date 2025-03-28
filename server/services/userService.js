@@ -5,6 +5,9 @@ import mongoose from 'mongoose';
 import { User } from '../models/UserModel.js';
 import bcrypt from 'bcrypt';
 import ApiError from '../utils/ApiError.js';
+import { Post } from '../models/PostModel.js';
+import { Comment } from '../models/CommentModel.js';
+import deleteImageFromCloudinary from './cloudinaryService.js';
 
 const generateAccessToken = (id) => {
   const payload = {
@@ -67,7 +70,7 @@ export default class UserService {
     return user;
   }
 
-  static async updateUser(id, updatedData) {
+  static async updateUser(id, updatedData, file) {
     const updateData = { ...updatedData };
 
     Object.keys(updateData).forEach(
@@ -76,12 +79,20 @@ export default class UserService {
     if (Object.keys(updateData).length === 0) {
       throw new ApiError(`No data to update'`, 422);
     }
+    const existingUser = await User.findById(id);
+    if (!existingUser) {
+      throw new ApiError(`User not found`, 404);
+    }
+    if (file) {
+      if (existingUser.user_img) {
+        await deleteImageFromCloudinary(existingUser.user_img);
+      }
+      updateData.user_img = file.path;
+    }
+
     const updatedUser = await User.findByIdAndUpdate(id, updateData, {
       new: true,
     });
-    if (!updatedUser) {
-      throw new ApiError(`User not found`, 404);
-    }
     return updatedUser;
   }
 
@@ -163,12 +174,46 @@ export default class UserService {
   }
 
   static async deleteUserById(userId) {
-    const result = await User.deleteOne({ _id: userId });
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw new ApiError('Invalid user ID', 400);
-    }
-    if (result.deletedCount === 0) {
-      throw new ApiError('User not found', 404);
+    try {
+      const userPosts = await Post.find({ user_id: userId }).select(
+        '_id image_url'
+      );
+
+      await Promise.all(
+        userPosts.map((post) => deleteImageFromCloudinary(post.image_url))
+      );
+
+      const user = await User.findById(userId);
+      if (user?.user_img) {
+        await deleteImageFromCloudinary(user.user_img);
+      }
+
+      const userComments = await Comment.find({ user_id: userId }).select(
+        '_id'
+      );
+
+      const postIds = userPosts.map((post) => post._id);
+      const commentIds = userComments.map((comment) => comment._id);
+
+      await Promise.all([
+        Post.deleteMany({ user_id: userId }),
+        Comment.deleteMany({ user_id: userId }),
+        Comment.deleteMany({ post_id: { $in: postIds } }),
+        Post.updateMany(
+          { _id: { $in: postIds } },
+          { $pull: { likes: userId } }
+        ),
+        Comment.updateMany(
+          { _id: { $in: commentIds } },
+          { $pull: { likes: userId } }
+        ),
+
+        Post.updateMany({ likes: userId }, { $pull: { likes: userId } }),
+        Comment.updateMany({ likes: userId }, { $pull: { likes: userId } }),
+        User.findByIdAndDelete(userId),
+      ]);
+    } catch (error) {
+      console.error('Error delete user', error);
     }
   }
 }

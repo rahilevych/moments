@@ -12,7 +12,8 @@ import {
 } from '../controllers/userController.js';
 import JWTAuth from '../middleware/JWTAuth.js';
 import { userValidation } from '../validation/userValidation.js';
-import { multerUpload } from '../middleware/multer.js';
+import upload from '../config/multer.js';
+
 const usersRouter = express.Router();
 
 usersRouter.post('/registration', userValidation, registration);
@@ -26,6 +27,6 @@ usersRouter.post('/:otherUserId/subscribe', JWTAuth, toggleSubscribeBtn);
 
 usersRouter.get('/:id', getUserById);
 usersRouter.delete('/delete/:id', JWTAuth, deleteUserById);
-usersRouter.put('/edit/:id', multerUpload.single('user_img'), updateUser);
+usersRouter.put('/edit/:id', upload.single('user_img'), updateUser);
 
 export default usersRouter;

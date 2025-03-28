@@ -41,7 +41,7 @@ const UserPosts: React.FC<Props> = ({ profileUser }) => {
       ))}
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <DetailedPost />
+        <DetailedPost onClose={closeModal} />
       </Modal>
     </div>
   );

@@ -34,7 +34,7 @@ export const signUp = async (
         return {
           success: false,
           status: 0,
-          message: 'Network error. Please check your connection.',
+          message: error.message,
         };
       }
     }
