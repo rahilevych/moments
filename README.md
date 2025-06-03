@@ -1,70 +1,74 @@
-# 🖼️ instclone 
-A simplified version of Instagram built with the MERN stack and TypeScript. The main goal of this project was to gain new knowledge in Express.js, Node.js, and MongoDB. This website is my first full-stack web application using Express.js and Node.js. 
+# 🖼️ moments 
+A simplified version of Instagram built with the MERN stack and TypeScript. Users can register and login, manage their profile, liking posts and write comments in real time using WebSockets.
 
 ## 🗃️ Technologies
 - React.js
 - TypeScript
 - Tailwind CSS
-- Context API
+- WebSokets
 - MongoDB
 - Node.js
 - Express.js
 
 
 ## 🤙 Features
-There are two types of users: registered and unregistered. Unregistered users can only create a new account or log in to the website.
+There are two types of users: registered and unregistered. 
+Unregistered users can only create a new account or log in to the website.
 
 ### Registered users can:
 
-- Manage liked posts: add or remove posts from their liked list
-- Add comments: share reviews and feedback on posts
-- Manage their posts: add posts
-- View the list of all users in the database
+- Like posts and comments
+- Add comments
+- Manage their posts
+- View the list of all users
 - Search for users
-- Subscribe/unsubscribe to/from users
-- View detailed information about posts
-- View the list of all comments
+- Subscribe/unsubscribe to other users
+- View detailed information
+- See all comments on post
 
 ## 📽️ The Development Process
 
-The development process can be divided into two parts: preparation and practical work. Since this was my first project using the MERN stack, it took some additional time to read the documentation about organizing the backend and handling communication between the server and client.
+The main goal of project was to implement layered architecture to make codebase cleaner and easier to debug.
+The app is devided into two parts: client and server, each with its own structute
 
-The application is divided into two parts: the client and the server. The root folder for the server part of the app is server. This folder contains:
+### Сlient
 
-- config: Configuration functions
-- controllers: Functions for specific routes
-- models: Database models
-- routes: Route definitions
-- utils: Additional functions
-- middleware: Middleware functions
-- The main goal of this folder organization is to create a clear structure to avoid future issues. Additionally, dividing the code into smaller files helps make it more organized and understandable. I also made an effort to follow the Single Responsibility Principle (SRP) during the development of this website.
-
-The server is created using Node.js and Express.js. For more details, you can explore the code directly in the repository.
-
-Let's move to client part.
-
-- components: Contains reusable React components for building UI elements.
-- pages: Includes components representing different application views or routes.
-- types: Defines TypeScript types and interfaces for type safety.
-- utils: Holds utility functions and helper modules used across the app.
-- assets: Stores static assets like images, fonts, and stylesheets.
-- context: Manages global state and context providers for state management.
-
+Client was built using React, Typescript and Tailwind CSS. 
 The client-side is organized with protected routes to ensure that only logged-in users can access certain parts of the application. Before a user can navigate to any route, the application checks for the presence of a user and token in localStorage. If these are not found, access to other routes is restricted. This approach ensures that only authenticated users can interact with the website.
 
+#### Сlient structure:
+- components:reusable components
+- context: global state management using context
+- hooks: custom react hooks
+- pages: page-level components 
+- services: API iteraction logic
+- types: TypeScript types 
+- utils: utility functions
+- __test__:  uni-tests using React Testing Library and Jest
+
+### Іerver
+Server was created using Node.js and Express.js
+
+#### Server structure:
+- config: configuration functions
+- controllers: handle incoming requests, call services
+- models: database models
+- routes: API endpoints
+- utils: utility functions
+- middleware: middleware functions(e.g., auth,error handling)
+- sockets: WebSockeet-related logic 
 
 ## 🧠 What I Learned
 
-- Node.js + Express.js
-- MongoDB
-- Enhanced React.js skills
-- Improved understanding of Context API
-- Gained more proficiency with TypeScript
+- first hands-on experience with WebSockets
+- improved knowledge of Node.js + Express.js
+- strengthened React.js skills
+- gained more proficiency with TypeScript
   
 ## ⬆️ How Can It Be Improved?
-- Add chat
-- Add histories
-- Impove Home page with recommendations
-- Add save page
+- add real-time chat between users
+- add stories feature
+- impove home page with recommendations
+- add saved posts feature
   
-## 🎥 Demo: https://instclone-client.onrender.com
+## 🎥 Demo: 
