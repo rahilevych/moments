@@ -8,7 +8,7 @@ export const initSocketServer = (server) => {
     cors: {
       origin: [
         'http://localhost:3001',
-        'https://instclone-client.onrender.com',
+        'https://moments-client1.onrender.com',
       ],
       methods: ['GET', 'POST'],
       credentials: true,
