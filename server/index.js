@@ -16,7 +16,7 @@ const server = http.createServer(app);
 
 app.use(
   cors({
-    origin: ['http://localhost:3001', 'https://moments-client1.onrender.com/'],
+    origin: ['http://localhost:3001', 'https://moments-client1.onrender.com'],
     credentials: true,
   })
 );
