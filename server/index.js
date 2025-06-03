@@ -16,7 +16,7 @@ const server = http.createServer(app);
 
 app.use(
   cors({
-    origin: ['http://localhost:3001', 'https://instclone-client.onrender.com'],
+    origin: ['http://localhost:3001', 'https://moments-1-eegp.onrender.com'],
     credentials: true,
   })
 );
