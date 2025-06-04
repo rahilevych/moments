@@ -46,7 +46,7 @@ The client-side is organized with protected routes to ensure that only logged-in
 - utils: utility functions
 - __test__:  uni-tests using React Testing Library and Jest
 
-### Іerver
+### Server
 Server was created using Node.js and Express.js
 
 #### Server structure:
@@ -54,6 +54,7 @@ Server was created using Node.js and Express.js
 - controllers: handle incoming requests, call services
 - models: database models
 - routes: API endpoints
+- services: contains business logic and handles interaction with the database (DB access layer)
 - utils: utility functions
 - middleware: middleware functions(e.g., auth,error handling)
 - sockets: WebSockeet-related logic 
